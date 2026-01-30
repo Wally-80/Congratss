@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+    --color-glass-white: rgba(255, 255, 255, 0.1);
+    --color-glass-border: rgba(255, 255, 255, 0.2);
+    --color-neon-pink: #ff007f;
+    --color-neon-cyan: #00f2ff;
+    --color-neon-blue: #0070f3;
+
+    --background-image-vibrant: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+@layer base {
+    body {
+        @apply bg-[#050510] text-white antialiased;
+        background-image: url('/celebration_bg.png');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+}
+
+@layer components {
+    .glass-pane {
+        @apply bg-white/10 backdrop-blur-xl border border-white/20 rounded-[40px] shadow-2xl;
+    }
+
+    .glass-card {
+        @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 transition-all duration-300 hover:bg-white/10;
+    }
+
+    .neon-glow-pink {
+        box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
+    }
+
+    .neon-glow-cyan {
+        box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+    }
+}
