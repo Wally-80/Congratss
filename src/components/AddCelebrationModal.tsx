@@ -7,13 +7,27 @@ interface AddCelebrationModalProps {
     isOpen: boolean;
     onClose: () => void;
     onAdd: (data: any) => Promise<void>;
+    initialData?: { id: string, title: string, rawDate: string, type: string } | null;
 }
 
-export default function AddCelebrationModal({ isOpen, onClose, onAdd }: AddCelebrationModalProps) {
+export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialData }: AddCelebrationModalProps) {
     const [title, setTitle] = useState("");
     const [date, setDate] = useState("");
     const [type, setType] = useState<"birthday" | "anniversary" | "retirement">("birthday");
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Populate fields when editing
+    React.useEffect(() => {
+        if (initialData) {
+            setTitle(initialData.title);
+            setDate(initialData.rawDate);
+            setType(initialData.type as any);
+        } else {
+            setTitle("");
+            setDate("");
+            setType("birthday");
+        }
+    }, [initialData, isOpen]);
 
     if (!isOpen) return null;
 
@@ -21,25 +35,15 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd }: AddCeleb
         e.preventDefault();
         setIsSubmitting(true);
 
-        // Simple logic for daysLeft and percentage for demo/MVP
-        // In a real app, this would be computed by a utility function
-        const celebrationDate = new Date(date);
-        const today = new Date();
-        const diffTime = Math.abs(celebrationDate.getTime() - today.getTime());
-        const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
         await onAdd({
+            id: initialData?.id, // Pass ID back if updating
             title,
-            date: celebrationDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-            type: type === "retirement" ? "anniversary" : type, // UI map
-            daysLeft,
-            percentage: 0, // Initial state
+            rawDate: date,
+            type: type === "retirement" ? "anniversary" : type,
         });
 
         setIsSubmitting(false);
         onClose();
-        setTitle("");
-        setDate("");
     };
 
     return (
@@ -114,7 +118,7 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd }: AddCeleb
                         disabled={isSubmitting}
                         className="w-full bg-white text-black font-bold py-5 rounded-2xl hover:scale-[1.02] transition-transform active:scale-[0.98] disabled:opacity-50 disabled:scale-100 mt-8"
                     >
-                        {isSubmitting ? "Creating..." : "Save Celebration"}
+                        {isSubmitting ? "Processing..." : (initialData ? "Update Celebration" : "Save Celebration")}
                     </button>
                 </form>
             </div>

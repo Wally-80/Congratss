@@ -10,8 +10,28 @@ import AuthPage from "./auth/page";
 
 export default function Home() {
     const { user, loading: authLoading, logout } = useAuth();
-    const { celebrations, loading: dataLoading, addCelebration } = useCelebrations();
+    const { celebrations, loading: dataLoading, error: dataError, addCelebration, updateCelebration, deleteCelebration } = useCelebrations();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingCelebration, setEditingCelebration] = useState<any>(null);
+    const [activeTab, setActiveTab] = useState("home");
+
+    const handleAddOrEdit = async (data: any) => {
+        if (data.id) {
+            await updateCelebration(data.id, { title: data.title, rawDate: data.rawDate, type: data.type });
+        } else {
+            await addCelebration({ title: data.title, rawDate: data.rawDate, type: data.type });
+        }
+    };
+
+    const openEditModal = (celebration: any) => {
+        setEditingCelebration(celebration);
+        setIsModalOpen(true);
+    };
+
+    const openAddModal = () => {
+        setEditingCelebration(null);
+        setIsModalOpen(true);
+    };
 
     if (authLoading || dataLoading) return (
         <div className="min-h-screen flex items-center justify-center">
@@ -25,6 +45,13 @@ export default function Home() {
         <main className="min-h-screen p-4 md:p-8 flex flex-col items-center">
             {/* Central Glass Container */}
             <div className="glass-pane w-full max-w-md h-[850px] overflow-hidden flex flex-col relative">
+
+                {/* Optional Error Banner */}
+                {dataError && (
+                    <div className="absolute top-0 left-0 right-0 z-50 p-4 bg-red-500/20 border-b border-red-500/50 backdrop-blur-md text-red-200 text-xs text-center">
+                        <p>Database Error: {dataError}</p>
+                    </div>
+                )}
 
                 {/* Header */}
                 <header className="p-8 pb-4 flex justify-between items-center bg-white/5 backdrop-blur-md">
@@ -69,11 +96,15 @@ export default function Home() {
                         celebrations.map((item) => (
                             <CelebrationCard
                                 key={item.id}
+                                id={item.id}
                                 title={item.title}
                                 daysLeft={item.daysLeft}
                                 date={item.date}
+                                rawDate={item.rawDate}
                                 percentage={item.percentage}
                                 type={item.type}
+                                onDelete={deleteCelebration}
+                                onEdit={openEditModal}
                             />
                         ))
                     )}
@@ -98,7 +129,7 @@ export default function Home() {
 
                 {/* Floating Action Button */}
                 <button
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={openAddModal}
                     className="absolute bottom-24 right-8 w-16 h-16 rounded-full bg-cyan-400/20 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-neon transition-transform active:scale-95 hover:scale-105 z-20 group"
                 >
                     <div className="w-12 h-12 rounded-full bg-cyan-400 flex items-center justify-center shadow-[0_0_20px_rgba(0,242,255,0.6)] group-hover:shadow-[0_0_30px_rgba(0,242,255,0.8)] transition-all">
@@ -109,9 +140,24 @@ export default function Home() {
 
                 {/* Navigation Bar */}
                 <nav className="absolute bottom-0 left-0 right-0 h-20 bg-white/10 backdrop-blur-3xl border-t border-white/20 flex items-center justify-around px-8">
-                    <button className="p-2 text-white"><HomeIcon className="w-6 h-6" /></button>
-                    <button className="p-2 text-white/40 hover:text-white transition-colors"><CalendarIcon className="w-6 h-6" /></button>
-                    <button className="p-2 text-white/40 hover:text-white transition-colors"><Settings className="w-6 h-6" /></button>
+                    <button
+                        onClick={() => setActiveTab("home")}
+                        className={`p-2 transition-colors ${activeTab === "home" ? "text-white" : "text-white/40 hover:text-white"}`}
+                    >
+                        <HomeIcon className="w-6 h-6" />
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("calendar")}
+                        className={`p-2 transition-colors ${activeTab === "calendar" ? "text-white" : "text-white/40 hover:text-white"}`}
+                    >
+                        <CalendarIcon className="w-6 h-6" />
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("settings")}
+                        className={`p-2 transition-colors ${activeTab === "settings" ? "text-white" : "text-white/40 hover:text-white"}`}
+                    >
+                        <Settings className="w-6 h-6" />
+                    </button>
                 </nav>
             </div>
 
@@ -119,7 +165,8 @@ export default function Home() {
             <AddCelebrationModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onAdd={addCelebration}
+                onAdd={handleAddOrEdit}
+                initialData={editingCelebration}
             />
         </main>
     );
