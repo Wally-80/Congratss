@@ -38,8 +38,16 @@ export const useCelebrations = () => {
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const data = snapshot.docs.map((doc) => {
                 const docData = doc.data();
+
+                // Convert Firestore Timestamp to ISO string if it exists
+                const createdAtISO = docData.createdAt?.toDate?.()?.toISOString() ||
+                    (docData.createdAt instanceof Date ? docData.createdAt.toISOString() : undefined);
+
                 // Fallback to .date if .rawDate is missing (for legacy data)
-                const { daysLeft, percentage, formattedDate } = calculateCountdown(docData.rawDate || docData.date);
+                const { daysLeft, percentage, formattedDate } = calculateCountdown(
+                    docData.rawDate || docData.date,
+                    createdAtISO
+                );
 
                 return {
                     id: doc.id,
@@ -65,7 +73,8 @@ export const useCelebrations = () => {
 
     const addCelebration = async (data: { title: string, rawDate: string, type: string }) => {
         if (!user) return;
-        const { daysLeft, percentage, formattedDate } = calculateCountdown(data.rawDate);
+        const nowISO = new Date().toISOString();
+        const { daysLeft, percentage, formattedDate } = calculateCountdown(data.rawDate, nowISO);
 
         try {
             await addDoc(collection(db, "celebrations"), {
@@ -84,6 +93,9 @@ export const useCelebrations = () => {
 
     const updateCelebration = async (id: string, data: { title: string, rawDate: string, type: string }) => {
         if (!user) return;
+
+        // When updating, we don't easily have the original createdAt here unless we fetch or it's passed.
+        // For simplicity, we'll just recalculate. Recurring events don't use it anyway.
         const { daysLeft, percentage, formattedDate } = calculateCountdown(data.rawDate);
 
         try {
