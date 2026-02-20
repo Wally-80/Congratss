@@ -7,6 +7,7 @@ export const metadata: Metadata = {
 };
 
 import { AuthProvider } from "@/context/AuthContext";
+import Fireworks from "@/components/Fireworks";
 
 export default function RootLayout({
     children,
@@ -16,6 +17,7 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <body className="antialiased" suppressHydrationWarning>
+                <Fireworks />
                 <AuthProvider>
                     {children}
                 </AuthProvider>
@@ -23,3 +25,4 @@ export default function RootLayout({
         </html>
     );
 }
+

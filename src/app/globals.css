@@ -12,22 +12,60 @@
 
 @layer base {
     body {
-        @apply bg-[#050510] text-white antialiased;
-        background-image: url('/celebration_bg.png');
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
+        @apply bg-[#030308] text-white antialiased selection:bg-neon-cyan/30;
+        position: relative;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        z-index: -1;
+        background:
+            radial-gradient(circle at 15% 15%, rgba(255, 0, 127, 0.12), transparent 35%),
+            radial-gradient(circle at 85% 25%, rgba(0, 242, 255, 0.12), transparent 35%),
+            radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.08), transparent 50%),
+            radial-gradient(circle at 20% 80%, rgba(0, 112, 243, 0.12), transparent 35%),
+            radial-gradient(circle at 80% 80%, rgba(255, 0, 127, 0.08), transparent 35%);
+        filter: blur(100px);
+        animation: mesh-flow 60s linear infinite;
+    }
+
+    @keyframes mesh-flow {
+        0% {
+            transform: rotate(0deg) scale(1);
+        }
+
+        50% {
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        100% {
+            transform: rotate(360deg) scale(1);
+        }
     }
 }
 
 @layer components {
     .glass-pane {
-        @apply bg-white/10 backdrop-blur-xl border border-white/20 rounded-[40px] shadow-2xl;
+        @apply bg-white/[0.03] backdrop-blur-[32px] border border-white/10 rounded-[48px];
+        box-shadow: 0 24px 80px -12px rgba(0, 0, 0, 0.5);
     }
 
     .glass-card {
-        @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 transition-all duration-300 hover:bg-white/10;
+        @apply bg-white/[0.02] backdrop-blur-2xl border border-white/5 rounded-3xl p-6 transition-all duration-500;
+
+        &:hover {
+            @apply bg-white/[0.05] border-white/20 -translate-y-1;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.3);
+        }
     }
+
 
     .neon-glow-pink {
         box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
@@ -36,4 +74,42 @@
     .neon-glow-cyan {
         box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
     }
+}
+
+@keyframes firework-rise {
+    0% {
+        transform: translateY(20vh) scale(0.3);
+        opacity: 0;
+    }
+
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-85vh) scale(1);
+        opacity: 0;
+    }
+}
+
+
+@keyframes firework-spark {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(var(--x), var(--y)) scale(0);
+        opacity: 0;
+    }
+}
+
+.animate-firework-spark {
+    animation: firework-spark 1.5s ease-out forwards;
 }
