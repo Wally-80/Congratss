@@ -2,7 +2,7 @@
 
 interface CircularProgressProps {
     percentage: number;
-    color: "pink" | "cyan";
+    color: "pink" | "cyan" | "purple" | "white";
     size?: number;
 }
 
@@ -11,8 +11,23 @@ export default function CircularProgress({ percentage, color, size = 100 }: Circ
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (percentage / 100) * circumference;
 
-    const neonColor = color === "pink" ? "var(--color-neon-pink)" : "var(--color-neon-cyan)";
-    const glowClass = color === "pink" ? "neon-glow-pink" : "neon-glow-cyan";
+    const getColorValues = () => {
+        switch (color) {
+            case "pink":
+                return "var(--color-neon-pink)";
+            case "cyan":
+                return "var(--color-neon-cyan)";
+            case "purple":
+                return "#a855f7"; // purple-500
+            case "white":
+                return "#ffffff";
+            default:
+                return "var(--color-neon-cyan)";
+        }
+    };
+
+    const neonColor = getColorValues();
+
 
     return (
         <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>

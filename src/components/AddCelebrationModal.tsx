@@ -39,7 +39,7 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
             id: initialData?.id, // Pass ID back if updating
             title,
             rawDate: date,
-            type: type === "retirement" ? "anniversary" : type,
+            type: type,
         });
 
         setIsSubmitting(false);
