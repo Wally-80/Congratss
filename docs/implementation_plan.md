@@ -27,7 +27,8 @@ The Gratzz app is a high-aesthetic, mobile-first utility designed to eliminate "
 - **Data Sovereignty:** GDPR-compliant export (JSON/CSV) and "Delete My Account" button are standard features.
 
 ## UX/UI Plan (B)
-![Celebrations Tracker Mockup](/Users/walterpomalaza/.gemini/antigravity/brain/5e6b4d8b-abcb-4c0c-bb11-fb684ecd42f4/tracker_dashboard_mockup_1769736638015.png)
+![Celebrations Tracker Mockup 1](/Users/walterpomalaza/.gemini/antigravity/brain/5e6b4d8b-abcb-4c0c-bb11-fb684ecd42f4/tracker_dashboard_mockup_1769736638015.png)
+![Celebrations Tracker Mockup 2](/Users/walterpomalaza/.gemini/antigravity/brain/771a9681-3a5d-4806-b517-fcf557e6a7ce/uploaded_media_1769742712063.png)
 
 **Sitemap:**
 1. **Onboarding:** Splash -> Auth -> "Add your first occasion"
