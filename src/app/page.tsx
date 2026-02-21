@@ -20,6 +20,8 @@ export default function Home() {
     const [sendingCelebration, setSendingCelebration] = useState<any>(null);
     const [activeTab, setActiveTab] = useState("home");
     const [searchQuery, setSearchQuery] = useState("");
+    const [lastScrollTop, setLastScrollTop] = useState(0);
+    const [showFab, setShowFab] = useState(true);
 
     const filteredCelebrations = celebrations
         .filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -27,6 +29,22 @@ export default function Home() {
 
     const handleUpdateProfile = async (displayName: string, photoURL: string) => {
         await updateUserProfile(displayName, photoURL);
+    };
+
+    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const currentScrollTop = e.currentTarget.scrollTop;
+
+        // Only trigger if scroll distance is significant (> 10px)
+        if (Math.abs(currentScrollTop - lastScrollTop) < 10) return;
+
+        if (currentScrollTop > lastScrollTop && currentScrollTop > 100) {
+            // Scrolling down
+            setShowFab(false);
+        } else {
+            // Scrolling up
+            setShowFab(true);
+        }
+        setLastScrollTop(currentScrollTop);
     };
 
     const handleAddOrEdit = async (data: any) => {
@@ -97,7 +115,10 @@ export default function Home() {
                             </div>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto px-8 scrollbar-hide pb-8">
+                        <div
+                            onScroll={handleScroll}
+                            className="flex-1 overflow-y-auto px-8 scrollbar-hide pb-8"
+                        >
                             {filteredCelebrations.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-20 text-center">
                                     <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6">
@@ -156,7 +177,10 @@ export default function Home() {
                 });
 
                 return (
-                    <div className="flex-1 overflow-y-auto px-8 scrollbar-hide py-4">
+                    <div
+                        onScroll={handleScroll}
+                        className="flex-1 overflow-y-auto px-8 scrollbar-hide py-4"
+                    >
                         <div className="space-y-8">
                             {sortedByDate.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-20 text-center opacity-40">
@@ -251,7 +275,8 @@ export default function Home() {
                 {activeTab !== "settings" && (
                     <button
                         onClick={openAddModal}
-                        className="absolute bottom-24 right-8 w-16 h-16 rounded-full bg-cyan-400/20 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-neon transition-transform active:scale-95 hover:scale-105 z-20 group"
+                        className={`absolute bottom-24 right-8 w-16 h-16 rounded-full bg-cyan-400/20 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-neon transition-all duration-500 active:scale-95 hover:scale-105 z-20 group ${showFab ? "translate-y-0 opacity-100" : "translate-y-32 opacity-0"
+                            }`}
                     >
                         <div className="w-12 h-12 rounded-full bg-cyan-400 flex items-center justify-center shadow-[0_0_20px_rgba(0,242,255,0.6)] group-hover:shadow-[0_0_30px_rgba(0,242,255,0.8)] transition-all">
                             <Plus className="text-black w-8 h-8" />
