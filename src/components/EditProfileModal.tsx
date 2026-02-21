@@ -3,6 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { X, User, Image, Loader2 } from "lucide-react";
 
+import { useAuth } from "@/context/AuthContext";
+import { translations } from "@/lib/translations";
+
 interface EditProfileModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -14,6 +17,9 @@ interface EditProfileModalProps {
 }
 
 export default function EditProfileModal({ isOpen, onClose, onUpdate, currentData }: EditProfileModalProps) {
+    const { language } = useAuth();
+    const t = translations[language];
+
     const [displayName, setDisplayName] = useState(currentData.displayName);
     const [photoURL, setPhotoURL] = useState(currentData.photoURL);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,7 +61,7 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
                     <X className="w-5 h-5" />
                 </button>
 
-                <h2 className="text-2xl font-bold mb-8 text-white/90">Edit Profile</h2>
+                <h2 className="text-2xl font-bold mb-8 text-white/90">{t.edit_profile}</h2>
 
                 {error && (
                     <div className="mb-6 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm">
@@ -75,7 +81,9 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest ml-1">Display Name</label>
+                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest ml-1">
+                            {language === "es" ? "Nombre a mostrar" : "Display Name"}
+                        </label>
                         <div className="relative">
                             <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                             <input
@@ -83,14 +91,16 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
                                 value={displayName}
                                 onChange={(e) => setDisplayName(e.target.value)}
                                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-cyan-400/50 transition-colors"
-                                placeholder="Your Name"
+                                placeholder={language === "es" ? "Tu Nombre" : "Your Name"}
                                 required
                             />
                         </div>
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest ml-1">Profile Photo URL</label>
+                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest ml-1">
+                            {language === "es" ? "URL de Foto de Perfil" : "Profile Photo URL"}
+                        </label>
                         <div className="relative">
                             <Image className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                             <input
@@ -111,9 +121,9 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
                         {isSubmitting ? (
                             <>
                                 <Loader2 className="w-5 h-5 animate-spin" />
-                                Saving...
+                                {language === "es" ? "Guardando..." : "Saving..."}
                             </>
-                        ) : "Save Changes"}
+                        ) : (language === "es" ? "Guardar Cambios" : "Save Changes")}
                     </button>
                 </form>
             </div>

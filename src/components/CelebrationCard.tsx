@@ -1,5 +1,9 @@
-import { Gift, Calendar, Heart, Trash2, Pencil, PartyPopper, Star, Send } from "lucide-react";
-import CircularProgress from "./CircularProgress";
+"use client";
+
+import React from "react";
+import { Gift, Heart, Trash2, Pencil, Send, PartyPopper } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { translations } from "@/lib/translations";
 
 interface CelebrationCardProps {
     id: string;
@@ -8,108 +12,89 @@ interface CelebrationCardProps {
     date: string;
     rawDate: string;
     percentage: number;
-    type: "birthday" | "anniversary" | "retirement" | "other";
-    onDelete?: (id: string) => void;
-    onEdit?: (data: any) => void;
-    onSendGreeting?: (data: any) => void;
+    type: "birthday" | "anniversary" | "retirement";
+    onDelete: (id: string) => Promise<void>;
+    onEdit: (celebration: any) => void;
+    onSendGreeting: (celebration: any) => void;
 }
 
-export default function CelebrationCard({ id, title, daysLeft, date, rawDate, percentage, type, onDelete, onEdit, onSendGreeting }: CelebrationCardProps) {
-    const getCelebrationDetails = () => {
+export default function CelebrationCard({
+    id, title, daysLeft, date, rawDate, percentage, type,
+    onDelete, onEdit, onSendGreeting
+}: CelebrationCardProps) {
+    const { language } = useAuth();
+    const t = translations[language];
+
+    const getIcon = () => {
         switch (type) {
-            case "birthday":
-                return {
-                    icon: Gift,
-                    color: "pink",
-                    neonColor: "text-neon-pink",
-                    message: daysLeft === 0 ? "Happy Birthday!" : `${daysLeft} days until your birthday`
-                };
-            case "anniversary":
-                return {
-                    icon: Heart,
-                    color: "cyan",
-                    neonColor: "text-neon-cyan",
-                    message: daysLeft === 0 ? "Happy Anniversary!" : `${daysLeft} days until your anniversary`
-                };
-            case "retirement":
-                return {
-                    icon: PartyPopper,
-                    color: "purple",
-                    neonColor: "text-purple-400",
-                    message: daysLeft === 0 ? "Happy Retirement!" : `${daysLeft} days until freedom (Retirement)`
-                };
-            default:
-                return {
-                    icon: Star,
-                    color: "white",
-                    neonColor: "text-white",
-                    message: `${daysLeft} days left`
-                };
+            case "birthday": return <Gift className="w-5 h-5" />;
+            case "anniversary": return <Heart className="w-5 h-5" />;
+            case "retirement": return <PartyPopper className="w-5 h-5" />;
+            default: return <Gift className="w-5 h-5" />;
         }
     };
 
-    const { icon: Icon, color, neonColor, message } = getCelebrationDetails() as {
-        icon: any;
-        color: "pink" | "cyan" | "purple" | "white";
-        neonColor: string;
-        message: string;
+    const getColors = () => {
+        switch (type) {
+            case "birthday": return "from-neon-pink to-purple-500 shadow-neon-pink";
+            case "anniversary": return "from-neon-cyan to-blue-500 shadow-neon-cyan";
+            case "retirement": return "from-white to-gray-400 shadow-white/20";
+            default: return "from-neon-cyan to-blue-500 shadow-neon-cyan";
+        }
     };
 
+    const isToday = daysLeft === 0;
 
     return (
-        <div className="glass-card flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 relative overflow-hidden p-4 sm:p-4 active:scale-[0.98] transition-transform">
-            <div className="flex-1 w-full">
-                <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-1.5">
-                        <h3 className="text-lg font-semibold text-white/90">{title}</h3>
-                        <Icon className={`w-4 h-4 ${neonColor}`} />
+        <div className="glass-card mb-6 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex justify-between items-start mb-6">
+                <div className="flex items-start gap-4">
+                    <div className={`p-3 rounded-2xl bg-gradient-to-br ${getColors()} text-black flex items-center justify-center transform -rotate-12`}>
+                        {getIcon()}
                     </div>
-                    {/* Action buttons - subtle and clean */}
-                    <div className="flex gap-1">
-                        {onSendGreeting && (
-                            <button
-                                onClick={() => onSendGreeting({ title, type })}
-                                className="p-2 text-white/40 hover:text-cyan-400 hover:bg-white/5 rounded-lg transition-all"
-                                title="Share"
-                            >
-                                <Send className="w-4 h-4" />
-                            </button>
-                        )}
-                        {onEdit && (
-                            <button
-                                onClick={() => onEdit({ id, title, rawDate, type })}
-                                className="p-2 text-white/40 hover:text-white hover:bg-white/5 rounded-lg transition-all"
-                                title="Edit"
-                            >
-                                <Pencil className="w-4 h-4" />
-                            </button>
-                        )}
-                        {onDelete && (
-                            <button
-                                onClick={() => onDelete(id)}
-                                className="p-2 text-white/40 hover:text-red-400 hover:bg-white/5 rounded-lg transition-all"
-                                title="Delete"
-                            >
-                                <Trash2 className="w-4 h-4" />
-                            </button>
-                        )}
+                    <div>
+                        <h3 className="text-lg font-bold text-white/90 tracking-tight mb-1">{title}</h3>
+                        <p className="text-xs text-white/40 font-medium">
+                            {new Date(rawDate).toLocaleDateString(language === "es" ? "es-ES" : "en-US", { month: "long", day: "numeric" })}
+                        </p>
                     </div>
                 </div>
 
-                <div className="flex justify-between items-end">
-                    <div>
-                        <p className="text-sm font-medium text-white/70 mb-2">{message}</p>
-                        <div className="flex items-center gap-1.5 text-white/30">
-                            <Calendar className="w-3.5 h-3.5" />
-                            <span className="text-[10px] uppercase tracking-wider font-semibold">{date}</span>
-                        </div>
-                    </div>
-                    <div className="sm:ml-4">
-                        <CircularProgress percentage={percentage} color={color} size={80} />
-                    </div>
+                <div className="flex items-center gap-1">
+                    <button
+                        onClick={() => onEdit({ id, title, rawDate, type })}
+                        className="p-2.5 text-white/40 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                    >
+                        <Pencil className="w-4 h-4" />
+                    </button>
+                    <button
+                        onClick={() => onDelete(id)}
+                        className="p-2.5 text-white/40 hover:text-red-400 hover:bg-red-500/5 rounded-xl transition-all"
+                    >
+                        <Trash2 className="w-4 h-4" />
+                    </button>
                 </div>
+            </div>
+
+            <div className="flex items-end justify-between mb-4">
+                <div className="flex flex-col">
+                    <span className="text-4xl font-black text-white italic tracking-tighter">
+                        {isToday ? "TODAY" : daysLeft}
+                    </span>
+                    <span className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mt-1">
+                        {isToday ? (language === "es" ? "¡ES HOY!" : "CELEBRATE!") : t.days_to_go}
+                    </span>
+                </div>
+                <button
+                    onClick={() => onSendGreeting({ title, type })}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${isToday
+                        ? "bg-neon-cyan text-black shadow-neon animate-pulse"
+                        : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/10 hover:text-white"}`}
+                >
+                    <Send className={`w-3.5 h-3.5 ${isToday ? "animate-bounce" : ""}`} />
+                    {t.pick_and_send}
+                </button>
             </div>
         </div>
     );
 }
-

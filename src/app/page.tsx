@@ -9,11 +9,14 @@ import SendGreetingModal from "@/components/SendGreetingModal";
 import AdminDashboard from "@/components/AdminDashboard";
 import { useAuth } from "@/context/AuthContext";
 import { useCelebrations } from "@/hooks/useCelebrations";
+import { translations } from "@/lib/translations";
 import AuthPage from "./auth/page";
 
 export default function Dashboard() {
     const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
-    const { user, isAdmin, loading: authLoading, logout, updateUserProfile } = useAuth();
+    const { user, isAdmin, language, setLanguage, loading: authLoading, logout, updateUserProfile } = useAuth();
+    const t = translations[language];
+
     const { celebrations, loading: dataLoading, error: dataError, addCelebration, updateCelebration, deleteCelebration } = useCelebrations();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSendGreetingModalOpen, setIsSendGreetingModalOpen] = useState(false);
@@ -88,9 +91,9 @@ export default function Dashboard() {
 
     const renderHeader = () => {
         let title = "Congratss";
-        if (activeTab === "calendar") title = "Calendar";
-        if (activeTab === "settings") title = "Settings";
-        if (activeTab === "admin") title = "Admin Console";
+        if (activeTab === "calendar") title = t.calendar;
+        if (activeTab === "settings") title = t.settings;
+        if (activeTab === "admin") title = t.admin_console;
 
         return (
             <header className="px-6 py-4 flex justify-between items-center bg-white/5 backdrop-blur-md">
@@ -116,7 +119,7 @@ export default function Dashboard() {
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                                 <input
                                     type="text"
-                                    placeholder="Search celebrations..."
+                                    placeholder={t.search_placeholder}
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-white/20"
@@ -134,10 +137,10 @@ export default function Dashboard() {
                                         <Plus className="w-10 h-10 text-white/20" />
                                     </div>
                                     <h3 className="text-lg font-medium text-white/60">
-                                        {searchQuery ? "No matches found" : "No celebrations yet"}
+                                        {searchQuery ? t.no_matches : t.no_celebrations}
                                     </h3>
                                     <p className="text-sm text-white/30 px-6">
-                                        {searchQuery ? "Try a different search term" : "Click the button below to add your first special moment."}
+                                        {searchQuery ? "Try a different search term" : t.add_first}
                                     </p>
                                 </div>
                             ) : (
@@ -175,7 +178,7 @@ export default function Dashboard() {
                             {sortedByDate.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-20 text-center opacity-40">
                                     <CalendarIcon className="w-16 h-16 mb-4" />
-                                    <p>Your calendar is empty</p>
+                                    <p>{t.no_celebrations}</p>
                                 </div>
                             ) : (
                                 sortedByDate.map((item) => (
@@ -184,10 +187,10 @@ export default function Dashboard() {
                                         <div className="flex items-start justify-between">
                                             <div>
                                                 <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-1">
-                                                    {new Date(item.rawDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                    {new Date(item.rawDate).toLocaleDateString(language === "es" ? "es-ES" : "en-US", { month: 'short', day: 'numeric', year: 'numeric' })}
                                                 </p>
                                                 <h4 className="text-white/90 font-medium mb-1">{item.title}</h4>
-                                                <p className="text-xs text-white/40">{item.daysLeft} days to go</p>
+                                                <p className="text-xs text-white/40">{item.daysLeft} {t.days_to_go}</p>
                                             </div>
                                             <button
                                                 onClick={() => openSendGreetingModal(item)}
@@ -229,11 +232,33 @@ export default function Dashboard() {
                                 onClick={() => setIsEditProfileModalOpen(true)}
                                 className="w-full glass-card p-4 flex items-center justify-between text-white/70 hover:text-white transition-colors"
                             >
-                                <span className="text-sm font-medium">Edit Profile</span>
+                                <span className="text-sm font-medium">{t.edit_profile}</span>
                                 <Settings className="w-4 h-4 opacity-40" />
                             </button>
+
+                            {/* Language Selector */}
+                            <div className="glass-card p-4 flex flex-col gap-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium text-white/70">{t.language}</span>
+                                    <div className="flex gap-2 p-1 bg-white/5 rounded-lg border border-white/10">
+                                        <button
+                                            onClick={() => setLanguage("en")}
+                                            className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${language === "en" ? "bg-cyan-400 text-black shadow-neon" : "text-white/40 hover:text-white/60"}`}
+                                        >
+                                            EN
+                                        </button>
+                                        <button
+                                            onClick={() => setLanguage("es")}
+                                            className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${language === "es" ? "bg-cyan-400 text-black shadow-neon" : "text-white/40 hover:text-white/60"}`}
+                                        >
+                                            ES
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
                             <button className="w-full glass-card p-4 flex items-center justify-between text-white/70 hover:text-white transition-colors">
-                                <span className="text-sm font-medium">Notifications</span>
+                                <span className="text-sm font-medium">{t.notifications}</span>
                                 <div className="w-8 h-4 bg-cyan-400/20 rounded-full relative">
                                     <div className="absolute right-0 top-0 w-4 h-4 bg-cyan-400 rounded-full shadow-neon" />
                                 </div>
@@ -246,7 +271,7 @@ export default function Dashboard() {
                                 className="w-full py-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 font-bold text-sm flex items-center justify-center gap-2 hover:bg-red-500/20 transition-all"
                             >
                                 <LogOut className="w-4 h-4" />
-                                Sign Out
+                                {t.sign_out}
                             </button>
                         </div>
                     </div>
@@ -282,7 +307,6 @@ export default function Dashboard() {
                         <div className="w-12 h-12 rounded-full bg-cyan-400 flex items-center justify-center shadow-[0_0_20px_rgba(0,242,255,0.6)] group-hover:shadow-[0_0_30px_rgba(0,242,255,0.8)] transition-all">
                             <Plus className="text-black w-8 h-8" />
                         </div>
-                        <span className="absolute -bottom-6 text-[10px] font-bold uppercase tracking-tighter text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity">Add New</span>
                     </button>
                 )}
 
@@ -292,14 +316,14 @@ export default function Dashboard() {
                         className={`p-2 flex flex-col items-center gap-1 transition-colors ${activeTab === "home" ? "text-white" : "text-white/40 hover:text-white"}`}
                     >
                         <HomeIcon className="w-5 h-5" />
-                        <span className="text-[7px] font-bold uppercase tracking-tighter">Home</span>
+                        <span className="text-[7px] font-bold uppercase tracking-tighter">{t.home}</span>
                     </button>
                     <button
                         onClick={() => setActiveTab("calendar")}
                         className={`p-2 flex flex-col items-center gap-1 transition-colors ${activeTab === "calendar" ? "text-white" : "text-white/40 hover:text-white"}`}
                     >
                         <CalendarIcon className="w-5 h-5" />
-                        <span className="text-[7px] font-bold uppercase tracking-tighter">Calendar</span>
+                        <span className="text-[7px] font-bold uppercase tracking-tighter">{t.calendar}</span>
                     </button>
                     <button
                         onClick={() => openSendGreetingModal(null)}
@@ -308,14 +332,14 @@ export default function Dashboard() {
                         <div className="w-8 h-8 rounded-full bg-cyan-400/20 flex items-center justify-center mb-0.5">
                             <Send className="w-4 h-4" />
                         </div>
-                        <span className="text-[7px] font-bold uppercase tracking-tighter">Share</span>
+                        <span className="text-[7px] font-bold uppercase tracking-tighter">{t.share}</span>
                     </button>
                     <button
                         onClick={() => setActiveTab("settings")}
                         className={`p-2 flex flex-col items-center gap-1 transition-colors ${activeTab === "settings" ? "text-white" : "text-white/40 hover:text-white"}`}
                     >
                         <Settings className="w-5 h-5" />
-                        <span className="text-[7px] font-bold uppercase tracking-tighter">Settings</span>
+                        <span className="text-[7px] font-bold uppercase tracking-tighter">{t.settings}</span>
                     </button>
                     {isAdmin && (
                         <button
@@ -323,7 +347,7 @@ export default function Dashboard() {
                             className={`p-2 flex flex-col items-center gap-1 transition-colors ${activeTab === "admin" ? "text-cyan-400" : "text-white/40 hover:text-white"}`}
                         >
                             <span className="w-5 h-5 flex items-center justify-center font-black text-xs">A</span>
-                            <span className="text-[7px] font-bold uppercase tracking-tighter">Admin</span>
+                            <span className="text-[7px] font-bold uppercase tracking-tighter">{t.admin}</span>
                         </button>
                     )}
                 </nav>

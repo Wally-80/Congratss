@@ -4,6 +4,9 @@ import React, { useState, useEffect } from "react";
 import { X, Send, MessageCircle, Mail, Phone, Check, RefreshCw } from "lucide-react";
 import { cardService, GreetingCard } from "@/lib/cardService";
 
+import { useAuth } from "@/context/AuthContext";
+import { translations } from "@/lib/translations";
+
 interface SendGreetingModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -13,23 +16,44 @@ interface SendGreetingModalProps {
     } | null;
 }
 
-const MESSAGE_TEMPLATES = [
-    "Happy Birthday! Hope you have a fantastic day! 🎂",
-    "Happy Anniversary! Wishing you many more years of happiness! ❤️",
-    "Congratulations on your retirement! Enjoy your new freedom! 🥂",
-    "Thinking of you on this special day! Best wishes! ✨",
-    "Huge congrats to you! Well deserved! 🎉",
-    "I love you so much! ❤️",
-    "Have a wonderful day, my love! ✨",
-    "Good morning! Hope your day is as amazing as you are. ☀️",
-    "Just wanted to say I'm thinking of you. Miss you! 💖",
-    "So proud of you and everything you do! 🌟",
-    "You're the best! Thanks for being you. 🙌",
-    "Sending you extra hugs today! 🤗",
-    "Can't wait to see you later! 🏠",
-];
+const MESSAGE_TEMPLATES = {
+    en: [
+        "Happy Birthday! Hope you have a fantastic day! 🎂",
+        "Happy Anniversary! Wishing you many more years of happiness! ❤️",
+        "Congratulations on your retirement! Enjoy your new freedom! 🥂",
+        "Thinking of you on this special day! Best wishes! ✨",
+        "Huge congrats to you! Well deserved! 🎉",
+        "I love you so much! ❤️",
+        "Have a wonderful day, my love! ✨",
+        "Good morning! Hope your day is as amazing as you are. ☀️",
+        "Just wanted to say I'm thinking of you. Miss you! 💖",
+        "So proud of you and everything you do! 🌟",
+        "You're the best! Thanks for being you. 🙌",
+        "Sending you extra hugs today! 🤗",
+        "Can't wait to see you later! 🏠",
+    ],
+    es: [
+        "¡Feliz Cumpleaños! ¡Espero que tengas un día fantástico! 🎂",
+        "¡Feliz Aniversario! ¡Te deseo muchos años más de felicidad! ❤️",
+        "¡Felicidades por tu jubilación! ¡Disfruta de tu nueva libertad! 🥂",
+        "¡Pensando en ti en este día tan especial! ¡Mis mejores deseos! ✨",
+        "¡Muchas felicidades! ¡Muy merecido! 🎉",
+        "¡Te quiero mucho! ❤️",
+        "¡Que tengas un día maravilloso, mi amor! ✨",
+        "¡Buenos días! Espero que tu día sea tan increíble como tú. ☀️",
+        "Sólo quería decir que estoy pensando en ti. ¡Te extraño! 💖",
+        "¡Estoy muy orgulloso/a de ti y de todo lo que haces! 🌟",
+        "¡Eres el mejor! Gracias por ser como eres. 🙌",
+        "¡Te envío muchos abrazos hoy! 🤗",
+        "¡No puedo esperar a verte más tarde! 🏠",
+    ]
+};
 
 export default function SendGreetingModal({ isOpen, onClose, celebration }: SendGreetingModalProps) {
+    const { language } = useAuth();
+    const t = translations[language];
+    const templates = MESSAGE_TEMPLATES[language];
+
     const [greetingCards, setGreetingCards] = useState<GreetingCard[]>([]);
     const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
     const [activeCategory, setActiveCategory] = useState("All");
@@ -100,7 +124,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
             : `${window.location.origin}${selectedImage.url}`;
         const fullText = `${message}\n\n${cardUrl}`;
         navigator.clipboard.writeText(fullText).then(() => {
-            alert("Message and card link copied to clipboard!");
+            alert(language === "es" ? "¡Mensaje y enlace copiados!" : "Message and card link copied to clipboard!");
         });
     };
 
@@ -117,7 +141,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
     const handleNativeShare = async () => {
         if (!selectedImage) return;
         if (typeof navigator === 'undefined' || !navigator.share) {
-            alert("Sharing not supported on this browser. Use the platform icons below!");
+            alert(language === "es" ? "Compartir no disponible en este navegador." : "Sharing not supported on this browser.");
             return;
         }
 
@@ -155,9 +179,9 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                 {/* Header */}
                 <div className="p-6 border-b border-white/10 flex justify-between items-center sticky top-0 bg-[#0a0a1a]/80 backdrop-blur-md z-10">
                     <div>
-                        <h2 className="text-xl font-bold text-white uppercase tracking-tight">Pick & Send</h2>
+                        <h2 className="text-xl font-bold text-white uppercase tracking-tight">{t.pick_and_send}</h2>
                         <p className="text-xs text-white/40">
-                            {celebration ? `Greeting for ${celebration.title}` : "Share with anyone"}
+                            {celebration ? (language === "es" ? `Felicitación para ${celebration.title}` : `Greeting for ${celebration.title}`) : (language === "es" ? "Comparte con cualquiera" : "Share with anyone")}
                         </p>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
@@ -169,7 +193,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                     {/* Image Selection with Category Tabs */}
                     <div>
                         <div className="flex flex-col gap-3 mb-3">
-                            <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest block">1. Select your card</label>
+                            <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest block">{t.select_card}</label>
                             <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
                                 {categories.map((cat) => (
                                     <button
@@ -180,7 +204,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                                             : "text-white/40 border-white/5 hover:text-white/70 bg-white/5"
                                             }`}
                                     >
-                                        {cat}
+                                        {cat === "All" && language === "es" ? "Todos" : cat}
                                     </button>
                                 ))}
                             </div>
@@ -189,11 +213,11 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                         {loadingCards ? (
                             <div className="flex flex-col items-center justify-center py-10 opacity-30">
                                 <RefreshCw className="w-8 h-8 animate-spin mb-2" />
-                                <p className="text-[10px] uppercase font-bold tracking-widest">Fetching Library...</p>
+                                <p className="text-[10px] uppercase font-bold tracking-widest">{language === "es" ? "Obteniendo Galería..." : "Fetching Library..."}</p>
                             </div>
                         ) : filteredImages.length === 0 ? (
                             <div className="py-20 text-center opacity-30">
-                                <p className="text-xs uppercase font-bold tracking-widest">No cards in this category</p>
+                                <p className="text-xs uppercase font-bold tracking-widest">{language === "es" ? "No hay tarjetas" : "No cards in this category"}</p>
                             </div>
                         ) : (
                             <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
@@ -223,9 +247,9 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
 
                     {/* Pre-designed Messages */}
                     <div>
-                        <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-3 block">2. Quick messages</label>
+                        <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-3 block">{t.quick_messages}</label>
                         <div className="flex flex-wrap gap-2">
-                            {MESSAGE_TEMPLATES.map((tmp, idx) => (
+                            {templates.map((tmp, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => handleTemplateSelect(tmp)}
@@ -239,11 +263,11 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
 
                     {/* Custom Message */}
                     <div>
-                        <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-3 block">3. Personalize</label>
+                        <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-3 block">{t.personalize}</label>
                         <textarea
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
-                            placeholder="Add your own special words here..."
+                            placeholder={language === "es" ? "Añade tus propias palabras..." : "Add your own special words here..."}
                             className="w-full h-28 bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white focus:outline-none focus:border-cyan-400/50 transition-all resize-none shadow-inner"
                         />
                     </div>
@@ -256,7 +280,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                             className="w-full py-4 rounded-2xl bg-cyan-400 text-black font-bold text-sm flex items-center justify-center gap-3 hover:brightness-110 active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(0,242,255,0.4)] disabled:opacity-50"
                         >
                             <Send className="w-5 h-5 flex-shrink-0" />
-                            {sharing ? "Sharing..." : "Share with Device"}
+                            {sharing ? (language === "es" ? "Compartiendo..." : "Sharing...") : t.share_with_device}
                         </button>
                     </div>
 
@@ -292,7 +316,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                             className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 transition-all disabled:opacity-30"
                         >
                             <Check className="w-4 h-4" />
-                            <span className="text-[10px] font-bold">Copy Link</span>
+                            <span className="text-[10px] font-bold">{t.copy_link}</span>
                         </button>
                         <button
                             onClick={handleDownload}
@@ -300,12 +324,14 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                             className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-cyan-400/5 border border-cyan-400/10 text-cyan-400/80 hover:bg-cyan-400/10 transition-all disabled:opacity-30"
                         >
                             <Send className="w-4 h-4 rotate-90" />
-                            <span className="text-[10px] font-bold">Save Card</span>
+                            <span className="text-[10px] font-bold">{t.save_card}</span>
                         </button>
                     </div>
 
                     <p className="text-[9px] text-white/20 text-center italic">
-                        Tip: On mobile, "Share with Device" sends the actual image file. On desktop, use "Save Card" to manually attach it.
+                        {language === "es"
+                            ? "Tip: En móvil, 'Compartir' envía la imagen. En PC, usa 'Guardar' para adjuntarla."
+                            : "Tip: On mobile, 'Share with Device' sends the image. On desktop, use 'Save Card' to attach it."}
                     </p>
                 </div>
             </div>

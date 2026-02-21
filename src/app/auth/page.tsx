@@ -3,8 +3,13 @@
 import React, { useState } from "react";
 import { auth } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { useAuth } from "@/context/AuthContext";
+import { translations } from "@/lib/translations";
 
 export default function AuthPage() {
+    const { language, setLanguage } = useAuth();
+    const t = translations[language];
+
     const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -26,14 +31,31 @@ export default function AuthPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4">
-            <div className="glass-pane w-full max-w-md p-10 shadow-2xl flex flex-col items-center">
+            <div className="glass-pane w-full max-w-md p-10 shadow-2xl flex flex-col items-center relative overflow-hidden">
+                {/* Language Switcher */}
+                <div className="absolute top-4 right-6 flex gap-2">
+                    <button
+                        onClick={() => setLanguage("en")}
+                        className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${language === "en" ? "text-neon-cyan" : "text-white/20 hover:text-white/40"}`}
+                    >
+                        EN
+                    </button>
+                    <span className="text-white/10 text-[10px]">|</span>
+                    <button
+                        onClick={() => setLanguage("es")}
+                        className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${language === "es" ? "text-neon-cyan" : "text-white/20 hover:text-white/40"}`}
+                    >
+                        ES
+                    </button>
+                </div>
+
                 <div className="flex flex-col items-center gap-3 mb-8">
                     <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-white text-black neon-glow-purple overflow-hidden">
                         <img src="/logo.png" className="h-full w-full object-cover" alt="Congratss Logo" />
                     </div>
                     <h1 className="text-4xl font-black tracking-tighter italic text-white text-center">Congratss.com</h1>
                     <p className="text-xs font-bold uppercase tracking-[0.3em] text-white/40">
-                        {isLogin ? "Welcome Back" : "Create Account"}
+                        {isLogin ? t.welcome_back : t.create_account}
                     </p>
                 </div>
 
@@ -43,9 +65,9 @@ export default function AuthPage() {
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="w-full space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-white/60 mb-1">Email</label>
+                        <label className="block text-sm font-medium text-white/60 mb-1">{t.email}</label>
                         <input
                             type="email"
                             value={email}
@@ -55,7 +77,7 @@ export default function AuthPage() {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-white/60 mb-1">Password</label>
+                        <label className="block text-sm font-medium text-white/60 mb-1">{t.password}</label>
                         <input
                             type="password"
                             value={password}
@@ -68,17 +90,17 @@ export default function AuthPage() {
                         type="submit"
                         className="w-full bg-neon-cyan/20 border border-neon-cyan/50 hover:bg-neon-cyan/30 text-neon-cyan font-bold py-4 rounded-2xl shadow-neon transition-all active:scale-[0.98]"
                     >
-                        {isLogin ? "Sign In" : "Sign Up"}
+                        {isLogin ? t.sign_in : t.sign_up}
                     </button>
                 </form>
 
                 <p className="mt-8 text-center text-white/40 text-sm">
-                    {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+                    {isLogin ? t.dont_have_account : t.already_have_account}{" "}
                     <button
                         onClick={() => setIsLogin(!isLogin)}
                         className="text-neon-cyan hover:underline font-medium"
                     >
-                        {isLogin ? "Sign up" : "Sign in"}
+                        {isLogin ? t.sign_up : t.sign_in}
                     </button>
                 </p>
             </div>
