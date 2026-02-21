@@ -114,8 +114,8 @@ export default function Fireworks() {
         };
 
         const render = () => {
-            // Darker trail effect
-            ctx.fillStyle = "rgba(3, 3, 8, 0.2)";
+            // Pure black trail for better contrast on OLED/Dark backgrounds
+            ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             if (Math.random() < 0.025) {
