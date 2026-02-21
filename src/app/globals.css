@@ -82,15 +82,23 @@
         opacity: 0;
     }
 
-
-    10% {
+    /* Rise to peak at 5.4s (72% of 7.5s) */
+    8% {
         opacity: 1;
     }
 
-    90% {
+    72% {
+        transform: translateY(-85vh) scale(1);
         opacity: 1;
     }
 
+    /* Hold at peak for explosion (until 6.9s or 92%) */
+    92% {
+        transform: translateY(-85vh) scale(1);
+        opacity: 1;
+    }
+
+    /* Fade out by 7.5s (100%) */
     100% {
         transform: translateY(-85vh) scale(1);
         opacity: 0;

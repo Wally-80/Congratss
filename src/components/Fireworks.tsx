@@ -25,21 +25,37 @@ export default function Fireworks() {
 
 function FireworkInstance({ delay, left }: { delay: number; left: string }) {
     const [showExplosion, setShowExplosion] = useState(false);
+    const [explosionKey, setExplosionKey] = useState(0);
 
     useEffect(() => {
-        const triggerExplosion = () => {
+        // The rise animation is 6s. Peak is around 5.4s (90%).
+        // We want to trigger the explosion at 5.4s.
+        // The explosion needs 1.5s to finish.
+        // So we'll run a 7.5s cycle (6s rise + 1.5s fade/wait).
+        
+        const cycleTime = 7500; 
+        const explosionTriggerTime = 5400;
+
+        const runCycle = () => {
             setShowExplosion(false);
-            // Peak is at 6s. Triggering just before the end.
-            setTimeout(() => setShowExplosion(true), 5800);
+            
+            // Trigger explosion at the peak
+            const explodeTimer = setTimeout(() => {
+                setShowExplosion(true);
+                setExplosionKey(prev => prev + 1);
+            }, explosionTriggerTime);
+
+            return () => clearTimeout(explodeTimer);
         };
 
-        const timer = setTimeout(() => {
-            triggerExplosion();
-            const interval = setInterval(triggerExplosion, 6000);
+        // Initial delay
+        const initialTimer = setTimeout(() => {
+            runCycle();
+            const interval = setInterval(runCycle, cycleTime);
             return () => clearInterval(interval);
         }, delay * 1000);
 
-        return () => clearTimeout(timer);
+        return () => clearTimeout(initialTimer);
     }, [delay]);
 
     return (
@@ -47,7 +63,7 @@ function FireworkInstance({ delay, left }: { delay: number; left: string }) {
             className="absolute bottom-0 opacity-0"
             style={{
                 left,
-                animation: `firework-rise 6s linear infinite ${delay}s`,
+                animation: `firework-rise 7.5s linear infinite ${delay}s`,
                 animationFillMode: 'backwards'
             }}
         >
@@ -60,7 +76,7 @@ function FireworkInstance({ delay, left }: { delay: number; left: string }) {
 
                 {/* The Explosion */}
                 {showExplosion && (
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2">
+                    <div key={explosionKey} className="absolute top-0 left-1/2 -translate-x-1/2">
                         {[...Array(SPARK_COUNT)].map((_, j) => {
                             const angle = (j * 360) / SPARK_COUNT;
                             const distance = 80 + Math.random() * 120;
