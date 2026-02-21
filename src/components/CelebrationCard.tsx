@@ -57,47 +57,47 @@ export default function CelebrationCard({ id, title, daysLeft, date, rawDate, pe
 
 
     return (
-        <div className="glass-card flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 relative group overflow-hidden p-6 sm:p-5">
-            <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all z-10">
+        <div className="glass-card flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 relative group overflow-hidden p-4 sm:p-4">
+            <div className="absolute top-2 right-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-all z-10">
                 {onSendGreeting && (
                     <button
                         onClick={() => onSendGreeting({ title, type })}
-                        className="p-2 bg-cyan-500/20 border border-cyan-500/50 rounded-full text-cyan-200 hover:bg-cyan-500/40 transition-all"
+                        className="p-1.5 bg-cyan-500/20 border border-cyan-500/50 rounded-full text-cyan-200 hover:bg-cyan-500/40 transition-all"
                     >
-                        <Send className="w-4 h-4" />
+                        <Send className="w-3.5 h-3.5" />
                     </button>
                 )}
                 {onEdit && (
                     <button
                         onClick={() => onEdit({ id, title, rawDate, type })}
-                        className="p-2 bg-white/10 border border-white/20 rounded-full text-white/80 hover:bg-white/20 transition-all"
+                        className="p-1.5 bg-white/10 border border-white/20 rounded-full text-white/80 hover:bg-white/20 transition-all"
                     >
-                        <Pencil className="w-4 h-4" />
+                        <Pencil className="w-3.5 h-3.5" />
                     </button>
                 )}
                 {onDelete && (
                     <button
                         onClick={() => onDelete(id)}
-                        className="p-2 bg-red-500/20 border border-red-500/50 rounded-full text-red-200 hover:bg-red-500/40 transition-all"
+                        className="p-1.5 bg-red-500/20 border border-red-500/50 rounded-full text-red-200 hover:bg-red-500/40 transition-all"
                     >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3.5 h-3.5" />
                     </button>
                 )}
             </div>
             <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-xl font-semibold text-white/90">{title}</h3>
-                    <Icon className={`w-5 h-5 ${neonColor}`} />
+                <div className="flex items-center gap-1.5 mb-1">
+                    <h3 className="text-lg font-semibold text-white/90">{title}</h3>
+                    <Icon className={`w-4 h-4 ${neonColor}`} />
                 </div>
-                <p className="text-lg font-medium text-white/70 mb-4">{message}</p>
-                <div className="flex items-center gap-2 text-white/40">
-                    <Calendar className="w-4 h-4" />
-                    <span className="text-sm uppercase tracking-wider">{date}</span>
+                <p className="text-sm font-medium text-white/70 mb-2">{message}</p>
+                <div className="flex items-center gap-1.5 text-white/40">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span className="text-xs uppercase tracking-wider">{date}</span>
                 </div>
             </div>
 
-            <div className="self-end sm:self-auto sm:ml-4 mt-4 sm:mt-0">
-                <CircularProgress percentage={percentage} color={color} size={110} />
+            <div className="self-end sm:self-auto sm:ml-4 mt-2 sm:mt-0">
+                <CircularProgress percentage={percentage} color={color} size={85} />
             </div>
         </div>
     );

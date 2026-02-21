@@ -4,6 +4,12 @@ import "./globals.css";
 export const metadata: Metadata = {
     title: "Congratss.com",
     description: "Celebrate every moment with Congratss.com",
+    manifest: "/manifest.json",
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: "black-translucent",
+        title: "Congratss",
+    },
 };
 
 import { AuthProvider } from "@/context/AuthContext";

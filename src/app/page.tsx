@@ -91,9 +91,9 @@ export default function Home() {
         if (activeTab === "settings") title = "Settings";
 
         return (
-            <header className="p-8 pb-4 flex justify-between items-center bg-white/5 backdrop-blur-md">
-                <h1 className="text-3xl font-bold tracking-tight text-white/90">{title}</h1>
-                <div className="w-12 h-12 rounded-full border-2 border-white/20 overflow-hidden shadow-lg">
+            <header className="px-6 py-4 flex justify-between items-center bg-white/5 backdrop-blur-md">
+                <h1 className="text-2xl font-bold tracking-tight text-white/90">{title}</h1>
+                <div className="w-9 h-9 rounded-full border-2 border-white/20 overflow-hidden shadow-lg">
                     <img
                         src={user.photoURL || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"}
                         alt="Profile"
@@ -273,36 +273,36 @@ export default function Home() {
                     </button>
                 )}
 
-                <nav className="h-24 bg-white/10 backdrop-blur-3xl border-t border-white/20 flex items-center justify-around px-4 z-30">
+                <nav className="h-20 bg-white/10 backdrop-blur-3xl border-t border-white/20 flex items-center justify-around px-4 z-30">
                     <button
                         onClick={() => setActiveTab("home")}
-                        className={`p-3 flex flex-col items-center gap-1 transition-colors ${activeTab === "home" ? "text-white" : "text-white/40 hover:text-white"}`}
+                        className={`p-2 flex flex-col items-center gap-1 transition-colors ${activeTab === "home" ? "text-white" : "text-white/40 hover:text-white"}`}
                     >
-                        <HomeIcon className="w-6 h-6" />
-                        <span className="text-[8px] font-bold uppercase tracking-tighter">Home</span>
+                        <HomeIcon className="w-5 h-5" />
+                        <span className="text-[7px] font-bold uppercase tracking-tighter">Home</span>
                     </button>
                     <button
                         onClick={() => setActiveTab("calendar")}
-                        className={`p-3 flex flex-col items-center gap-1 transition-colors ${activeTab === "calendar" ? "text-white" : "text-white/40 hover:text-white"}`}
+                        className={`p-2 flex flex-col items-center gap-1 transition-colors ${activeTab === "calendar" ? "text-white" : "text-white/40 hover:text-white"}`}
                     >
-                        <CalendarIcon className="w-6 h-6" />
-                        <span className="text-[8px] font-bold uppercase tracking-tighter">Calendar</span>
+                        <CalendarIcon className="w-5 h-5" />
+                        <span className="text-[7px] font-bold uppercase tracking-tighter">Calendar</span>
                     </button>
                     <button
                         onClick={() => openSendGreetingModal(null)}
-                        className={`p-3 flex flex-col items-center gap-1 transition-colors text-cyan-400 hover:text-cyan-300 active:scale-95`}
+                        className={`p-2 flex flex-col items-center gap-1 transition-colors text-cyan-400 hover:text-cyan-300 active:scale-95`}
                     >
-                        <div className="w-10 h-10 rounded-full bg-cyan-400/20 flex items-center justify-center mb-1">
-                            <Send className="w-5 h-5" />
+                        <div className="w-8 h-8 rounded-full bg-cyan-400/20 flex items-center justify-center mb-0.5">
+                            <Send className="w-4 h-4" />
                         </div>
-                        <span className="text-[8px] font-bold uppercase tracking-tighter">Quick Share</span>
+                        <span className="text-[7px] font-bold uppercase tracking-tighter">Share</span>
                     </button>
                     <button
                         onClick={() => setActiveTab("settings")}
-                        className={`p-3 flex flex-col items-center gap-1 transition-colors ${activeTab === "settings" ? "text-white" : "text-white/40 hover:text-white"}`}
+                        className={`p-2 flex flex-col items-center gap-1 transition-colors ${activeTab === "settings" ? "text-white" : "text-white/40 hover:text-white"}`}
                     >
-                        <Settings className="w-6 h-6" />
-                        <span className="text-[8px] font-bold uppercase tracking-tighter">Settings</span>
+                        <Settings className="w-5 h-5" />
+                        <span className="text-[7px] font-bold uppercase tracking-tighter">Settings</span>
                     </button>
                 </nav>
             </div>
