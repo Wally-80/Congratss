@@ -252,8 +252,8 @@ export default function Home() {
     };
 
     return (
-        <main className="min-h-screen bg-background flex flex-col items-center justify-start sm:py-8 overflow-hidden sm:overflow-auto">
-            <div className="glass-pane w-full max-w-md h-screen sm:h-[850px] sm:rounded-[3rem] overflow-hidden flex flex-col relative">
+        <main className="min-h-screen bg-background flex flex-col items-center justify-start sm:py-8 overflow-x-hidden">
+            <div className="glass-pane w-full max-w-md h-[100dvh] sm:h-[850px] sm:rounded-[3rem] overflow-hidden flex flex-col relative">
                 {dataError && (
                     <div className="absolute top-0 left-0 right-0 z-50 p-4 bg-red-500/20 border-b border-red-500/50 backdrop-blur-md text-red-200 text-xs text-center">
                         <p>Database Error: {dataError}</p>
