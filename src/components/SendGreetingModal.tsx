@@ -12,15 +12,21 @@ interface SendGreetingModalProps {
     } | null;
 }
 
+const CATEGORIES = ["All", "Classic", "Special", "Funny"];
+
 const GREETING_IMAGES = [
-    { id: "flowers", url: "/greeting_flowers.png", label: "Flowers" },
-    { id: "balloons", url: "/greeting_balloons.png", label: "Balloons" },
-    { id: "gratzz", url: "/greeting_gratzz.png", label: "Gratzz" },
-    { id: "cake", url: "/greeting_cake.png", label: "Birthday Cake" },
-    { id: "party", url: "/greeting_party.png", label: "Party Time" },
-    { id: "retirement", url: "/greeting_retirement.png", label: "Retirement" },
-    { id: "anniversary", url: "/greeting_anniversary_gold.png", label: "Anniversary" },
-    { id: "congrats", url: "/greeting_congrats_modern.png", label: "Congrats" },
+    { id: "gratzz", url: "/greeting_gratzz.png", label: "Gratzz", category: "Classic" },
+    { id: "flowers", url: "/greeting_flowers.png", label: "Flowers", category: "Classic" },
+    { id: "balloons", url: "/greeting_balloons.png", label: "Balloons", category: "Classic" },
+    { id: "cake", url: "/greeting_cake.png", label: "Birthday Cake", category: "Special" },
+    { id: "party", url: "/greeting_party.png", label: "Party Time", category: "Special" },
+    { id: "retirement", url: "/greeting_retirement.png", label: "Retirement", category: "Special" },
+    { id: "anniversary", url: "/greeting_anniversary_gold.png", label: "Anniversary", category: "Special" },
+    { id: "congrats", url: "/greeting_congrats_modern.png", label: "Congrats", category: "Special" },
+    { id: "funny_grandpa", url: "/greeting_funny_grandpa.png", label: "Cool Grandpa", category: "Funny" },
+    { id: "funny_dog", url: "/greeting_funny_dog.png", label: "Party Puppy", category: "Funny" },
+    { id: "funny_cat", url: "/greeting_funny_cat_pizza.png", label: "Gamer Cat", category: "Funny" },
+    { id: "funny_beer", url: "/greeting_funny_beer_signal.png", label: "Beer Signal", category: "Funny" },
 ];
 
 const MESSAGE_TEMPLATES = [
@@ -41,6 +47,7 @@ const MESSAGE_TEMPLATES = [
 
 export default function SendGreetingModal({ isOpen, onClose, celebration }: SendGreetingModalProps) {
     const [selectedImageId, setSelectedImageId] = useState(GREETING_IMAGES[0].id);
+    const [activeCategory, setActiveCategory] = useState("All");
     const [message, setMessage] = useState("");
     const [sharing, setSharing] = useState(false);
 
@@ -48,27 +55,54 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
 
     const selectedImage = GREETING_IMAGES.find(img => img.id === selectedImageId) || GREETING_IMAGES[0];
 
+    const filteredImages = activeCategory === "All"
+        ? GREETING_IMAGES
+        : GREETING_IMAGES.filter(img => img.category === activeCategory);
+
     const handleTemplateSelect = (template: string) => {
         setMessage(template);
     };
 
     const getShareUrl = (platform: "whatsapp" | "email" | "sms") => {
         const encodedMessage = encodeURIComponent(message);
+        const cardUrl = `${window.location.origin}${selectedImage.url}`;
 
         switch (platform) {
             case "whatsapp":
-                return `https://wa.me/?text=${encodedMessage}`;
+                return `https://api.whatsapp.com/send?text=${encodedMessage}${encodeURIComponent("\n\n" + cardUrl)}`;
             case "email":
-                return `mailto:?body=${encodedMessage}`;
+                return `mailto:?body=${encodedMessage}${encodeURIComponent("\n\n" + cardUrl)}`;
             case "sms":
-                return `sms:?&body=${encodedMessage}`;
+                return `sms:?&body=${encodedMessage}${encodeURIComponent("\n\n" + cardUrl)}`;
             default:
                 return "";
         }
     };
 
     const handleShare = (platform: "whatsapp" | "email" | "sms") => {
-        window.open(getShareUrl(platform), "_blank");
+        const url = getShareUrl(platform);
+        if (platform === "whatsapp") {
+            window.open(url, "_blank");
+        } else {
+            window.location.href = url;
+        }
+    };
+
+    const handleCopyLink = () => {
+        const cardUrl = `${window.location.origin}${selectedImage.url}`;
+        const fullText = `${message}\n\n${cardUrl}`;
+        navigator.clipboard.writeText(fullText).then(() => {
+            alert("Message and card link copied to clipboard!");
+        });
+    };
+
+    const handleDownload = () => {
+        const link = document.createElement("a");
+        link.href = selectedImage.url;
+        link.download = `${selectedImageId}_greeting.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     const handleNativeShare = async () => {
@@ -83,7 +117,6 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                 text: message,
             };
 
-            // Attempt to fetch the image to share as a file (supported on most modern mobile)
             try {
                 const response = await fetch(selectedImage.url);
                 const blob = await response.blob();
@@ -123,15 +156,30 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                 </div>
 
                 <div className="p-6 space-y-6">
-                    {/* Image Selection */}
+                    {/* Image Selection with Category Tabs */}
                     <div>
-                        <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-3 block">1. Select your card</label>
+                        <div className="flex justify-between items-center mb-3">
+                            <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest block">1. Select your card</label>
+                            <div className="flex gap-1 bg-white/5 p-0.5 rounded-lg border border-white/10">
+                                {CATEGORIES.map((cat) => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setActiveCategory(cat)}
+                                        className={`px-2 py-1 rounded-md text-[9px] font-bold uppercase transition-all ${activeCategory === cat ? "bg-cyan-400 text-black shadow-neon" : "text-white/40 hover:text-white/70"
+                                            }`}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
                         <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
-                            {GREETING_IMAGES.map((img) => (
+                            {filteredImages.map((img) => (
                                 <button
                                     key={img.id}
                                     onClick={() => setSelectedImageId(img.id)}
-                                    className={`relative flex-shrink-0 w-32 h-32 rounded-xl overflow-hidden border-2 transition-all ${selectedImageId === img.id ? "border-cyan-400 scale-105 shadow-neon" : "border-white/10 opacity-60 grayscale-[0.3]"
+                                    className={`relative flex-shrink-0 w-32 h-32 rounded-xl overflow-hidden border-2 transition-all ${selectedImageId === img.id ? "border-cyan-400 scale-105 shadow-neon-sm" : "border-white/10 opacity-60 grayscale-[0.3]"
                                         }`}
                                 >
                                     <img src={img.url} alt={img.label} className="w-full h-full object-cover" />
@@ -190,29 +238,47 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                     </div>
 
                     {/* Secondary Share Icons */}
-                    <div className="flex gap-3">
+                    <div className="flex flex-wrap gap-3">
                         <button
                             onClick={() => handleShare("whatsapp")}
-                            className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20 transition-all"
+                            className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20 transition-all"
                         >
                             <MessageCircle className="w-4 h-4" />
                             <span className="text-[10px] font-bold">WhatsApp</span>
                         </button>
                         <button
                             onClick={() => handleShare("email")}
-                            className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 transition-all"
+                            className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 transition-all"
                         >
                             <Mail className="w-4 h-4" />
                             <span className="text-[10px] font-bold">Email</span>
                         </button>
                         <button
                             onClick={() => handleShare("sms")}
-                            className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20 transition-all"
+                            className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-cyan-400/10 border border-cyan-400/20 text-cyan-400 hover:bg-cyan-400/20 transition-all"
                         >
                             <Phone className="w-4 h-4" />
                             <span className="text-[10px] font-bold">SMS</span>
                         </button>
+                        <button
+                            onClick={handleCopyLink}
+                            className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 transition-all"
+                        >
+                            <Check className="w-4 h-4" />
+                            <span className="text-[10px] font-bold">Copy Link</span>
+                        </button>
+                        <button
+                            onClick={handleDownload}
+                            className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-cyan-400/5 border border-cyan-400/10 text-cyan-400/80 hover:bg-cyan-400/10 transition-all"
+                        >
+                            <Send className="w-4 h-4 rotate-90" />
+                            <span className="text-[10px] font-bold">Save Card</span>
+                        </button>
                     </div>
+
+                    <p className="text-[9px] text-white/20 text-center italic">
+                        Tip: On mobile, "Share with Device" sends the actual image file. On desktop, use "Save Card" to manually attach it.
+                    </p>
                 </div>
             </div>
         </div>

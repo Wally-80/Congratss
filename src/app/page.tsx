@@ -21,9 +21,9 @@ export default function Home() {
     const [activeTab, setActiveTab] = useState("home");
     const [searchQuery, setSearchQuery] = useState("");
 
-    const filteredCelebrations = celebrations.filter(c =>
-        c.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredCelebrations = celebrations
+        .filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase()))
+        .sort((a, b) => a.daysLeft - b.daysLeft);
 
     const handleUpdateProfile = async (displayName: string, photoURL: string) => {
         await updateUserProfile(displayName, photoURL);

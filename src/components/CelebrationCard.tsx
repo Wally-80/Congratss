@@ -57,8 +57,8 @@ export default function CelebrationCard({ id, title, daysLeft, date, rawDate, pe
 
 
     return (
-        <div className="glass-card flex items-center justify-between mb-4 relative group">
-            <div className="absolute -top-2 -right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all z-10">
+        <div className="glass-card flex items-center justify-between mb-4 relative group overflow-hidden">
+            <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all z-10">
                 {onSendGreeting && (
                     <button
                         onClick={() => onSendGreeting({ title, type })}
