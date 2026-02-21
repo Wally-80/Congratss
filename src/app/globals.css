@@ -1,24 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-    --color-glass-white: rgba(255, 255, 255, 0.03);
-    --color-glass-border: rgba(255, 255, 255, 0.08);
+    --color-glass-white: rgba(255, 255, 255, 0.02);
+    --color-glass-border: rgba(255, 255, 255, 0.05);
+
+    /* Midnight Gold Palette */
+    --color-gold-primary: #D4AF37;
+    --color-gold-soft: #C5A028;
+    --color-champagne: #F7E7CE;
+    --color-slate-dark: #0F172A;
+
+    /* Neon accents preserved but muted for neutral feel */
     --color-neon-pink: #ff007f;
     --color-neon-cyan: #00f2ff;
-    --color-neon-blue: #0070f3;
 
-    --background-image-vibrant: linear-gradient(135deg, #030305 0%, #050508 100%);
+    --background-image-vibrant: linear-gradient(135deg, #020205 0%, #050510 100%);
 }
 
 @layer base {
     body {
-        @apply bg-[#020204] text-white antialiased selection:bg-neon-cyan/30;
+        @apply bg-[#010103] text-white antialiased selection:bg-gold-primary/30;
         position: relative;
         min-height: 100vh;
         overflow-x: hidden;
     }
 
-    /* Subtle mesh - much darker to prevent "milky" look */
+    /* Minimalist Dark Mesh */
     body::before {
         content: '';
         position: fixed;
@@ -27,13 +34,13 @@
         height: 200%;
         z-index: -1;
         background:
-            radial-gradient(circle at 15% 15%, rgba(255, 0, 127, 0.03), transparent 30%),
-            radial-gradient(circle at 85% 25%, rgba(0, 242, 255, 0.03), transparent 30%),
-            radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.02), transparent 40%),
-            radial-gradient(circle at 20% 80%, rgba(0, 112, 243, 0.03), transparent 30%);
+            radial-gradient(circle at 15% 15%, rgba(212, 175, 55, 0.02), transparent 30%),
+            radial-gradient(circle at 85% 25%, rgba(247, 231, 206, 0.01), transparent 30%),
+            radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.05), transparent 40%),
+            radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.01), transparent 30%);
         filter: blur(80px);
         animation: mesh-flow 60s linear infinite;
-        opacity: 0.6;
+        opacity: 0.5;
     }
 
     @keyframes mesh-flow {
@@ -53,26 +60,21 @@
 
 @layer components {
     .glass-pane {
-        @apply bg-black/40 backdrop-blur-[40px] border border-white/5 rounded-[48px];
-        box-shadow: 0 24px 80px -12px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+        @apply bg-black/30 backdrop-blur-[45px] border border-white/5 rounded-[48px];
+        box-shadow: 0 32px 100px -12px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.03);
     }
 
     .glass-card {
-        @apply bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-3xl p-6 transition-all duration-500;
-        box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.5);
+        @apply bg-white/[0.01] backdrop-blur-xl border border-white/5 rounded-3xl p-6 transition-all duration-500 shadow-2xl;
 
         &:hover {
-            @apply bg-white/[0.04] border-white/10 -translate-y-1;
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+            @apply bg-white/[0.03] border-white/10 -translate-y-1;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
         }
     }
 
-    .neon-glow-pink {
-        box-shadow: 0 0 20px rgba(255, 0, 127, 0.3);
-    }
-
-    .neon-glow-cyan {
-        box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+    .neon-glow-gold {
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
     }
 }
 

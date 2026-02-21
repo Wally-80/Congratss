@@ -16,13 +16,13 @@ export default function Fireworks() {
         let particles: Particle[] = [];
         let rockets: Rocket[] = [];
 
+        // Gender-neutral Gold & Champagne Palette
         const colors = [
-            "#ff007f", // neon pink
-            "#00f2ff", // neon cyan
-            "#ffffff", // white
-            "#7c3aed", // violet
-            "#0070f3", // blue
-            "#ffd700", // gold
+            "#D4AF37", // Gold
+            "#F7E7CE", // Champagne
+            "#FFFFFF", // White
+            "#C5A028", // Dark Gold
+            "#E5E7EB", // Platinum
         ];
 
         class Particle {
@@ -39,19 +39,19 @@ export default function Fireworks() {
                 this.x = x;
                 this.y = y;
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 6 + 1; // Faster particles
+                const speed = Math.random() * 5 + 1;
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed;
                 this.alpha = 1;
                 this.color = color;
-                this.size = Math.random() * 2 + 1;
-                this.decay = Math.random() * 0.01 + 0.01;
+                this.size = Math.random() * 1.5 + 0.5; // Slightly smaller to be sharper
+                this.decay = Math.random() * 0.015 + 0.01;
             }
 
             update() {
                 this.vx *= 0.96;
                 this.vy *= 0.96;
-                this.vy += 0.08; // gravity
+                this.vy += 0.06; // gravity
                 this.x += this.vx;
                 this.y += this.vy;
                 this.alpha -= this.decay;
@@ -59,18 +59,14 @@ export default function Fireworks() {
 
             draw(ctx: CanvasRenderingContext2D) {
                 if (this.alpha <= 0) return;
-                ctx.save();
+
+                // PERFORMANCE OPTIMIZATION: Remove shadowBlur. 
+                // Instead, use globalAlpha and slightly larger arc if we want a soft feel.
                 ctx.globalAlpha = this.alpha;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
-                // Use bloom only for some particles to keep it sharp
-                if (Math.random() > 0.5) {
-                    ctx.shadowBlur = 15;
-                    ctx.shadowColor = this.color;
-                }
                 ctx.fill();
-                ctx.restore();
             }
         }
 
@@ -86,14 +82,14 @@ export default function Fireworks() {
                 this.x = Math.random() * width;
                 this.y = height;
                 this.targetY = Math.random() * (height * 0.6);
-                this.vy = -(Math.random() * 4 + 7); // Faster rockets
+                this.vy = -(Math.random() * 4 + 7);
                 this.color = colors[Math.floor(Math.random() * colors.length)];
                 this.alive = true;
             }
 
             update() {
                 this.y += this.vy;
-                this.vy *= 0.99; // slight air resistance
+                this.vy *= 0.99;
                 if (this.vy > -0.5 || this.y <= this.targetY) {
                     this.alive = false;
                     this.explode();
@@ -101,18 +97,18 @@ export default function Fireworks() {
             }
 
             explode() {
-                const count = 50 + Math.floor(Math.random() * 50);
+                // Reduced particle count for performance on mobile
+                const count = 30 + Math.floor(Math.random() * 20);
                 for (let i = 0; i < count; i++) {
                     particles.push(new Particle(this.x, this.y, this.color));
                 }
             }
 
             draw(ctx: CanvasRenderingContext2D) {
+                ctx.globalAlpha = 1;
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2);
                 ctx.fillStyle = "#fff";
-                ctx.shadowBlur = 20;
-                ctx.shadowColor = "#fff";
                 ctx.fill();
             }
         }
@@ -123,15 +119,15 @@ export default function Fireworks() {
         };
 
         const render = () => {
-            // Aggressively clear to pure black to avoid grey buildup
+            // Aggressive black clear for better performance and contrast
             ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+            ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Light rockets/particles should use 'screen' or 'lighter' for that firework glow
+            // Shimmering effect using 'lighter' but avoiding heavy glows
             ctx.globalCompositeOperation = 'lighter';
 
-            if (Math.random() < 0.03) {
+            if (Math.random() < 0.02) { // Slightly lower frequency for stability
                 rockets.push(new Rocket(canvas.width, canvas.height));
             }
 
@@ -163,9 +159,9 @@ export default function Fireworks() {
     return (
         <canvas
             ref={canvasRef}
-            className="fixed inset-0 pointer-events-none z-0"
+            className="fixed inset-0 pointer-events-none z-[-2]" // Deepest layer
             style={{
-                backgroundColor: '#000000', // Solid black base
+                backgroundColor: '#000000',
             }}
         />
     );

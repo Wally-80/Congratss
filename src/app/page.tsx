@@ -96,9 +96,9 @@ export default function Dashboard() {
         if (activeTab === "admin") title = t.admin_console;
 
         return (
-            <header className="px-6 py-4 flex justify-between items-center bg-white/5 backdrop-blur-md">
+            <header className="px-6 py-4 flex justify-between items-center bg-white/[0.02] backdrop-blur-md border-b border-white/5">
                 <h1 className="text-2xl font-bold tracking-tight text-white/90">{title}</h1>
-                <div className="w-9 h-9 rounded-full border-2 border-white/20 overflow-hidden shadow-lg">
+                <div className="w-9 h-9 rounded-full border-2 border-gold-primary/30 overflow-hidden shadow-gold-primary/10">
                     <img
                         src={user.photoURL || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"}
                         alt="Profile"
@@ -304,53 +304,41 @@ export default function Dashboard() {
                 {(activeTab === "home" || activeTab === "calendar") && (
                     <button
                         onClick={openAddModal}
-                        className={`absolute bottom-[114px] right-8 w-16 h-16 rounded-full bg-cyan-400/20 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-neon transition-all duration-500 ease-in-out active:scale-95 hover:scale-105 z-20 group ${showFab ? "translate-y-0 scale-100" : "translate-y-4 scale-90 opacity-80"
-                            }`}
+                        className={`fixed bottom-28 right-8 z-50 w-16 h-16 rounded-[2rem] bg-gold-primary text-black flex items-center justify-center shadow-[0_0_30px_rgba(212,175,55,0.4)] hover:brightness-110 hover:scale-110 active:scale-95 transition-all duration-500 ${showFab ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20 pointer-events-none'}`}
                     >
-                        <div className="w-12 h-12 rounded-full bg-cyan-400 flex items-center justify-center shadow-[0_0_20px_rgba(0,242,255,0.6)] group-hover:shadow-[0_0_30px_rgba(0,242,255,0.8)] transition-all">
-                            <Plus className="text-black w-8 h-8" />
-                        </div>
+                        <Plus className="w-8 h-8 font-black" />
                     </button>
                 )}
 
                 <nav className="h-20 bg-white/10 backdrop-blur-3xl border-t border-white/20 flex items-center justify-around px-4 z-30">
                     <button
                         onClick={() => setActiveTab("home")}
-                        className={`p-2 flex flex-col items-center gap-1 transition-colors ${activeTab === "home" ? "text-white" : "text-white/40 hover:text-white"}`}
+                        className={`flex flex-col items-center gap-1 transition-all ${activeTab === "home" ? "text-gold-primary scale-110" : "text-white/30 hover:text-white/50"}`}
                     >
-                        <HomeIcon className="w-5 h-5" />
-                        <span className="text-[7px] font-bold uppercase tracking-tighter">{t.home}</span>
+                        <HomeIcon className={`w-6 h-6 ${activeTab === "home" ? "fill-gold-primary/20" : ""}`} />
+                        <span className="text-[10px] font-bold uppercase tracking-widest">{t.nav_home}</span>
                     </button>
                     <button
                         onClick={() => setActiveTab("calendar")}
-                        className={`p-2 flex flex-col items-center gap-1 transition-colors ${activeTab === "calendar" ? "text-white" : "text-white/40 hover:text-white"}`}
+                        className={`flex flex-col items-center gap-1 transition-all ${activeTab === "calendar" ? "text-gold-primary scale-110" : "text-white/30 hover:text-white/50"}`}
                     >
-                        <CalendarIcon className="w-5 h-5" />
-                        <span className="text-[7px] font-bold uppercase tracking-tighter">{t.calendar}</span>
-                    </button>
-                    <button
-                        onClick={() => openSendGreetingModal(null)}
-                        className={`p-2 flex flex-col items-center gap-1 transition-colors text-cyan-400 hover:text-cyan-300 active:scale-95`}
-                    >
-                        <div className="w-8 h-8 rounded-full bg-cyan-400/20 flex items-center justify-center mb-0.5">
-                            <Send className="w-4 h-4" />
-                        </div>
-                        <span className="text-[7px] font-bold uppercase tracking-tighter">{t.share}</span>
+                        <CalendarIcon className={`w-6 h-6 ${activeTab === "calendar" ? "fill-gold-primary/20" : ""}`} />
+                        <span className="text-[10px] font-bold uppercase tracking-widest">{t.nav_calendar}</span>
                     </button>
                     <button
                         onClick={() => setActiveTab("settings")}
-                        className={`p-2 flex flex-col items-center gap-1 transition-colors ${activeTab === "settings" ? "text-white" : "text-white/40 hover:text-white"}`}
+                        className={`flex flex-col items-center gap-1 transition-all ${activeTab === "settings" ? "text-gold-primary scale-110" : "text-white/30 hover:text-white/50"}`}
                     >
-                        <Settings className="w-5 h-5" />
-                        <span className="text-[7px] font-bold uppercase tracking-tighter">{t.settings}</span>
+                        <Settings className={`w-6 h-6 ${activeTab === "settings" ? "fill-gold-primary/20" : ""}`} />
+                        <span className="text-[10px] font-bold uppercase tracking-widest">{t.nav_settings}</span>
                     </button>
                     {isAdmin && (
                         <button
                             onClick={() => setActiveTab("admin")}
-                            className={`p-2 flex flex-col items-center gap-1 transition-colors ${activeTab === "admin" ? "text-cyan-400" : "text-white/40 hover:text-white"}`}
+                            className={`flex flex-col items-center gap-1 transition-all ${activeTab === "admin" ? "text-gold-primary scale-110" : "text-white/30 hover:text-white/50"}`}
                         >
-                            <span className="w-5 h-5 flex items-center justify-center font-black text-xs">A</span>
-                            <span className="text-[7px] font-bold uppercase tracking-tighter">{t.admin}</span>
+                            <Plus className={`w-6 h-6 rotate-45 ${activeTab === "admin" ? "fill-gold-primary/20" : ""}`} />
+                            <span className="text-[10px] font-bold uppercase tracking-widest">{t.admin}</span>
                         </button>
                     )}
                 </nav>

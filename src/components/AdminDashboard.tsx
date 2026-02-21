@@ -58,7 +58,7 @@ export default function AdminDashboard() {
     };
 
     return (
-        <div className="flex-1 flex flex-col overflow-hidden bg-[#0a0a1a]">
+        <div className="flex-1 flex flex-col overflow-hidden bg-transparent">
             {/* Admin Header */}
             <div className="px-6 py-6 border-b border-white/10 flex justify-between items-center bg-white/5">
                 <div>
@@ -68,7 +68,7 @@ export default function AdminDashboard() {
                 {!isAdding && (
                     <button
                         onClick={() => setIsAdding(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-cyan-400 text-black rounded-xl font-bold text-xs shadow-neon hover:brightness-110 transition-all"
+                        className="flex items-center gap-2 px-4 py-2 bg-gold-primary text-black rounded-xl font-bold text-xs shadow-gold-primary/20 hover:brightness-110 transition-all"
                     >
                         <PlusCircle className="w-4 h-4" />
                         Add New Card
@@ -98,7 +98,7 @@ export default function AdminDashboard() {
                                     value={formData.label}
                                     onChange={(e) => setFormData({ ...formData, label: e.target.value })}
                                     placeholder="e.g. Birthday Magic"
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-400 transition-all"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-primary transition-all"
                                 />
                             </div>
 
@@ -110,7 +110,7 @@ export default function AdminDashboard() {
                                     value={formData.url}
                                     onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                                     placeholder="e.g. /greeting_new.png"
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-400 transition-all"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-primary transition-all"
                                 />
                             </div>
 
@@ -123,7 +123,7 @@ export default function AdminDashboard() {
                                             type="button"
                                             onClick={() => setFormData({ ...formData, category: cat })}
                                             className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all ${formData.category === cat
-                                                ? "bg-cyan-400/20 border-cyan-400 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.2)]"
+                                                ? "bg-gold-primary/20 border-gold-primary text-gold-primary shadow-[0_0_15px_rgba(212,175,55,0.1)]"
                                                 : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10"
                                                 }`}
                                         >
@@ -144,7 +144,7 @@ export default function AdminDashboard() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="flex-1 bg-cyan-400 text-black py-3 rounded-xl font-bold text-sm shadow-neon hover:brightness-110 transition-all flex items-center justify-center gap-2"
+                                    className="flex-1 bg-gold-primary text-black py-3 rounded-xl font-bold text-sm shadow-gold-primary/20 hover:brightness-110 transition-all flex items-center justify-center gap-2"
                                 >
                                     <Save className="w-4 h-4" />
                                     {loading ? "Saving..." : editingId ? "Update Card" : "Publish Card"}
@@ -178,7 +178,7 @@ export default function AdminDashboard() {
                                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                                         <button
                                                             onClick={() => handleEdit(card)}
-                                                            className="p-2 bg-white/10 backdrop-blur-md rounded-lg text-white hover:bg-cyan-400 hover:text-black transition-all"
+                                                            className="p-2 bg-white/10 backdrop-blur-md rounded-lg text-white hover:bg-gold-primary hover:text-black transition-all"
                                                         >
                                                             <Pencil className="w-4 h-4" />
                                                         </button>
