@@ -1,109 +1,156 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-
-const FIREWORK_COUNT = 5;
-const SPARK_COUNT = 24;
+import React, { useEffect, useRef } from "react";
 
 export default function Fireworks() {
-    const [mounted, setMounted] = useState(false);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
-        setMounted(true);
-    }, []);
+        const canvas = canvasRef.current;
+        if (!canvas) return;
 
-    if (!mounted) return null;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
 
-    return (
-        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-            {[...Array(FIREWORK_COUNT)].map((_, i) => (
-                <FireworkInstance key={i} delay={i * 2} left={`${10 + i * 20}%`} />
-            ))}
-        </div>
-    );
-}
+        let animationFrameId: number;
+        let particles: Particle[] = [];
+        let rockets: Rocket[] = [];
 
-function FireworkInstance({ delay, left }: { delay: number; left: string }) {
-    const [showExplosion, setShowExplosion] = useState(false);
-    const [explosionKey, setExplosionKey] = useState(0);
+        const colors = [
+            "#ff007f", // neon pink
+            "#00f2ff", // neon cyan
+            "#ffffff", // white
+            "#7c3aed", // violet
+            "#0070f3", // blue
+        ];
 
-    useEffect(() => {
-        // The rise animation is 6s. Peak is around 5.4s (90%).
-        // We want to trigger the explosion at 5.4s.
-        // The explosion needs 1.5s to finish.
-        // So we'll run a 7.5s cycle (6s rise + 1.5s fade/wait).
-        
-        const cycleTime = 7500; 
-        const explosionTriggerTime = 5400;
+        class Particle {
+            x: number;
+            y: number;
+            vx: number;
+            vy: number;
+            alpha: number;
+            color: string;
+            decay: number;
 
-        const runCycle = () => {
-            setShowExplosion(false);
-            
-            // Trigger explosion at the peak
-            const explodeTimer = setTimeout(() => {
-                setShowExplosion(true);
-                setExplosionKey(prev => prev + 1);
-            }, explosionTriggerTime);
+            constructor(x: number, y: number, color: string) {
+                this.x = x;
+                this.y = y;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 4 + 1;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.alpha = 1;
+                this.color = color;
+                this.decay = Math.random() * 0.015 + 0.015;
+            }
 
-            return () => clearTimeout(explodeTimer);
+            update() {
+                this.vx *= 0.95;
+                this.vy *= 0.95;
+                this.vy += 0.05; // gravity
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= this.decay;
+            }
+
+            draw(ctx: CanvasRenderingContext2D) {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class Rocket {
+            x: number;
+            y: number;
+            targetY: number;
+            vy: number;
+            color: string;
+            alive: boolean;
+
+            constructor(width: number, height: number) {
+                this.x = Math.random() * width;
+                this.y = height;
+                this.targetY = Math.random() * (height * 0.5);
+                this.vy = -(Math.random() * 3 + 4);
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.alive = true;
+            }
+
+            update() {
+                this.y += this.vy;
+                if (this.y <= this.targetY) {
+                    this.alive = false;
+                    this.explode();
+                }
+            }
+
+            explode() {
+                for (let i = 0; i < 40; i++) {
+                    particles.push(new Particle(this.x, this.y, this.color));
+                }
+            }
+
+            draw(ctx: CanvasRenderingContext2D) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = "#fff";
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = "#fff";
+                ctx.fill();
+            }
+        }
+
+        const resize = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         };
 
-        // Initial delay
-        const initialTimer = setTimeout(() => {
-            runCycle();
-            const interval = setInterval(runCycle, cycleTime);
-            return () => clearInterval(interval);
-        }, delay * 1000);
+        const render = () => {
+            ctx.fillStyle = "rgba(3, 3, 8, 0.15)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        return () => clearTimeout(initialTimer);
-    }, [delay]);
+            if (Math.random() < 0.025) {
+                rockets.push(new Rocket(canvas.width, canvas.height));
+            }
+
+            rockets = rockets.filter(r => r.alive);
+            rockets.forEach(r => {
+                r.update();
+                r.draw(ctx);
+            });
+
+            particles = particles.filter(p => p.alpha > 0);
+            particles.forEach(p => {
+                p.update();
+                p.draw(ctx);
+            });
+
+            animationFrameId = requestAnimationFrame(render);
+        };
+
+        window.addEventListener("resize", resize);
+        resize();
+        render();
+
+        return () => {
+            window.removeEventListener("resize", resize);
+            cancelAnimationFrame(animationFrameId);
+        };
+    }, []);
 
     return (
-        <div
-            className="absolute bottom-0 opacity-0"
-            style={{
-                left,
-                animation: `firework-rise 7.5s linear infinite ${delay}s`,
-                animationFillMode: 'backwards'
-            }}
-        >
-            <div className="relative">
-                {/* Intense rising spark */}
-                <div className="w-2 h-6 bg-gradient-to-t from-transparent via-white/40 to-white/90 blur-[1px] rounded-full shadow-[0_0_15px_rgba(255,255,255,0.6)]" />
-
-                {/* Shimmering trail */}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 w-[2px] h-48 bg-gradient-to-t from-transparent via-white/5 to-white/30" />
-
-                {/* The Explosion */}
-                {showExplosion && (
-                    <div key={explosionKey} className="absolute top-0 left-1/2 -translate-x-1/2">
-                        {[...Array(SPARK_COUNT)].map((_, j) => {
-                            const angle = (j * 360) / SPARK_COUNT;
-                            const distance = 80 + Math.random() * 120;
-                            const x = Math.cos((angle * Math.PI) / 180) * distance;
-                            const y = Math.sin((angle * Math.PI) / 180) * distance;
-                            const sparkDelay = Math.random() * 0.2;
-                            const color = j % 3 === 0 ? "var(--color-neon-cyan)" : j % 3 === 1 ? "var(--color-neon-pink)" : "#ffffff";
-
-                            return (
-                                <div
-                                    key={j}
-                                    className="absolute w-1.5 h-1.5 rounded-full animate-firework-spark"
-                                    style={{
-                                        // @ts-ignore
-                                        "--x": `${x}px`,
-                                        // @ts-ignore
-                                        "--y": `${y}px`,
-                                        animationDelay: `${sparkDelay}s`,
-                                        backgroundColor: color,
-                                        boxShadow: `0 0 12px ${color}`
-                                    }}
-                                />
-                            );
-                        })}
-                    </div>
-                )}
-            </div>
-        </div>
+        <canvas
+            ref={canvasRef}
+            className="fixed inset-0 pointer-events-none z-[1] opacity-50"
+            style={{ mixBlendMode: 'screen' }}
+        />
     );
 }
