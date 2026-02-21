@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Home as HomeIcon, Calendar as CalendarIcon, Settings, Search, LogOut } from "lucide-react";
+import { Plus, Home as HomeIcon, Calendar as CalendarIcon, Settings, Search, LogOut, Send } from "lucide-react";
 import CelebrationCard from "@/components/CelebrationCard";
 import AddCelebrationModal from "@/components/AddCelebrationModal";
 import EditProfileModal from "@/components/EditProfileModal";
@@ -165,13 +165,23 @@ export default function Home() {
                                 </div>
                             ) : (
                                 sortedByDate.map((item) => (
-                                    <div key={item.id} className="relative pl-8 border-l border-white/10 pb-4">
+                                    <div key={item.id} className="relative pl-8 border-l border-white/10 pb-4 group">
                                         <div className="absolute left-[-5px] top-0 w-[9px] h-[9px] rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
-                                        <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-1">
-                                            {new Date(item.rawDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                        </p>
-                                        <h4 className="text-white/90 font-medium mb-1">{item.title}</h4>
-                                        <p className="text-xs text-white/40">{item.daysLeft} days to go</p>
+                                        <div className="flex items-start justify-between">
+                                            <div>
+                                                <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-1">
+                                                    {new Date(item.rawDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                </p>
+                                                <h4 className="text-white/90 font-medium mb-1">{item.title}</h4>
+                                                <p className="text-xs text-white/40">{item.daysLeft} days to go</p>
+                                            </div>
+                                            <button
+                                                onClick={() => openSendGreetingModal(item)}
+                                                className="p-2 bg-cyan-400/10 border border-cyan-400/20 rounded-xl text-cyan-400 opacity-0 group-hover:opacity-100 transition-all hover:bg-cyan-400/20"
+                                            >
+                                                <Send className="w-4 h-4" />
+                                            </button>
+                                        </div>
                                     </div>
                                 ))
                             )}
@@ -250,24 +260,36 @@ export default function Home() {
                     </button>
                 )}
 
-                <nav className="h-20 bg-white/10 backdrop-blur-3xl border-t border-white/20 flex items-center justify-around px-8 z-30">
+                <nav className="h-24 bg-white/10 backdrop-blur-3xl border-t border-white/20 flex items-center justify-around px-4 z-30">
                     <button
                         onClick={() => setActiveTab("home")}
-                        className={`p-2 transition-colors ${activeTab === "home" ? "text-white" : "text-white/40 hover:text-white"}`}
+                        className={`p-3 flex flex-col items-center gap-1 transition-colors ${activeTab === "home" ? "text-white" : "text-white/40 hover:text-white"}`}
                     >
                         <HomeIcon className="w-6 h-6" />
+                        <span className="text-[8px] font-bold uppercase tracking-tighter">Home</span>
                     </button>
                     <button
                         onClick={() => setActiveTab("calendar")}
-                        className={`p-2 transition-colors ${activeTab === "calendar" ? "text-white" : "text-white/40 hover:text-white"}`}
+                        className={`p-3 flex flex-col items-center gap-1 transition-colors ${activeTab === "calendar" ? "text-white" : "text-white/40 hover:text-white"}`}
                     >
                         <CalendarIcon className="w-6 h-6" />
+                        <span className="text-[8px] font-bold uppercase tracking-tighter">Calendar</span>
+                    </button>
+                    <button
+                        onClick={() => openSendGreetingModal(null)}
+                        className={`p-3 flex flex-col items-center gap-1 transition-colors text-cyan-400 hover:text-cyan-300 active:scale-95`}
+                    >
+                        <div className="w-10 h-10 rounded-full bg-cyan-400/20 flex items-center justify-center mb-1">
+                            <Send className="w-5 h-5" />
+                        </div>
+                        <span className="text-[8px] font-bold uppercase tracking-tighter">Quick Share</span>
                     </button>
                     <button
                         onClick={() => setActiveTab("settings")}
-                        className={`p-2 transition-colors ${activeTab === "settings" ? "text-white" : "text-white/40 hover:text-white"}`}
+                        className={`p-3 flex flex-col items-center gap-1 transition-colors ${activeTab === "settings" ? "text-white" : "text-white/40 hover:text-white"}`}
                     >
                         <Settings className="w-6 h-6" />
+                        <span className="text-[8px] font-bold uppercase tracking-tighter">Settings</span>
                     </button>
                 </nav>
             </div>

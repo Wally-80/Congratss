@@ -29,6 +29,14 @@ const MESSAGE_TEMPLATES = [
     "Congratulations on your retirement! Enjoy your new freedom! 🥂",
     "Thinking of you on this special day! Best wishes! ✨",
     "Huge congrats to you! Well deserved! 🎉",
+    "I love you so much! ❤️",
+    "Have a wonderful day, my love! ✨",
+    "Good morning! Hope your day is as amazing as you are. ☀️",
+    "Just wanted to say I'm thinking of you. Miss you! 💖",
+    "So proud of you and everything you do! 🌟",
+    "You're the best! Thanks for being you. 🙌",
+    "Sending you extra hugs today! 🤗",
+    "Can't wait to see you later! 🏠",
 ];
 
 export default function SendGreetingModal({ isOpen, onClose, celebration }: SendGreetingModalProps) {
@@ -36,7 +44,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
     const [message, setMessage] = useState("");
     const [sharing, setSharing] = useState(false);
 
-    if (!isOpen || !celebration) return null;
+    if (!isOpen) return null;
 
     const selectedImage = GREETING_IMAGES.find(img => img.id === selectedImageId) || GREETING_IMAGES[0];
 
@@ -105,7 +113,9 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                 <div className="p-6 border-b border-white/10 flex justify-between items-center sticky top-0 bg-[#0a0a1a]/80 backdrop-blur-md z-10">
                     <div>
                         <h2 className="text-xl font-bold text-white uppercase tracking-tight">Pick & Send</h2>
-                        <p className="text-xs text-white/40">Greeting for {celebration.title}</p>
+                        <p className="text-xs text-white/40">
+                            {celebration ? `Greeting for ${celebration.title}` : "Share with anyone"}
+                        </p>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
                         <X className="w-5 h-5 text-white/60" />
