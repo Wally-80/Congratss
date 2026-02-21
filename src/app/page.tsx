@@ -162,11 +162,7 @@ export default function Home() {
                 );
 
             case "calendar":
-                const sortedByDate = [...celebrations].sort((a, b) => {
-                    const dateA = new Date(a.rawDate).getTime();
-                    const dateB = new Date(b.rawDate).getTime();
-                    return dateA - dateB;
-                });
+                const sortedByDate = [...celebrations].sort((a, b) => a.daysLeft - b.daysLeft);
 
                 return (
                     <div
