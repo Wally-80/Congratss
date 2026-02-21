@@ -6,13 +6,14 @@ import CelebrationCard from "@/components/CelebrationCard";
 import AddCelebrationModal from "@/components/AddCelebrationModal";
 import EditProfileModal from "@/components/EditProfileModal";
 import SendGreetingModal from "@/components/SendGreetingModal";
+import AdminDashboard from "@/components/AdminDashboard";
 import { useAuth } from "@/context/AuthContext";
 import { useCelebrations } from "@/hooks/useCelebrations";
 import AuthPage from "./auth/page";
 
-export default function Home() {
+export default function Dashboard() {
     const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
-    const { user, loading: authLoading, logout, updateUserProfile } = useAuth();
+    const { user, isAdmin, loading: authLoading, logout, updateUserProfile } = useAuth();
     const { celebrations, loading: dataLoading, error: dataError, addCelebration, updateCelebration, deleteCelebration } = useCelebrations();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSendGreetingModalOpen, setIsSendGreetingModalOpen] = useState(false);
@@ -89,6 +90,7 @@ export default function Home() {
         let title = "Congratss";
         if (activeTab === "calendar") title = "Calendar";
         if (activeTab === "settings") title = "Settings";
+        if (activeTab === "admin") title = "Admin Console";
 
         return (
             <header className="px-6 py-4 flex justify-between items-center bg-white/5 backdrop-blur-md">
@@ -203,9 +205,10 @@ export default function Home() {
 
             case "settings":
                 return (
-                    <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
-                        <div className="glass-card p-6 text-center">
-                            <div className="w-20 h-20 rounded-full border-4 border-white/10 overflow-hidden mx-auto mb-4 shadow-2xl">
+                    <div className="flex-1 overflow-y-auto px-8 py-8 scrollbar-hide">
+                        {/* Profile Section */}
+                        <div className="flex flex-col items-center mb-10 text-center">
+                            <div className="w-24 h-24 rounded-[2rem] border-4 border-white/10 overflow-hidden shadow-2xl mb-4 relative group">
                                 <img
                                     src={user.photoURL || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"}
                                     alt="Profile"
@@ -214,8 +217,12 @@ export default function Home() {
                             </div>
                             <h3 className="text-xl font-bold text-white/90">{user.displayName || "Congratss User"}</h3>
                             <p className="text-sm text-white/40">{user.email}</p>
+                            {isAdmin && (
+                                <div className="mt-2 px-3 py-1 bg-cyan-400/10 border border-cyan-400/30 rounded-full">
+                                    <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">Admin Access</span>
+                                </div>
+                            )}
                         </div>
-
                         <div className="space-y-3">
                             <h4 className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] px-2">Account</h4>
                             <button
@@ -304,6 +311,15 @@ export default function Home() {
                         <Settings className="w-5 h-5" />
                         <span className="text-[7px] font-bold uppercase tracking-tighter">Settings</span>
                     </button>
+                    {isAdmin && (
+                        <button
+                            onClick={() => setActiveTab("admin")}
+                            className={`p-2 flex flex-col items-center gap-1 transition-colors ${activeTab === "admin" ? "text-cyan-400" : "text-white/40 hover:text-white"}`}
+                        >
+                            <span className="w-5 h-5 flex items-center justify-center font-black text-xs">A</span>
+                            <span className="text-[7px] font-bold uppercase tracking-tighter">Admin</span>
+                        </button>
+                    )}
                 </nav>
             </div>
 
