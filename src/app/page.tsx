@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Home as HomeIcon, Calendar as CalendarIcon, Settings, Search, LogOut, Send } from "lucide-react";
 import CelebrationCard from "@/components/CelebrationCard";
 import AddCelebrationModal from "@/components/AddCelebrationModal";
@@ -23,6 +23,13 @@ export default function Home() {
     const [lastScrollTop, setLastScrollTop] = useState(0);
     const [showFab, setShowFab] = useState(true);
 
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setShowFab(true);
+        }, 1200);
+        return () => clearTimeout(timeout);
+    }, [lastScrollTop]);
+
     const filteredCelebrations = celebrations
         .filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase()))
         .sort((a, b) => a.daysLeft - b.daysLeft);
@@ -35,7 +42,7 @@ export default function Home() {
         const currentScrollTop = e.currentTarget.scrollTop;
 
         // Only trigger if scroll distance is significant (> 10px)
-        if (Math.abs(currentScrollTop - lastScrollTop) < 10) return;
+        if (Math.abs(currentScrollTop - lastScrollTop) < 20) return;
 
         if (currentScrollTop > lastScrollTop && currentScrollTop > 50) {
             // Scrolling down
@@ -275,7 +282,7 @@ export default function Home() {
                 {activeTab !== "settings" && (
                     <button
                         onClick={openAddModal}
-                        className={`absolute bottom-24 right-8 w-16 h-16 rounded-full bg-cyan-400/20 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-neon transition-all duration-500 active:scale-95 hover:scale-105 z-20 group ${showFab ? "translate-y-0 opacity-100" : "translate-y-32 opacity-0"
+                        className={`absolute bottom-[114px] right-8 w-16 h-16 rounded-full bg-cyan-400/20 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-neon transition-all duration-500 ease-in-out active:scale-95 hover:scale-105 z-20 group ${showFab ? "translate-y-0 opacity-100 scale-100" : "translate-y-20 opacity-0 scale-50 pointer-events-none"
                             }`}
                     >
                         <div className="w-12 h-12 rounded-full bg-cyan-400 flex items-center justify-center shadow-[0_0_20px_rgba(0,242,255,0.6)] group-hover:shadow-[0_0_30px_rgba(0,242,255,0.8)] transition-all">
