@@ -14,6 +14,11 @@ export default function Home() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCelebration, setEditingCelebration] = useState<any>(null);
     const [activeTab, setActiveTab] = useState("home");
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const filteredCelebrations = celebrations.filter(c =>
+        c.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const handleAddOrEdit = async (data: any) => {
         if (data.id) {
@@ -77,6 +82,8 @@ export default function Home() {
                         <input
                             type="text"
                             placeholder="Search celebrations..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-white/20"
                         />
                     </div>
@@ -84,16 +91,20 @@ export default function Home() {
 
                 {/* Celebrations List */}
                 <div className="flex-1 overflow-y-auto px-8 scrollbar-hide pb-8">
-                    {celebrations.length === 0 ? (
+                    {filteredCelebrations.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-20 text-center">
                             <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6">
                                 <Plus className="w-10 h-10 text-white/20" />
                             </div>
-                            <h3 className="text-lg font-medium text-white/60">No celebrations yet</h3>
-                            <p className="text-sm text-white/30 px-6">Click the button below to add your first special moment.</p>
+                            <h3 className="text-lg font-medium text-white/60">
+                                {searchQuery ? "No matches found" : "No celebrations yet"}
+                            </h3>
+                            <p className="text-sm text-white/30 px-6">
+                                {searchQuery ? "Try a different search term" : "Click the button below to add your first special moment."}
+                            </p>
                         </div>
                     ) : (
-                        celebrations.map((item) => (
+                        filteredCelebrations.map((item) => (
                             <CelebrationCard
                                 key={item.id}
                                 id={item.id}
