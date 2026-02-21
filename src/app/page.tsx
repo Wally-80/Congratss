@@ -4,12 +4,14 @@ import React, { useState } from "react";
 import { Plus, Home as HomeIcon, Calendar as CalendarIcon, Settings, Search, LogOut } from "lucide-react";
 import CelebrationCard from "@/components/CelebrationCard";
 import AddCelebrationModal from "@/components/AddCelebrationModal";
+import EditProfileModal from "@/components/EditProfileModal";
 import { useAuth } from "@/context/AuthContext";
 import { useCelebrations } from "@/hooks/useCelebrations";
 import AuthPage from "./auth/page";
 
 export default function Home() {
-    const { user, loading: authLoading, logout } = useAuth();
+    const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
+    const { user, loading: authLoading, logout, updateUserProfile } = useAuth();
     const { celebrations, loading: dataLoading, error: dataError, addCelebration, updateCelebration, deleteCelebration } = useCelebrations();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCelebration, setEditingCelebration] = useState<any>(null);
@@ -19,6 +21,10 @@ export default function Home() {
     const filteredCelebrations = celebrations.filter(c =>
         c.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const handleUpdateProfile = async (displayName: string, photoURL: string) => {
+        await updateUserProfile(displayName, photoURL);
+    };
 
     const handleAddOrEdit = async (data: any) => {
         if (data.id) {
@@ -181,7 +187,10 @@ export default function Home() {
 
                         <div className="space-y-3">
                             <h4 className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] px-2">Account</h4>
-                            <button className="w-full glass-card p-4 flex items-center justify-between text-white/70 hover:text-white transition-colors">
+                            <button
+                                onClick={() => setIsEditProfileModalOpen(true)}
+                                className="w-full glass-card p-4 flex items-center justify-between text-white/70 hover:text-white transition-colors"
+                            >
                                 <span className="text-sm font-medium">Edit Profile</span>
                                 <Settings className="w-4 h-4 opacity-40" />
                             </button>
@@ -259,6 +268,16 @@ export default function Home() {
                 onClose={() => setIsModalOpen(false)}
                 onAdd={handleAddOrEdit}
                 initialData={editingCelebration}
+            />
+
+            <EditProfileModal
+                isOpen={isEditProfileModalOpen}
+                onClose={() => setIsEditProfileModalOpen(false)}
+                onUpdate={handleUpdateProfile}
+                currentData={{
+                    displayName: user.displayName || "",
+                    photoURL: user.photoURL || ""
+                }}
             />
         </main>
     );
