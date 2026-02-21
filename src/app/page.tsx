@@ -286,7 +286,7 @@ export default function Dashboard() {
     };
 
     return (
-        <main className="min-h-screen bg-transparent flex flex-col items-center justify-start sm:py-8 overflow-x-hidden">
+        <main className="min-h-screen bg-[#030308] flex flex-col items-center justify-start sm:py-8 overflow-x-hidden">
             <div
                 onScroll={handleScroll}
                 className="glass-pane w-full max-w-md h-[100dvh] sm:h-[850px] flex flex-col relative overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-1000"

@@ -114,7 +114,8 @@ export default function Fireworks() {
         };
 
         const render = () => {
-            ctx.fillStyle = "rgba(3, 3, 8, 0.15)";
+            // Darker trail effect
+            ctx.fillStyle = "rgba(3, 3, 8, 0.2)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             if (Math.random() < 0.025) {
@@ -149,7 +150,7 @@ export default function Fireworks() {
     return (
         <canvas
             ref={canvasRef}
-            className="fixed inset-0 pointer-events-none z-[1] opacity-50"
+            className="fixed inset-0 pointer-events-none z-0"
             style={{ mixBlendMode: 'screen' }}
         />
     );
