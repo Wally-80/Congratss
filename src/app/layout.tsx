@@ -10,6 +10,9 @@ export const metadata: Metadata = {
         statusBarStyle: "black-translucent",
         title: "Congratss",
     },
+    icons: {
+        apple: "/logo.png",
+    },
 };
 
 import { AuthProvider } from "@/context/AuthContext";
