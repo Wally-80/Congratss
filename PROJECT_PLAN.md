@@ -1,7 +1,7 @@
-# PROJECT PLAN - Gratzz.com
+# PROJECT PLAN - Congratss.com
 
 ## Overview
-Gratzz.com is a celebration management platform built with Next.js and Firebase. It allows users to track and celebrate special occasions.
+Congratss.com is a celebration management platform built with Next.js and Firebase. It allows users to track and celebrate special occasions.
 
 ## Goals
 - Provide a seamless UI for managing celebrations.

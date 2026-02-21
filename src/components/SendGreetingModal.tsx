@@ -15,7 +15,7 @@ interface SendGreetingModalProps {
 const CATEGORIES = ["All", "Classic", "Special", "Funny"];
 
 const GREETING_IMAGES = [
-    { id: "gratzz", url: "/greeting_gratzz.png", label: "Gratzz", category: "Classic" },
+    { id: "congratss", url: "/greeting_gratzz.png", label: "Congratss", category: "Classic" },
     { id: "flowers", url: "/greeting_flowers.png", label: "Flowers", category: "Classic" },
     { id: "balloons", url: "/greeting_balloons.png", label: "Balloons", category: "Classic" },
     { id: "cake", url: "/greeting_cake.png", label: "Birthday Cake", category: "Special" },

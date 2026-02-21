@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-    title: "YupiFiesta",
-    description: "Celebrate every moment with YupiFiesta",
+    title: "Congratss.com",
+    description: "Celebrate every moment with Congratss.com",
 };
 
 import { AuthProvider } from "@/context/AuthContext";

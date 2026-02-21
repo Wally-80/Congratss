@@ -26,10 +26,16 @@ export default function AuthPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4">
-            <div className="glass-pane w-full max-w-md p-8 shadow-2xl">
-                <h2 className="text-3xl font-bold mb-6 text-center text-white/90">
-                    {isLogin ? "Welcome Back" : "Create Account"}
-                </h2>
+            <div className="glass-pane w-full max-w-md p-10 shadow-2xl flex flex-col items-center">
+                <div className="flex flex-col items-center gap-3 mb-8">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-white text-black neon-glow-purple overflow-hidden">
+                        <img src="/logo.png" className="h-full w-full object-cover" alt="Congratss Logo" />
+                    </div>
+                    <h1 className="text-4xl font-black tracking-tighter italic text-white text-center">Congratss.com</h1>
+                    <p className="text-xs font-bold uppercase tracking-[0.3em] text-white/40">
+                        {isLogin ? "Welcome Back" : "Create Account"}
+                    </p>
+                </div>
 
                 {error && (
                     <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm">
