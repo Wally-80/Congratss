@@ -2,7 +2,8 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User, signOut, updateProfile } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db, auth } from "@/lib/firebase";
 
 interface AuthContextType {
     user: User | null;
@@ -26,15 +27,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setUser(user);
-            // Simple email-based admin check for now
-            // Can be expanded to Firestore check later
-            setIsAdmin(user?.email === "walterrpom@gmail.com");
-            setLoading(false);
+        let unsubscribeUserDoc: (() => void) | undefined;
+
+        const unsubscribeAuth = onAuthStateChanged(auth, (authUser) => {
+            setUser(authUser);
+
+            if (authUser) {
+                // Listen to user document in Firestore for role updates
+                const userRef = doc(db, "users", authUser.uid);
+                unsubscribeUserDoc = onSnapshot(userRef, (snapshot) => {
+                    if (snapshot.exists()) {
+                        const userData = snapshot.data();
+                        // Support both 'role: admin' and 'isAdmin: true' formats
+                        setIsAdmin(userData.role === "admin" || userData.isAdmin === true);
+                    } else {
+                        // Safe default: Check for specific admin email if no doc exists yet
+                        setIsAdmin(authUser.email === "walterpomalaza@gmail.com" || authUser.email === "walterrpom@gmail.com");
+                    }
+                    setLoading(false);
+                });
+            } else {
+                setIsAdmin(false);
+                setLoading(false);
+            }
         });
 
-        return () => unsubscribe();
+        return () => {
+            unsubscribeAuth();
+            if (unsubscribeUserDoc) unsubscribeUserDoc();
+        };
     }, []);
 
     const logout = async () => {
