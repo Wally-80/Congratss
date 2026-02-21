@@ -282,7 +282,7 @@ export default function Home() {
                 {activeTab !== "settings" && (
                     <button
                         onClick={openAddModal}
-                        className={`absolute bottom-[114px] right-8 w-16 h-16 rounded-full bg-cyan-400/20 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-neon transition-all duration-500 ease-in-out active:scale-95 hover:scale-105 z-20 group ${showFab ? "translate-y-0" : "translate-y-12"
+                        className={`absolute bottom-[114px] right-8 w-16 h-16 rounded-full bg-cyan-400/20 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-neon transition-all duration-500 ease-in-out active:scale-95 hover:scale-105 z-20 group ${showFab ? "translate-y-0 scale-100" : "translate-y-4 scale-90 opacity-80"
                             }`}
                     >
                         <div className="w-12 h-12 rounded-full bg-cyan-400 flex items-center justify-center shadow-[0_0_20px_rgba(0,242,255,0.6)] group-hover:shadow-[0_0_30px_rgba(0,242,255,0.8)] transition-all">
