@@ -53,7 +53,7 @@ export default function AuthPage() {
                     <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-white text-black neon-glow-purple overflow-hidden">
                         <img src="/logo.png" className="h-full w-full object-cover" alt="Congratss Logo" />
                     </div>
-                    <h1 className="text-4xl font-black tracking-tighter italic text-white text-center">Congratss.com</h1>
+                    <h1 className="text-4xl font-black tracking-tighter italic text-white text-center">Congratss</h1>
                     <p className="text-xs font-bold uppercase tracking-[0.3em] text-white/40">
                         {isLogin ? t.welcome_back : t.create_account}
                     </p>

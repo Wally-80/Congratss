@@ -47,7 +47,7 @@ export default function LoginPage() {
                     <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-white text-black neon-glow-purple overflow-hidden">
                         <img src="/logo.png" className="h-full w-full object-cover" alt="Congratss Logo" />
                     </div>
-                    <h1 className="text-4xl font-black tracking-tighter italic">Congratss.com</h1>
+                    <h1 className="text-4xl font-black tracking-tighter italic">Congratss</h1>
                     <p className="text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground">Welcome Back</p>
                 </div>
 

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-    title: "Congratss.com",
-    description: "Celebrate every moment with Congratss.com",
+    title: "Congratss",
+    description: "Celebrate every moment with Congratss",
     manifest: "/manifest.json",
     appleWebApp: {
         capable: true,
