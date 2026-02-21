@@ -140,8 +140,8 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <div className="glass-pane w-full max-w-md max-h-[90vh] overflow-y-auto flex flex-col relative animate-in fade-in zoom-in duration-300">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center sm:p-4 bg-black/60 backdrop-blur-sm">
+            <div className="glass-pane w-full h-full sm:h-auto sm:max-w-md sm:max-h-[90vh] overflow-y-auto flex flex-col relative animate-in fade-in zoom-in duration-300">
                 {/* Header */}
                 <div className="p-6 border-b border-white/10 flex justify-between items-center sticky top-0 bg-[#0a0a1a]/80 backdrop-blur-md z-10">
                     <div>

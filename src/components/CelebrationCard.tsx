@@ -57,7 +57,7 @@ export default function CelebrationCard({ id, title, daysLeft, date, rawDate, pe
 
 
     return (
-        <div className="glass-card flex items-center justify-between mb-4 relative group overflow-hidden">
+        <div className="glass-card flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 relative group overflow-hidden p-6 sm:p-5">
             <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all z-10">
                 {onSendGreeting && (
                     <button
@@ -96,7 +96,7 @@ export default function CelebrationCard({ id, title, daysLeft, date, rawDate, pe
                 </div>
             </div>
 
-            <div className="ml-4">
+            <div className="self-end sm:self-auto sm:ml-4 mt-4 sm:mt-0">
                 <CircularProgress percentage={percentage} color={color} size={110} />
             </div>
         </div>

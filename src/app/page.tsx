@@ -61,7 +61,7 @@ export default function Home() {
     if (!user) return <AuthPage />;
 
     const renderHeader = () => {
-        let title = "YupiFiesta";
+        let title = "Congratss";
         if (activeTab === "calendar") title = "Calendar";
         if (activeTab === "settings") title = "Settings";
 
@@ -200,7 +200,7 @@ export default function Home() {
                                     className="w-full h-full object-cover"
                                 />
                             </div>
-                            <h3 className="text-xl font-bold text-white/90">{user.displayName || "Yupi User"}</h3>
+                            <h3 className="text-xl font-bold text-white/90">{user.displayName || "Congratss User"}</h3>
                             <p className="text-sm text-white/40">{user.email}</p>
                         </div>
 
@@ -236,8 +236,8 @@ export default function Home() {
     };
 
     return (
-        <main className="min-h-screen p-4 md:p-8 flex flex-col items-center">
-            <div className="glass-pane w-full max-w-md h-[850px] overflow-hidden flex flex-col relative">
+        <main className="min-h-screen bg-background flex flex-col items-center justify-start sm:py-8">
+            <div className="glass-pane w-full max-w-md min-h-screen sm:min-h-[850px] sm:rounded-[3rem] overflow-hidden flex flex-col relative">
                 {dataError && (
                     <div className="absolute top-0 left-0 right-0 z-50 p-4 bg-red-500/20 border-b border-red-500/50 backdrop-blur-md text-red-200 text-xs text-center">
                         <p>Database Error: {dataError}</p>
