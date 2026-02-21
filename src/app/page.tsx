@@ -5,6 +5,7 @@ import { Plus, Home as HomeIcon, Calendar as CalendarIcon, Settings, Search, Log
 import CelebrationCard from "@/components/CelebrationCard";
 import AddCelebrationModal from "@/components/AddCelebrationModal";
 import EditProfileModal from "@/components/EditProfileModal";
+import SendGreetingModal from "@/components/SendGreetingModal";
 import { useAuth } from "@/context/AuthContext";
 import { useCelebrations } from "@/hooks/useCelebrations";
 import AuthPage from "./auth/page";
@@ -14,7 +15,9 @@ export default function Home() {
     const { user, loading: authLoading, logout, updateUserProfile } = useAuth();
     const { celebrations, loading: dataLoading, error: dataError, addCelebration, updateCelebration, deleteCelebration } = useCelebrations();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isSendGreetingModalOpen, setIsSendGreetingModalOpen] = useState(false);
     const [editingCelebration, setEditingCelebration] = useState<any>(null);
+    const [sendingCelebration, setSendingCelebration] = useState<any>(null);
     const [activeTab, setActiveTab] = useState("home");
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -42,6 +45,11 @@ export default function Home() {
     const openAddModal = () => {
         setEditingCelebration(null);
         setIsModalOpen(true);
+    };
+
+    const openSendGreetingModal = (celebration: any) => {
+        setSendingCelebration(celebration);
+        setIsSendGreetingModalOpen(true);
     };
 
     if (authLoading || dataLoading) return (
@@ -115,6 +123,7 @@ export default function Home() {
                                         type={item.type}
                                         onDelete={deleteCelebration}
                                         onEdit={openEditModal}
+                                        onSendGreeting={openSendGreetingModal}
                                     />
                                 ))
                             )}
@@ -278,6 +287,12 @@ export default function Home() {
                     displayName: user.displayName || "",
                     photoURL: user.photoURL || ""
                 }}
+            />
+
+            <SendGreetingModal
+                isOpen={isSendGreetingModalOpen}
+                onClose={() => setIsSendGreetingModalOpen(false)}
+                celebration={sendingCelebration}
             />
         </main>
     );

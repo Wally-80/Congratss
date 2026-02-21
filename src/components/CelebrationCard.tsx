@@ -1,4 +1,4 @@
-import { Gift, Calendar, Heart, Trash2, Pencil, PartyPopper, Star } from "lucide-react";
+import { Gift, Calendar, Heart, Trash2, Pencil, PartyPopper, Star, Send } from "lucide-react";
 import CircularProgress from "./CircularProgress";
 
 interface CelebrationCardProps {
@@ -11,9 +11,10 @@ interface CelebrationCardProps {
     type: "birthday" | "anniversary" | "retirement" | "other";
     onDelete?: (id: string) => void;
     onEdit?: (data: any) => void;
+    onSendGreeting?: (data: any) => void;
 }
 
-export default function CelebrationCard({ id, title, daysLeft, date, rawDate, percentage, type, onDelete, onEdit }: CelebrationCardProps) {
+export default function CelebrationCard({ id, title, daysLeft, date, rawDate, percentage, type, onDelete, onEdit, onSendGreeting }: CelebrationCardProps) {
     const getCelebrationDetails = () => {
         switch (type) {
             case "birthday":
@@ -58,6 +59,14 @@ export default function CelebrationCard({ id, title, daysLeft, date, rawDate, pe
     return (
         <div className="glass-card flex items-center justify-between mb-4 relative group">
             <div className="absolute -top-2 -right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all z-10">
+                {onSendGreeting && (
+                    <button
+                        onClick={() => onSendGreeting({ title, type })}
+                        className="p-2 bg-cyan-500/20 border border-cyan-500/50 rounded-full text-cyan-200 hover:bg-cyan-500/40 transition-all"
+                    >
+                        <Send className="w-4 h-4" />
+                    </button>
+                )}
                 {onEdit && (
                     <button
                         onClick={() => onEdit({ id, title, rawDate, type })}
