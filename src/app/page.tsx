@@ -55,7 +55,7 @@ export default function Home() {
 
                 {/* Header */}
                 <header className="p-8 pb-4 flex justify-between items-center bg-white/5 backdrop-blur-md">
-                    <h1 className="text-3xl font-bold tracking-tight text-white/90">Celebrations</h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-white/90">YupiFiesta</h1>
                     <div className="flex items-center gap-4">
                         <button onClick={logout} className="p-2 text-white/40 hover:text-red-400 transition-colors">
                             <LogOut className="w-5 h-5" />
@@ -83,7 +83,7 @@ export default function Home() {
                 </div>
 
                 {/* Celebrations List */}
-                <div className="flex-1 overflow-y-auto px-8 scrollbar-hide pb-24">
+                <div className="flex-1 overflow-y-auto px-8 scrollbar-hide pb-8">
                     {celebrations.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-20 text-center">
                             <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6">
@@ -139,7 +139,7 @@ export default function Home() {
                 </button>
 
                 {/* Navigation Bar */}
-                <nav className="absolute bottom-0 left-0 right-0 h-20 bg-white/10 backdrop-blur-3xl border-t border-white/20 flex items-center justify-around px-8">
+                <nav className="h-20 bg-white/10 backdrop-blur-3xl border-t border-white/20 flex items-center justify-around px-8 z-30">
                     <button
                         onClick={() => setActiveTab("home")}
                         className={`p-2 transition-colors ${activeTab === "home" ? "text-white" : "text-white/40 hover:text-white"}`}
