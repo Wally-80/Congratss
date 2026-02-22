@@ -37,11 +37,10 @@ export const cardService = {
     },
 
     // Listen to all cards in real-time
-    subscribeToCards(callback: (cards: GreetingCard[]) => void) {
+    subscribeToCards(callback: (cards: GreetingCard[]) => void, onError?: (error: any) => void) {
         const q = query(
             collection(db, COLLECTION_NAME),
-            orderBy("category", "asc"),
-            orderBy("label", "asc")
+            orderBy("category", "asc")
         );
 
         return onSnapshot(q, (snapshot) => {
@@ -56,6 +55,7 @@ export const cardService = {
             callback(cards);
         }, (error) => {
             console.error("Error subscribing to cards: ", error);
+            if (onError) onError(error);
         });
     },
 

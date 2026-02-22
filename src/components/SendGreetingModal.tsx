@@ -70,6 +70,9 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                 setSelectedImageId(cards[0].id);
             }
             setLoadingCards(false);
+        }, (err) => {
+            console.error("Failed to fetch cards:", err);
+            setLoadingCards(false);
         });
 
         return () => unsubscribe();
