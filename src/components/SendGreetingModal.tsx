@@ -65,13 +65,14 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
         if (!isOpen) return;
 
         const unsubscribe = cardService.subscribeToCards((cards) => {
+            console.log("Modal received cards:", cards.length);
             setGreetingCards(cards);
             if (cards.length > 0 && !selectedImageId) {
                 setSelectedImageId(cards[0].id);
             }
             setLoadingCards(false);
         }, (err) => {
-            console.error("Failed to fetch cards:", err);
+            console.error("Modal fetch error:", err);
             setLoadingCards(false);
         });
 
