@@ -23,18 +23,19 @@ export interface GreetingCard {
 
 const COLLECTION_NAME = "greeting_cards";
 
+// EXACT ORIGINAL CARDS FROM PREVIOUS VERSION
 const DEFAULT_CARDS = [
-    { label: "Birthday Cake", url: "/greeting_cake.png", category: "Classic" },
-    { label: "Party Time", url: "/greeting_party.png", category: "Classic" },
-    { label: "Beautiful Flowers", url: "/greeting_flowers.png", category: "Flowers" },
-    { label: "Festive Balloons", url: "/greeting_balloons.png", category: "Balloons" },
-    { label: "Modern Congrats", url: "/greeting_congrats_modern.png", category: "Modern" },
-    { label: "Golden Anniversary", url: "/greeting_anniversary_gold.png", category: "Classic" },
-    { label: "Happy Retirement", url: "/greeting_retirement.png", category: "Classic" },
-    { label: "Congratss Classic", url: "/greeting_gratzz.png", category: "Congratss" },
-    { label: "Funny Dog", url: "/greeting_funny_dog.png", category: "Funny" },
-    { label: "Pizza Cat", url: "/greeting_funny_party_cat_pizza.png", category: "Funny" },
+    { label: "Congratss", url: "/greeting_gratzz.png", category: "Classic" },
+    { label: "Flowers", url: "/greeting_flowers.png", category: "Classic" },
+    { label: "Balloons", url: "/greeting_balloons.png", category: "Classic" },
+    { label: "Birthday Cake", url: "/greeting_cake.png", category: "Special" },
+    { label: "Party Time", url: "/greeting_party.png", category: "Special" },
+    { label: "Retirement", url: "/greeting_retirement.png", category: "Special" },
+    { label: "Anniversary", url: "/greeting_anniversary_gold.png", category: "Special" },
+    { label: "Congrats", url: "/greeting_congrats_modern.png", category: "Special" },
     { label: "Cool Grandpa", url: "/greeting_funny_grandpa.png", category: "Funny" },
+    { label: "Party Puppy", url: "/greeting_funny_dog.png", category: "Funny" },
+    { label: "Gamer Cat", url: "/greeting_funny_cat_pizza.png", category: "Funny" },
     { label: "Beer Signal", url: "/greeting_funny_beer_signal.png", category: "Funny" }
 ];
 
@@ -55,7 +56,6 @@ export const cardService = {
 
     // Listen to all cards in real-time
     subscribeToCards(callback: (cards: GreetingCard[]) => void, onError?: (error: any) => void) {
-        // We use query() even without orderBy to keep it standard
         const q = query(collection(db, COLLECTION_NAME));
 
         return onSnapshot(q, (snapshot) => {
@@ -100,13 +100,11 @@ export const cardService = {
     // Seed the database with default cards
     async seedDefaults() {
         try {
-            const snapshot = await getDocs(collection(db, COLLECTION_NAME));
-            if (snapshot.size > 0) {
-                // If cards exist, don't auto-seed to avoid duplicates
-                console.log("Collection already contains data.");
-            }
-
             const batch = writeBatch(db);
+
+            // First, delete existing if any? The user said "recover", so let's just add them.
+            // If they want to start fresh, they can clear manually.
+
             DEFAULT_CARDS.forEach(card => {
                 const newDocRef = doc(collection(db, COLLECTION_NAME));
                 batch.set(newDocRef, {
