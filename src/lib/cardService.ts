@@ -48,7 +48,9 @@ export const cardService = {
                 return {
                     id: doc.id,
                     ...data,
-                    createdAt: (data.createdAt as Timestamp)?.toDate()
+                    createdAt: data.createdAt && typeof data.createdAt.toDate === 'function'
+                        ? data.createdAt.toDate()
+                        : undefined
                 } as GreetingCard;
             });
             callback(cards);

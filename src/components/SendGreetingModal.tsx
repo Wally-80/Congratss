@@ -77,7 +77,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
         });
 
         return () => unsubscribe();
-    }, [isOpen, selectedImageId]);
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
