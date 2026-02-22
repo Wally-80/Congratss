@@ -98,7 +98,7 @@ export default function Dashboard() {
         return (
             <header className="px-6 py-4 flex justify-between items-center bg-white/[0.02] backdrop-blur-md border-b border-white/5">
                 <h1 className="text-2xl font-bold tracking-tight text-white/90">{title}</h1>
-                <div className="w-9 h-9 rounded-full border-2 border-gold-primary/30 overflow-hidden shadow-gold-primary/10">
+                <div className="w-9 h-9 rounded-full border-2 border-white/20 overflow-hidden shadow-lg">
                     <img
                         src={user.photoURL || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"}
                         alt="Profile"

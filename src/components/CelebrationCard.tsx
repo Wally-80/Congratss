@@ -36,10 +36,10 @@ export default function CelebrationCard({
 
     const getColors = () => {
         switch (type) {
-            case "birthday": return "from-gold-primary to-gold-soft shadow-gold-primary/20";
-            case "anniversary": return "from-champagne to-white shadow-white/10";
-            case "retirement": return "from-slate-dark to-slate-800 shadow-slate-dark/40";
-            default: return "from-gold-primary to-gold-soft shadow-gold-primary/20";
+            case "birthday": return "from-neon-pink to-purple-500 shadow-neon-pink";
+            case "anniversary": return "from-neon-cyan to-blue-500 shadow-neon-cyan";
+            case "retirement": return "from-white to-gray-400 shadow-white/20";
+            default: return "from-neon-cyan to-blue-500 shadow-neon-cyan";
         }
     };
 
