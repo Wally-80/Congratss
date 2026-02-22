@@ -7,7 +7,9 @@ import {
     onSnapshot,
     query,
     orderBy,
-    Timestamp
+    Timestamp,
+    getDocs,
+    writeBatch
 } from "firebase/firestore";
 import { db } from "./firebase";
 
@@ -20,6 +22,21 @@ export interface GreetingCard {
 }
 
 const COLLECTION_NAME = "greeting_cards";
+
+const DEFAULT_CARDS = [
+    { label: "Birthday Cake", url: "/greeting_cake.png", category: "Classic" },
+    { label: "Party Time", url: "/greeting_party.png", category: "Classic" },
+    { label: "Beautiful Flowers", url: "/greeting_flowers.png", category: "Flowers" },
+    { label: "Festive Balloons", url: "/greeting_balloons.png", category: "Balloons" },
+    { label: "Modern Congrats", url: "/greeting_congrats_modern.png", category: "Modern" },
+    { label: "Golden Anniversary", url: "/greeting_anniversary_gold.png", category: "Classic" },
+    { label: "Happy Retirement", url: "/greeting_retirement.png", category: "Classic" },
+    { label: "Congratss Classic", url: "/greeting_gratzz.png", category: "Congratss" },
+    { label: "Funny Dog", url: "/greeting_funny_dog.png", category: "Funny" },
+    { label: "Pizza Cat", url: "/greeting_funny_party_cat_pizza.png", category: "Funny" },
+    { label: "Cool Grandpa", url: "/greeting_funny_grandpa.png", category: "Funny" },
+    { label: "Beer Signal", url: "/greeting_funny_beer_signal.png", category: "Funny" }
+];
 
 export const cardService = {
     // Add a new greeting card
@@ -38,11 +55,10 @@ export const cardService = {
 
     // Listen to all cards in real-time
     subscribeToCards(callback: (cards: GreetingCard[]) => void, onError?: (error: any) => void) {
-        console.log("Subscribed to cards collection: ", COLLECTION_NAME);
+        // We use query() even without orderBy to keep it standard
         const q = query(collection(db, COLLECTION_NAME));
 
         return onSnapshot(q, (snapshot) => {
-            console.log("Received snapshot, size: ", snapshot.size);
             const cards = snapshot.docs.map(doc => {
                 const data = doc.data();
                 return {
@@ -77,6 +93,32 @@ export const cardService = {
             await deleteDoc(doc(db, COLLECTION_NAME, id));
         } catch (error) {
             console.error("Error deleting card: ", error);
+            throw error;
+        }
+    },
+
+    // Seed the database with default cards
+    async seedDefaults() {
+        try {
+            const snapshot = await getDocs(collection(db, COLLECTION_NAME));
+            if (snapshot.size > 0) {
+                // If cards exist, don't auto-seed to avoid duplicates
+                console.log("Collection already contains data.");
+            }
+
+            const batch = writeBatch(db);
+            DEFAULT_CARDS.forEach(card => {
+                const newDocRef = doc(collection(db, COLLECTION_NAME));
+                batch.set(newDocRef, {
+                    ...card,
+                    createdAt: Timestamp.now()
+                });
+            });
+
+            await batch.commit();
+            console.log("Successfully seeded default cards.");
+        } catch (error) {
+            console.error("Error seeding cards: ", error);
             throw error;
         }
     }

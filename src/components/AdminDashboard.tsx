@@ -66,13 +66,33 @@ export default function AdminDashboard() {
                     <p className="text-xs text-white/40">Manage your greeting card library</p>
                 </div>
                 {!isAdding && (
-                    <button
-                        onClick={() => setIsAdding(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-cyan-400 text-black rounded-xl font-bold text-xs shadow-neon hover:brightness-110 transition-all"
-                    >
-                        <PlusCircle className="w-4 h-4" />
-                        Add New Card
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={async () => {
+                                if (confirm("Do you want to restore the 12 original Congratss cards?")) {
+                                    setLoading(true);
+                                    try {
+                                        await cardService.seedDefaults();
+                                        alert("Gallery restored successfully!");
+                                    } catch (e) {
+                                        alert("Restoration failed. See console.");
+                                    } finally {
+                                        setLoading(false);
+                                    }
+                                }
+                            }}
+                            className="flex items-center gap-2 px-4 py-2 bg-white/5 text-white/40 border border-white/10 rounded-xl font-bold text-xs hover:bg-white/10 hover:text-white transition-all"
+                        >
+                            Restore Defaults
+                        </button>
+                        <button
+                            onClick={() => setIsAdding(true)}
+                            className="flex items-center gap-2 px-4 py-2 bg-cyan-400 text-black rounded-xl font-bold text-xs shadow-neon hover:brightness-110 transition-all"
+                        >
+                            <PlusCircle className="w-4 h-4" />
+                            Add New Card
+                        </button>
+                    </div>
                 )}
             </div>
 
