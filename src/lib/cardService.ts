@@ -38,9 +38,11 @@ export const cardService = {
 
     // Listen to all cards in real-time
     subscribeToCards(callback: (cards: GreetingCard[]) => void, onError?: (error: any) => void) {
-        const q = collection(db, COLLECTION_NAME);
+        console.log("Subscribed to cards collection: ", COLLECTION_NAME);
+        const q = query(collection(db, COLLECTION_NAME));
 
         return onSnapshot(q, (snapshot) => {
+            console.log("Received snapshot, size: ", snapshot.size);
             const cards = snapshot.docs.map(doc => {
                 const data = doc.data();
                 return {
