@@ -61,13 +61,36 @@
     }
 
     .glass-card {
-        @apply bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-3xl p-6 transition-all duration-500;
+        @apply bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-3xl p-6 transition-all duration-500 overflow-hidden;
         box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.5);
 
         &:hover {
             @apply bg-white/[0.05] border-white/10 -translate-y-1;
             box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
         }
+    }
+
+    .premium-border {
+        @apply relative;
+
+        &::before {
+            content: "";
+            @apply absolute inset-0 rounded-[inherit] border border-white/10 pointer-events-none;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent, rgba(255, 255, 255, 0.05));
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            padding: 1px;
+        }
+    }
+
+    .neon-border-cyan {
+        @apply border-neon-cyan/30;
+        box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
+    }
+
+    .neon-border-pink {
+        @apply border-neon-pink/30;
+        box-shadow: 0 0 15px rgba(255, 0, 127, 0.1);
     }
 
     .neon-glow-pink {

@@ -114,23 +114,25 @@ export default function Dashboard() {
             case "home":
                 return (
                     <>
-                        <div className="px-8 mb-6">
-                            <div className="relative">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                        <div className="px-8 mb-8">
+                            <div className="relative group">
+                                <div className="absolute inset-0 bg-neon-cyan/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 z-10" />
                                 <input
                                     type="text"
                                     placeholder={t.search_placeholder}
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-white/20"
+                                    className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 pl-12 pr-5 text-sm text-white focus:outline-none focus:border-neon-cyan/40 focus:bg-white/[0.05] transition-all duration-300 relative z-10"
                                 />
                             </div>
                         </div>
 
                         <div
                             onScroll={handleScroll}
-                            className="flex-1 overflow-y-auto px-8 scrollbar-hide pb-8"
+                            className="flex-1 overflow-y-auto px-8 scrollbar-hide pb-24 relative"
                         >
+                            <div className="absolute left-8 right-8 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                             {filteredCelebrations.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-20 text-center">
                                     <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6">

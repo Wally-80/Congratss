@@ -46,7 +46,7 @@ export default function CelebrationCard({
     const isToday = daysLeft === 0;
 
     return (
-        <div className="glass-card mb-6 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className={`glass-card mb-6 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500 premium-border ${type === "birthday" ? "neon-border-pink" : type === "anniversary" ? "neon-border-cyan" : ""}`}>
             <div className="flex justify-between items-start mb-6">
                 <div className="flex items-start gap-4">
                     <div className={`p-3 rounded-2xl bg-gradient-to-br ${getColors()} text-black flex items-center justify-center transform -rotate-12`}>
