@@ -38,10 +38,7 @@ export const cardService = {
 
     // Listen to all cards in real-time
     subscribeToCards(callback: (cards: GreetingCard[]) => void, onError?: (error: any) => void) {
-        const q = query(
-            collection(db, COLLECTION_NAME),
-            orderBy("category", "asc")
-        );
+        const q = collection(db, COLLECTION_NAME);
 
         return onSnapshot(q, (snapshot) => {
             const cards = snapshot.docs.map(doc => {
