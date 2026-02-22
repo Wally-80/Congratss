@@ -9,14 +9,13 @@ export default function Fireworks() {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-        const ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext("2d", { alpha: false }); // Optimization: set alpha to false for background canvas
         if (!ctx) return;
 
         let animationFrameId: number;
         let particles: Particle[] = [];
         let rockets: Rocket[] = [];
 
-        // Back to Vibrant Colors
         const colors = [
             "#ff007f", // neon pink
             "#00f2ff", // neon cyan
@@ -39,19 +38,19 @@ export default function Fireworks() {
                 this.x = x;
                 this.y = y;
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 5 + 1;
+                const speed = Math.random() * 4 + 1; // Slightly slower for better control
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed;
                 this.alpha = 1;
                 this.color = color;
-                this.size = Math.random() * 1.5 + 0.8;
-                this.decay = Math.random() * 0.015 + 0.01;
+                this.size = Math.random() * 1.2 + 0.6; // Smaller particles
+                this.decay = Math.random() * 0.02 + 0.015; // Faster decay
             }
 
             update() {
-                this.vx *= 0.96;
-                this.vy *= 0.96;
-                this.vy += 0.07; // gravity
+                this.vx *= 0.95;
+                this.vy *= 0.95;
+                this.vy += 0.06; // gravity
                 this.x += this.vx;
                 this.y += this.vy;
                 this.alpha -= this.decay;
@@ -59,18 +58,13 @@ export default function Fireworks() {
 
             draw(ctx: CanvasRenderingContext2D) {
                 if (this.alpha <= 0) return;
-                ctx.save();
+
+                // HIGH PERFORMANCE DRAW: No save/restore, no shadowBlur
                 ctx.globalAlpha = this.alpha;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
-                // Subtle glow for attractiveness without heavy performance penalty
-                if (this.alpha > 0.5) {
-                    ctx.shadowBlur = 10;
-                    ctx.shadowColor = this.color;
-                }
                 ctx.fill();
-                ctx.restore();
             }
         }
 
@@ -82,18 +76,18 @@ export default function Fireworks() {
             color: string;
             alive: boolean;
 
-            constructor(width: number, height: number) {
-                this.x = Math.random() * width;
+            constructor(width: number, height: number, initialX?: number) {
+                this.x = initialX ?? Math.random() * width;
                 this.y = height;
-                this.targetY = Math.random() * (height * 0.5);
-                this.vy = -(Math.random() * 4 + 7);
+                this.targetY = Math.random() * (height * 0.45) + (height * 0.1);
+                this.vy = -(Math.random() * 3 + 8);
                 this.color = colors[Math.floor(Math.random() * colors.length)];
                 this.alive = true;
             }
 
             update() {
                 this.y += this.vy;
-                this.vy *= 0.99;
+                this.vy *= 0.985;
                 if (this.vy > -0.5 || this.y <= this.targetY) {
                     this.alive = false;
                     this.explode();
@@ -101,21 +95,19 @@ export default function Fireworks() {
             }
 
             explode() {
-                const count = 40 + Math.floor(Math.random() * 30);
+                // REDUCED PARTICLE COUNT: from 40-70 to 20-35
+                const count = 20 + Math.floor(Math.random() * 15);
                 for (let i = 0; i < count; i++) {
                     particles.push(new Particle(this.x, this.y, this.color));
                 }
             }
 
             draw(ctx: CanvasRenderingContext2D) {
-                ctx.save();
+                ctx.globalAlpha = 1.0;
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2);
                 ctx.fillStyle = "#fff";
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = "#fff";
                 ctx.fill();
-                ctx.restore();
             }
         }
 
@@ -125,8 +117,10 @@ export default function Fireworks() {
         };
 
         const render = () => {
+            // OPTIMIZED CLEAR
             ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+            ctx.globalAlpha = 1.0;
+            ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             ctx.globalCompositeOperation = 'lighter';
@@ -152,6 +146,10 @@ export default function Fireworks() {
 
         window.addEventListener("resize", resize);
         resize();
+
+        // IMMEDIATE LAUNCH: Start with one rocket right away
+        rockets.push(new Rocket(canvas.width, canvas.height, canvas.width / 2));
+
         render();
 
         return () => {
