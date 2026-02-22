@@ -60,24 +60,25 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
     const [message, setMessage] = useState("");
     const [sharing, setSharing] = useState(false);
     const [loadingCards, setLoadingCards] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!isOpen) return;
-
+        // Subscribe to cards on mount to ensure data is ready early
         const unsubscribe = cardService.subscribeToCards((cards) => {
-            console.log("Modal received cards:", cards.length);
             setGreetingCards(cards);
             if (cards.length > 0 && !selectedImageId) {
                 setSelectedImageId(cards[0].id);
             }
             setLoadingCards(false);
+            setError(null);
         }, (err) => {
-            console.error("Modal fetch error:", err);
+            console.error("Modal cards error:", err);
+            setError(err.message || "Error");
             setLoadingCards(false);
         });
 
         return () => unsubscribe();
-    }, [isOpen]);
+    }, []);
 
     if (!isOpen) return null;
 
@@ -219,9 +220,25 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                                 <RefreshCw className="w-8 h-8 animate-spin mb-2" />
                                 <p className="text-[10px] uppercase font-bold tracking-widest">{language === "es" ? "Obteniendo Galería..." : "Fetching Library..."}</p>
                             </div>
+                        ) : error ? (
+                            <div className="py-10 text-center text-red-400">
+                                <p className="text-xs font-bold mb-2 uppercase tracking-widest">{language === "es" ? "Error de conexión" : "Connection Error"}</p>
+                                <button onClick={() => window.location.reload()} className="text-[10px] uppercase underline opacity-60">Retry</button>
+                            </div>
                         ) : filteredImages.length === 0 ? (
-                            <div className="py-20 text-center opacity-30">
-                                <p className="text-xs uppercase font-bold tracking-widest">{language === "es" ? "No hay tarjetas" : "No cards in this category"}</p>
+                            <div className="py-20 text-center opacity-30 flex flex-col items-center gap-3">
+                                <p className="text-xs uppercase font-bold tracking-widest">
+                                    {language === "es" ? "No hay tarjetas disponibles" : "No cards in this category"}
+                                </p>
+                                <p className="text-[9px] max-w-[200px] leading-relaxed">
+                                    {language === "es"
+                                        ? "Verifica tu conexión o añade tarjetas en el Admin."
+                                        : "Check your connection or add cards in the Admin Console."}
+                                </p>
+                                <button onClick={() => window.location.reload()} className="px-4 py-2 border border-white/10 rounded-lg text-[9px] uppercase font-bold hover:bg-white/5">
+                                    Force Refresh
+                                </button>
+                                <div className="text-[8px] opacity-20 mt-2">Cards found: {greetingCards.length}</div>
                             </div>
                         ) : (
                             <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
