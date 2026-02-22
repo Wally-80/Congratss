@@ -304,7 +304,7 @@ export default function Dashboard() {
                 {(activeTab === "home" || activeTab === "calendar") && (
                     <button
                         onClick={openAddModal}
-                        className={`fixed bottom-28 right-8 z-50 w-16 h-16 rounded-[2rem] bg-gold-primary text-black flex items-center justify-center shadow-[0_0_30px_rgba(212,175,55,0.4)] hover:brightness-110 hover:scale-110 active:scale-95 transition-all duration-500 ${showFab ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20 pointer-events-none'}`}
+                        className={`fixed bottom-28 right-8 z-50 w-16 h-16 rounded-[2rem] bg-neon-cyan text-black flex items-center justify-center shadow-neon hover:brightness-110 hover:scale-110 active:scale-95 transition-all duration-500 ${showFab ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20 pointer-events-none'}`}
                     >
                         <Plus className="w-8 h-8 font-black" />
                     </button>
@@ -313,31 +313,31 @@ export default function Dashboard() {
                 <nav className="h-20 bg-white/10 backdrop-blur-3xl border-t border-white/20 flex items-center justify-around px-4 z-30">
                     <button
                         onClick={() => setActiveTab("home")}
-                        className={`flex flex-col items-center gap-1 transition-all ${activeTab === "home" ? "text-gold-primary scale-110" : "text-white/30 hover:text-white/50"}`}
+                        className={`flex flex-col items-center gap-1 transition-all ${activeTab === "home" ? "text-neon-cyan scale-110" : "text-white/30 hover:text-white/50"}`}
                     >
-                        <HomeIcon className={`w-6 h-6 ${activeTab === "home" ? "fill-gold-primary/20" : ""}`} />
+                        <HomeIcon className={`w-6 h-6 ${activeTab === "home" ? "fill-neon-cyan/20" : ""}`} />
                         <span className="text-[10px] font-bold uppercase tracking-widest">{t.nav_home}</span>
                     </button>
                     <button
                         onClick={() => setActiveTab("calendar")}
-                        className={`flex flex-col items-center gap-1 transition-all ${activeTab === "calendar" ? "text-gold-primary scale-110" : "text-white/30 hover:text-white/50"}`}
+                        className={`flex flex-col items-center gap-1 transition-all ${activeTab === "calendar" ? "text-neon-cyan scale-110" : "text-white/30 hover:text-white/50"}`}
                     >
-                        <CalendarIcon className={`w-6 h-6 ${activeTab === "calendar" ? "fill-gold-primary/20" : ""}`} />
+                        <CalendarIcon className={`w-6 h-6 ${activeTab === "calendar" ? "fill-neon-cyan/20" : ""}`} />
                         <span className="text-[10px] font-bold uppercase tracking-widest">{t.nav_calendar}</span>
                     </button>
                     <button
                         onClick={() => setActiveTab("settings")}
-                        className={`flex flex-col items-center gap-1 transition-all ${activeTab === "settings" ? "text-gold-primary scale-110" : "text-white/30 hover:text-white/50"}`}
+                        className={`flex flex-col items-center gap-1 transition-all ${activeTab === "settings" ? "text-neon-cyan scale-110" : "text-white/30 hover:text-white/50"}`}
                     >
-                        <Settings className={`w-6 h-6 ${activeTab === "settings" ? "fill-gold-primary/20" : ""}`} />
+                        <Settings className={`w-6 h-6 ${activeTab === "settings" ? "fill-neon-cyan/20" : ""}`} />
                         <span className="text-[10px] font-bold uppercase tracking-widest">{t.nav_settings}</span>
                     </button>
                     {isAdmin && (
                         <button
                             onClick={() => setActiveTab("admin")}
-                            className={`flex flex-col items-center gap-1 transition-all ${activeTab === "admin" ? "text-gold-primary scale-110" : "text-white/30 hover:text-white/50"}`}
+                            className={`flex flex-col items-center gap-1 transition-all ${activeTab === "admin" ? "text-neon-cyan scale-110" : "text-white/30 hover:text-white/50"}`}
                         >
-                            <Plus className={`w-6 h-6 rotate-45 ${activeTab === "admin" ? "fill-gold-primary/20" : ""}`} />
+                            <Plus className={`w-6 h-6 rotate-45 ${activeTab === "admin" ? "fill-neon-cyan/20" : ""}`} />
                             <span className="text-[10px] font-bold uppercase tracking-widest">{t.admin}</span>
                         </button>
                     )}
