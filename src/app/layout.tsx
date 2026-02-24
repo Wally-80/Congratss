@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,6 +13,15 @@ export const metadata: Metadata = {
     icons: {
         apple: "/logo.png",
     },
+};
+
+export const viewport: Viewport = {
+    themeColor: "#030308",
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: "cover",
 };
 
 import { AuthProvider } from "@/context/AuthContext";

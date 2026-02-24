@@ -96,7 +96,7 @@ export default function Dashboard() {
         if (activeTab === "admin") title = t.admin_console;
 
         return (
-            <header className="px-6 py-4 flex justify-between items-center bg-white/[0.02] backdrop-blur-md border-b border-white/5">
+            <header className="px-6 py-4 flex justify-between items-center bg-white/[0.02] backdrop-blur-md border-b border-white/5 pwa-header-spacer">
                 <h1 className="text-2xl font-bold tracking-tight text-white/90">{title}</h1>
                 <div className="w-9 h-9 rounded-full border-2 border-white/20 overflow-hidden shadow-lg">
                     <img
@@ -288,10 +288,10 @@ export default function Dashboard() {
     };
 
     return (
-        <main className="min-h-screen bg-[#030308] flex flex-col items-center justify-start sm:py-8 overflow-x-hidden">
+        <main className="min-h-screen bg-[#030308] flex flex-col items-center justify-start overflow-x-hidden">
             <div
                 onScroll={handleScroll}
-                className="glass-pane w-full max-w-md h-[100dvh] sm:h-[850px] flex flex-col relative overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-1000"
+                className="glass-pane w-full max-w-md h-[100dvh] sm:h-[850px] sm:my-8 flex flex-col relative overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-1000"
             >
                 {dataError && (
                     <div className="absolute top-0 left-0 right-0 z-50 p-4 bg-red-500/20 border-b border-red-500/50 backdrop-blur-md text-red-200 text-xs text-center">
@@ -312,7 +312,7 @@ export default function Dashboard() {
                     </button>
                 )}
 
-                <nav className="h-20 bg-white/10 backdrop-blur-3xl border-t border-white/20 flex items-center justify-around px-4 z-30">
+                <nav className="bg-white/10 backdrop-blur-3xl border-t border-white/20 flex items-center justify-around px-4 z-30 pwa-nav-spacer">
                     <button
                         onClick={() => setActiveTab("home")}
                         className={`flex flex-col items-center gap-1 transition-all ${activeTab === "home" ? "text-neon-cyan scale-110" : "text-white/30 hover:text-white/50"}`}
