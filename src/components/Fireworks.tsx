@@ -120,13 +120,12 @@ export default function Fireworks() {
             const hasActivity = rockets.length > 0 || particles.length > 0;
 
             if (hasActivity) {
-                // Stronger clearing to prevent "marks" or ghosting
+                // Aggressive clearing to eliminate "marks" or ghosting
                 ctx.globalCompositeOperation = 'source-over';
-                ctx.globalAlpha = 1.0;
-                ctx.fillStyle = "rgba(0, 0, 0, 0.35)"; // Increased for cleaner fade
+                ctx.fillStyle = "rgba(0, 0, 0, 0.5)"; // Significant increase for zero residue
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
             } else {
-                // Fully reset canvas when nothing is blooming to ensure absolute black
+                // Total wipe when idle
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.fillStyle = "#000000";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -137,15 +136,17 @@ export default function Fireworks() {
                 rockets.push(new Rocket(canvas.width, canvas.height));
             }
 
-            // Draw Rockets first (source-over for solid look)
+            // Draw Rockets
             ctx.globalCompositeOperation = 'source-over';
             rockets = rockets.filter(r => r.alive);
             rockets.forEach(r => {
                 r.update();
+                // Subtly fade the rocket head to reduce trail contrast
+                ctx.globalAlpha = 0.8;
                 r.draw(ctx);
             });
 
-            // Draw Particles (lighter for neon glow effect)
+            // Draw Particles
             ctx.globalCompositeOperation = 'lighter';
             particles = particles.filter(p => p.alpha > 0.01);
             particles.forEach(p => {
