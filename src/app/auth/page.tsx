@@ -6,8 +6,10 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "fire
 import { useAuth } from "@/context/AuthContext";
 import { translations } from "@/lib/translations";
 
+import { getRandomAvatar, getAvatarUrl } from "@/lib/avatars";
+
 export default function AuthPage() {
-    const { language, setLanguage } = useAuth();
+    const { language, setLanguage, updateUserProfile } = useAuth();
     const t = translations[language];
 
     const [isLogin, setIsLogin] = useState(true);
@@ -22,7 +24,11 @@ export default function AuthPage() {
             if (isLogin) {
                 await signInWithEmailAndPassword(auth, email, password);
             } else {
-                await createUserWithEmailAndPassword(auth, email, password);
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                if (userCredential.user) {
+                    const avatar = getRandomAvatar();
+                    await updateUserProfile("Congratss User", getAvatarUrl(avatar));
+                }
             }
         } catch (err: any) {
             setError(err.message);

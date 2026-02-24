@@ -98,9 +98,9 @@ export default function Dashboard() {
         return (
             <header className="px-6 py-4 flex justify-between items-center bg-white/[0.02] backdrop-blur-md border-b border-white/5 pwa-header-spacer">
                 <h1 className="text-2xl font-bold tracking-tight text-white/90">{title}</h1>
-                <div className="w-9 h-9 rounded-full border-2 border-white/20 overflow-hidden shadow-lg">
+                <div className="w-9 h-9 rounded-full border-2 border-white/20 overflow-hidden shadow-lg bg-white/5 flex items-center justify-center">
                     <img
-                        src={user.photoURL || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"}
+                        src={user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || "U")}&background=random&color=fff&size=100`}
                         alt="Profile"
                         className="w-full h-full object-cover"
                     />
@@ -213,9 +213,9 @@ export default function Dashboard() {
                     <div className="flex-1 overflow-y-auto px-8 py-8 scrollbar-hide">
                         {/* Profile Section */}
                         <div className="flex flex-col items-center mb-10 text-center">
-                            <div className="w-24 h-24 rounded-[2rem] border-4 border-white/10 overflow-hidden shadow-2xl mb-4 relative group">
+                            <div className="w-24 h-24 rounded-[2rem] border-4 border-white/10 overflow-hidden shadow-2xl mb-4 relative group bg-white/5 flex items-center justify-center">
                                 <img
-                                    src={user.photoURL || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"}
+                                    src={user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || "U")}&background=random&color=fff&size=256`}
                                     alt="Profile"
                                     className="w-full h-full object-cover"
                                 />
