@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Trash2, Pencil, Image as ImageIcon, Save, X, PlusCircle } from "lucide-react";
 import { cardService, GreetingCard } from "@/lib/cardService";
+import ConfirmModal from "./ConfirmModal";
 
 export default function AdminDashboard() {
     const [cards, setCards] = useState<GreetingCard[]>([]);
@@ -10,6 +11,11 @@ export default function AdminDashboard() {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [formData, setFormData] = useState({ label: "", url: "", category: "Classic" });
     const [loading, setLoading] = useState(false);
+
+    // Confirmation States
+    const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+    const [isRestoreConfirmOpen, setIsRestoreConfirmOpen] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
     useEffect(() => {
         const unsubscribe = cardService.subscribeToCards((data) => {
@@ -45,9 +51,27 @@ export default function AdminDashboard() {
         setIsAdding(true);
     };
 
-    const handleDelete = async (id: string) => {
-        if (confirm("Are you sure you want to delete this card?")) {
-            await cardService.deleteCard(id);
+    const handleDeleteClick = (id: string) => {
+        setItemToDelete(id);
+        setIsDeleteConfirmOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (itemToDelete) {
+            await cardService.deleteCard(itemToDelete);
+            setItemToDelete(null);
+        }
+    };
+
+    const handleRestoreConfirm = async () => {
+        setLoading(true);
+        try {
+            await cardService.seedDefaults();
+            alert("Gallery restored successfully!");
+        } catch (e) {
+            alert("Restoration failed. See console.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -203,7 +227,7 @@ export default function AdminDashboard() {
                                                             <Pencil className="w-4 h-4" />
                                                         </button>
                                                         <button
-                                                            onClick={() => handleDelete(card.id)}
+                                                            onClick={() => handleDeleteClick(card.id)}
                                                             className="p-2 bg-white/10 backdrop-blur-md rounded-lg text-white hover:bg-red-500 transition-all"
                                                         >
                                                             <Trash2 className="w-4 h-4" />
@@ -229,6 +253,24 @@ export default function AdminDashboard() {
                     </p>
                 </div>
             )}
+
+            <ConfirmModal
+                isOpen={isDeleteConfirmOpen}
+                onClose={() => setIsDeleteConfirmOpen(false)}
+                onConfirm={handleConfirmDelete}
+                title="Delete Custom Card?"
+                message="Are you sure you want to remove this greeting card from the public library?"
+            />
+
+            <ConfirmModal
+                isOpen={isRestoreConfirmOpen}
+                onClose={() => setIsRestoreConfirmOpen(false)}
+                onConfirm={handleRestoreConfirm}
+                isDangerous={false}
+                title="Restore Default Gallery?"
+                message="This will add the 12 original Congratss cards back to your library. Existing custom cards will be kept."
+                confirmText="RESTORE NOW"
+            />
         </div>
     );
 }

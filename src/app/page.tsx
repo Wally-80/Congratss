@@ -7,6 +7,7 @@ import AddCelebrationModal from "@/components/AddCelebrationModal";
 import EditProfileModal from "@/components/EditProfileModal";
 import SendGreetingModal from "@/components/SendGreetingModal";
 import AdminDashboard from "@/components/AdminDashboard";
+import ConfirmModal from "@/components/ConfirmModal";
 import { useAuth } from "@/context/AuthContext";
 import { useCelebrations } from "@/hooks/useCelebrations";
 import { translations } from "@/lib/translations";
@@ -26,6 +27,21 @@ export default function Dashboard() {
     const [searchQuery, setSearchQuery] = useState("");
     const [lastScrollTop, setLastScrollTop] = useState(0);
     const [showFab, setShowFab] = useState(true);
+
+    const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+
+    const handleDeleteClick = async (id: string) => {
+        setItemToDelete(id);
+        setIsConfirmDeleteOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (itemToDelete) {
+            await deleteCelebration(itemToDelete);
+            setItemToDelete(null);
+        }
+    };
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -156,7 +172,7 @@ export default function Dashboard() {
                                         rawDate={item.rawDate}
                                         percentage={item.percentage}
                                         type={item.type}
-                                        onDelete={deleteCelebration}
+                                        onDelete={handleDeleteClick}
                                         onEdit={openEditModal}
                                         onSendGreeting={openSendGreetingModal}
                                     />
