@@ -54,7 +54,7 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
-            <div className="glass-pane w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-300">
+            <div className={`glass-pane w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-300 premium-border ${type === "birthday" ? "neon-border-pink" : type === "anniversary" ? "neon-border-cyan" : ""}`}>
                 <button
                     onClick={onClose}
                     className="absolute top-6 right-6 p-2 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors"
@@ -63,17 +63,17 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
                 </button>
 
                 <h2 className="text-2xl font-bold mb-8 text-slate-950 dark:text-white/90">
-                    {initialData ? (language === "es" ? "Editar Celebración" : "Edit Celebration") : (language === "es" ? "Añadir Celebración" : "Add Celebration")}
+                    {initialData ? t.edit_celebration : t.add_celebration}
                 </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
                         <label className="block text-sm font-medium text-black/40 dark:text-white/40 mb-2 uppercase tracking-widest">
-                            {language === "es" ? "Título" : "Title"}
+                            {t.title}
                         </label>
                         <input
                             type="text"
-                            placeholder={language === "es" ? "ej. Cumpleaños de Walter" : "e.g. Walter's Birthday"}
+                            placeholder={t.title_placeholder}
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             className="w-full bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-950 dark:text-white focus:outline-none focus:border-neon-cyan transition-colors shadow-sm"
@@ -83,7 +83,7 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
 
                     <div>
                         <label className="block text-sm font-medium text-black/40 dark:text-white/40 mb-2 uppercase tracking-widest">
-                            {language === "es" ? "Fecha" : "Date"}
+                            {t.date}
                         </label>
                         <input
                             type="date"
@@ -97,7 +97,7 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
 
                     <div>
                         <label className="block text-sm font-medium text-black/40 dark:text-white/40 mb-4 uppercase tracking-widest">
-                            {language === "es" ? "Tipo de Evento" : "Event Type"}
+                            {t.event_type}
                         </label>
                         <div className="grid grid-cols-3 gap-4">
                             <button
@@ -107,7 +107,7 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
                             >
                                 <Gift className="w-6 h-6" />
                                 <span className="text-[10px] font-bold uppercase tracking-tighter">
-                                    {language === "es" ? "Cumple" : "Birthday"}
+                                    {t.birthday}
                                 </span>
                             </button>
                             <button
@@ -117,7 +117,7 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
                             >
                                 <Heart className="w-6 h-6" />
                                 <span className="text-[10px] font-bold uppercase tracking-tighter">
-                                    {language === "es" ? "Aniv." : "Anniv."}
+                                    {t.anniversary}
                                 </span>
                             </button>
                             <button
@@ -127,7 +127,7 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
                             >
                                 <User className="w-6 h-6" />
                                 <span className="text-[10px] font-bold uppercase tracking-tighter">
-                                    {language === "es" ? "Retiro" : "Retire."}
+                                    {t.retirement}
                                 </span>
                             </button>
                         </div>
@@ -138,7 +138,7 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
                         disabled={isSubmitting}
                         className="w-full bg-slate-900 dark:bg-white text-white dark:text-black font-bold py-5 rounded-2xl hover:scale-[1.02] transition-transform active:scale-[0.98] disabled:opacity-50 disabled:scale-100 mt-8 shadow-neon-sm dark:shadow-none"
                     >
-                        {isSubmitting ? (language === "es" ? "Procesando..." : "Processing...") : (initialData ? (language === "es" ? "Actualizar" : "Update") : (language === "es" ? "Guardar" : "Save"))}
+                        {isSubmitting ? t.processing : (initialData ? t.update : t.save)}
                     </button>
                 </form>
             </div>

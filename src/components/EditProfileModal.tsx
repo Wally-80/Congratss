@@ -44,7 +44,7 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
             await onUpdate(displayName, photoURL);
             onClose();
         } catch (err: any) {
-            setError(err.message || "Failed to update profile");
+            setError(err.message || (language === "es" ? "Error al actualizar el perfil" : "Failed to update profile"));
         } finally {
             setIsSubmitting(false);
         }
@@ -54,7 +54,7 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-            <div className="glass-pane w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto scrollbar-hide">
+            <div className="glass-pane w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto scrollbar-hide premium-border neon-border-cyan">
                 <button
                     onClick={onClose}
                     className="absolute top-6 right-6 p-2 text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors"
@@ -83,7 +83,7 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
 
                     <div className="space-y-3">
                         <label className="text-[10px] font-bold text-[var(--app-text-muted)] uppercase tracking-widest ml-1">
-                            {language === "es" ? "Elige un Avatar" : "Choose an Avatar"}
+                            {t.choose_avatar}
                         </label>
                         <div className="grid grid-cols-6 gap-2 p-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl">
                             {DEFAULT_AVATARS.slice(0, 18).map((emoji) => {
@@ -105,7 +105,7 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
 
                     <div className="space-y-2">
                         <label className="text-[10px] font-bold text-[var(--app-text-muted)] uppercase tracking-widest ml-1">
-                            {language === "es" ? "Nombre a mostrar" : "Display Name"}
+                            {t.display_name}
                         </label>
                         <div className="relative">
                             <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40 dark:text-white/40" />
@@ -114,7 +114,7 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
                                 value={displayName}
                                 onChange={(e) => setDisplayName(e.target.value)}
                                 className="w-full bg-[var(--app-bg)] border border-[var(--glass-border)] rounded-2xl py-4 pl-12 pr-4 text-[var(--app-text)] placeholder:text-[var(--app-text-muted)] focus:outline-none focus:border-cyan-400/50 transition-colors"
-                                placeholder={language === "es" ? "Tu Nombre" : "Your Name"}
+                                placeholder={t.your_name}
                                 required
                             />
                         </div>
@@ -122,7 +122,7 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
 
                     <div className="space-y-2">
                         <label className="text-[10px] font-bold text-[var(--app-text-muted)] uppercase tracking-widest ml-1">
-                            {language === "es" ? "O usa una URL de foto" : "Or use a Photo URL"}
+                            {t.photo_url_label}
                         </label>
                         <div className="relative">
                             <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40 dark:text-white/40" />
@@ -144,9 +144,9 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
                         {isSubmitting ? (
                             <>
                                 <Loader2 className="w-5 h-5 animate-spin" />
-                                {language === "es" ? "Guardando..." : "Saving..."}
+                                {t.saving}
                             </>
-                        ) : (language === "es" ? "Guardar Cambios" : "Save Changes")}
+                        ) : t.save_changes}
                     </button>
                 </form>
             </div>

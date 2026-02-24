@@ -38,7 +38,7 @@ export default function ConfirmModal({
                 onClick={onClose}
             />
 
-            <div className="glass-pane w-full max-w-sm p-8 relative animate-in fade-in zoom-in duration-300 shadow-2xl premium-border">
+            <div className={`glass-pane w-full max-w-sm p-8 relative animate-in fade-in zoom-in duration-300 shadow-2xl premium-border ${isDangerous ? "neon-border-red" : "neon-border-cyan"}`}>
                 <button
                     onClick={onClose}
                     className="absolute top-6 right-6 p-2 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-opacity"
@@ -52,11 +52,11 @@ export default function ConfirmModal({
                     </div>
 
                     <h3 className="text-xl font-bold mb-2 text-slate-950 dark:text-white">
-                        {title || (language === "es" ? "¿Estás seguro?" : "Are you sure?")}
+                        {title || t.are_you_sure}
                     </h3>
 
                     <p className="text-sm text-black/50 dark:text-white/50 leading-relaxed mb-8">
-                        {message || (language === "es" ? "Esta acción es permanente y no se puede deshacer." : "This action is permanent and cannot be undone.")}
+                        {message || t.permanent_action}
                     </p>
 
                     <div className="flex flex-col w-full gap-3">
@@ -70,14 +70,14 @@ export default function ConfirmModal({
                                 : "bg-cyan-400 text-black shadow-neon hover:brightness-110"
                                 }`}
                         >
-                            {confirmText || (language === "es" ? "SÍ, ELIMINAR" : "YES, DELETE")}
+                            {confirmText || t.yes_delete}
                         </button>
 
                         <button
                             onClick={onClose}
                             className="w-full py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest text-black/40 dark:text-white/40 hover:text-black/100 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all"
                         >
-                            {cancelText || (language === "es" ? "CANCELAR" : "CANCEL")}
+                            {cancelText || t.cancel}
                         </button>
                     </div>
                 </div>

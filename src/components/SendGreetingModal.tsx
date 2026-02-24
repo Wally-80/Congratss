@@ -73,7 +73,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
             setError(null);
         }, (err) => {
             console.error("Modal cards error:", err);
-            setError(err.message || "Error");
+            setError(err.message || t.connection_error);
             setLoadingCards(false);
         });
 
@@ -180,13 +180,13 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center sm:p-4 bg-black/60 backdrop-blur-sm">
-            <div className="glass-pane w-full h-full sm:h-auto sm:max-w-md sm:max-h-[90vh] overflow-y-auto flex flex-col relative animate-in fade-in zoom-in duration-300">
+            <div className={`glass-pane w-full h-full sm:h-auto sm:max-w-md sm:max-h-[90vh] overflow-y-auto flex flex-col relative animate-in fade-in zoom-in duration-300 premium-border ${celebration?.type === "birthday" ? "neon-border-pink" : celebration?.type === "anniversary" ? "neon-border-cyan" : "neon-border-cyan"}`}>
                 {/* Header */}
                 <div className="p-6 border-b border-black/5 dark:border-white/10 flex justify-between items-center sticky top-0 bg-[var(--pane-bg)] backdrop-blur-md z-10">
                     <div>
                         <h2 className="text-xl font-bold text-[var(--app-text)] uppercase tracking-tight">{t.pick_and_send}</h2>
                         <p className="text-xs text-[var(--app-text-dim)]">
-                            {celebration ? (language === "es" ? `Felicitación para ${celebration.title}` : `Greeting for ${celebration.title}`) : (language === "es" ? "Comparte con cualquiera" : "Share with anyone")}
+                            {celebration ? `${t.greeting_for} ${celebration.title}` : t.share_with_anyone}
                         </p>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors">
@@ -209,7 +209,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                                             : "text-[var(--app-text-dim)] border-[var(--glass-border)] hover:text-[var(--app-text)] bg-black/5 dark:bg-white/5"
                                             }`}
                                     >
-                                        {cat === "All" && language === "es" ? "Todos" : cat}
+                                        {cat === "All" ? (language === "es" ? "Todos" : "All") : cat}
                                     </button>
                                 ))}
                             </div>
@@ -218,25 +218,23 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                         {loadingCards ? (
                             <div className="flex flex-col items-center justify-center py-10 opacity-30">
                                 <RefreshCw className="w-8 h-8 animate-spin mb-2" />
-                                <p className="text-[10px] uppercase font-bold tracking-widest">{language === "es" ? "Obteniendo Galería..." : "Fetching Library..."}</p>
+                                <p className="text-[10px] uppercase font-bold tracking-widest">{t.fetching_library}</p>
                             </div>
                         ) : error ? (
                             <div className="py-10 text-center text-red-400">
-                                <p className="text-xs font-bold mb-2 uppercase tracking-widest">{language === "es" ? "Error de conexión" : "Connection Error"}</p>
-                                <button onClick={() => window.location.reload()} className="text-[10px] uppercase underline opacity-60">Retry</button>
+                                <p className="text-xs font-bold mb-2 uppercase tracking-widest">{t.connection_error}</p>
+                                <button onClick={() => window.location.reload()} className="text-[10px] uppercase underline opacity-60">{language === "es" ? "Reintentar" : "Retry"}</button>
                             </div>
                         ) : filteredImages.length === 0 ? (
                             <div className="py-20 text-center opacity-30 flex flex-col items-center gap-3">
                                 <p className="text-xs uppercase font-bold tracking-widest">
-                                    {language === "es" ? "No hay tarjetas disponibles" : "No cards in this category"}
+                                    {t.no_cards_available}
                                 </p>
                                 <p className="text-[9px] max-w-[200px] leading-relaxed">
-                                    {language === "es"
-                                        ? "Verifica tu conexión o añade tarjetas en el Admin."
-                                        : "Check your connection or add cards in the Admin Console."}
+                                    {t.check_connection_admin}
                                 </p>
                                 <button onClick={() => window.location.reload()} className="px-4 py-2 border border-white/10 rounded-lg text-[9px] uppercase font-bold hover:bg-white/5">
-                                    Force Refresh
+                                    {language === "es" ? "Forzar Actualización" : "Force Refresh"}
                                 </button>
                                 <div className="text-[8px] opacity-20 mt-2">Cards found: {greetingCards.length}</div>
                             </div>
@@ -301,7 +299,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                             className="w-full py-4 rounded-2xl bg-cyan-400 text-black font-bold text-sm flex items-center justify-center gap-3 hover:brightness-110 active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(0,242,255,0.4)] disabled:opacity-50"
                         >
                             <Send className="w-5 h-5 flex-shrink-0" />
-                            {sharing ? (language === "es" ? "Compartiendo..." : "Sharing...") : t.share_with_device}
+                            {sharing ? t.sharing : t.share_with_device}
                         </button>
                     </div>
 
@@ -350,12 +348,10 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                     </div>
 
                     <h2 className="text-2xl font-black text-[var(--app-text)] uppercase tracking-tighter italic">
-                        {language === "es" ? "Elige y Envía" : "Pick & Send"}
+                        {t.pick_and_send}
                     </h2>
                     <p className="text-[var(--app-text-muted)] text-center italic text-[9px]">
-                        {language === "es"
-                            ? "Tip: En móvil, 'Compartir' envía la imagen. En PC, usa 'Guardar' para adjuntarla."
-                            : "Tip: On mobile, 'Share with Device' sends the image. On desktop, use 'Save Card' to attach it."}
+                        {t.share_tip}
                     </p>
                 </div>
             </div>
