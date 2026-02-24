@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { translations } from "@/lib/translations";
 
 import { getRandomAvatar, getAvatarUrl } from "@/lib/avatars";
+import Logo from "@/components/Logo";
 
 export default function AuthPage() {
     const { language, setLanguage, updateUserProfile } = useAuth();
@@ -42,36 +43,10 @@ export default function AuthPage() {
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-neon-cyan/5 blur-[80px] rounded-full" />
                 <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-neon-pink/5 blur-[80px] rounded-full" />
 
-                {/* Language Switcher */}
-                <div className="absolute top-4 sm:top-6 right-6 sm:right-8 flex gap-3 z-50">
-                    <button
-                        onClick={() => setLanguage("en")}
-                        className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 px-2 py-1 ${language === "en" ? "text-neon-cyan shadow-neon-sm" : "text-[var(--app-text-dim)]/50 dark:text-white/20 hover:text-[var(--app-text)]"}`}
-                    >
-                        EN
-                    </button>
-                    <span className="text-[var(--app-text-dim)]/20 dark:text-white/10 text-[10px] self-center">|</span>
-                    <button
-                        onClick={() => setLanguage("es")}
-                        className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 px-2 py-1 ${language === "es" ? "text-neon-cyan shadow-neon-sm" : "text-[var(--app-text-dim)]/50 dark:text-white/20 hover:text-[var(--app-text)]"}`}
-                    >
-                        ES
-                    </button>
-                </div>
 
-                <div className="flex flex-col items-center gap-4 mb-8 sm:mb-10 z-10">
-                    <div className="group relative">
-                        <div className="absolute inset-0 bg-neon-cyan/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                        <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-[1.5rem] sm:rounded-[2rem] bg-white text-black shadow-2xl overflow-hidden relative z-10 border-2 border-white/20 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-3">
-                            <img src="/logo.png" className="h-full w-full object-cover" alt="Congratss Logo" />
-                        </div>
-                    </div>
-                    <div className="text-center">
-                        <h1 className="text-4xl sm:text-5xl font-black tracking-tighter italic text-[var(--app-text)] mb-1 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">Congratss</h1>
-                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[var(--app-text-muted)]">
-                            {isLogin ? t.welcome_back : t.create_account}
-                        </p>
-                    </div>
+
+                <div className="z-10 mb-8">
+                    <Logo size="lg" className="mb-4" />
                 </div>
 
                 {error && (
@@ -114,15 +89,33 @@ export default function AuthPage() {
                     </button>
                 </form>
 
-                <p className="mt-10 text-center text-[var(--app-text-dim)]/60 text-xs font-medium z-10">
-                    {isLogin ? t.dont_have_account : t.already_have_account}{" "}
-                    <button
-                        onClick={() => setIsLogin(!isLogin)}
-                        className="text-cyan-600 dark:text-neon-cyan hover:text-[var(--app-text)] transition-colors duration-300 font-black uppercase tracking-widest text-[10px] ml-1"
-                    >
-                        {isLogin ? t.sign_up : t.sign_in}
-                    </button>
-                </p>
+                <div className="mt-8 pt-6 border-t border-white/5 flex flex-col items-center gap-4 w-full z-10">
+                    <p className="text-center text-[var(--app-text-dim)]/60 text-xs font-medium">
+                        {isLogin ? t.dont_have_account : t.already_have_account}{" "}
+                        <button
+                            onClick={() => setIsLogin(!isLogin)}
+                            className="text-cyan-600 dark:text-neon-cyan hover:text-[var(--app-text)] transition-colors duration-300 font-black uppercase tracking-widest text-[10px] ml-1"
+                        >
+                            {isLogin ? t.sign_up : t.sign_in}
+                        </button>
+                    </p>
+
+                    <div className="flex gap-4">
+                        <button
+                            onClick={() => setLanguage("en")}
+                            className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${language === "en" ? "text-neon-cyan shadow-neon-sm" : "text-[var(--app-text-dim)]/40 hover:text-[var(--app-text)]"}`}
+                        >
+                            English
+                        </button>
+                        <span className="text-[var(--app-text-dim)]/10 text-[10px]">|</span>
+                        <button
+                            onClick={() => setLanguage("es")}
+                            className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${language === "es" ? "text-neon-cyan shadow-neon-sm" : "text-[var(--app-text-dim)]/40 hover:text-[var(--app-text)]"}`}
+                        >
+                            Español
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     );

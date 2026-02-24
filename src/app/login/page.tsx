@@ -7,13 +7,14 @@ import { Gift, Mail, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { translations } from '@/lib/translations';
+import Logo from '@/components/Logo';
 
 export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const router = useRouter();
-    const { language } = useAuth();
+    const { language, setLanguage } = useAuth();
     const t = translations[language];
 
     const handleGoogleLogin = async () => {
@@ -47,36 +48,9 @@ export default function LoginPage() {
     return (
         <div className="min-h-[100dvh] flex items-center justify-center p-6 bg-background">
             <div className="glass w-full max-w-sm rounded-[3rem] p-10 shadow-2xl text-center space-y-8 animate-in fade-in zoom-in duration-700 bg-black/40 border border-white/10 ring-1 ring-neon-cyan/20 relative">
-                {/* Language Switcher */}
-                <div className="absolute top-4 sm:top-6 right-6 sm:right-8 flex gap-3 z-50">
-                    <button
-                        onClick={() => { }} // Integration with useAuth if needed, but LoginPage already has 'language' from context
-                        className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 px-2 py-1 ${language === "en" ? "text-neon-cyan shadow-neon-sm" : "text-muted-foreground/50 hover:text-white"}`}
-                    >
-                        EN
-                    </button>
-                    <span className="text-white/10 text-[10px] self-center">|</span>
-                    <button
-                        onClick={() => { }} // Mocked for now since AuthContext provides it
-                        className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 px-2 py-1 ${language === "es" ? "text-neon-cyan shadow-neon-sm" : "text-muted-foreground/50 hover:text-white"}`}
-                    >
-                        ES
-                    </button>
-                </div>
 
-                <div className="flex flex-col items-center">
-                    <div className="flex h-16 w-16 sm:h-24 sm:w-24 items-center justify-center rounded-[1.5rem] sm:rounded-[2rem] bg-white text-black ring-4 ring-neon-cyan shadow-neon-cyan-sm overflow-hidden mb-8 sm:mb-12">
-                        <img src="/logo.png" className="h-full w-full object-cover" alt="Congratss Logo" />
-                    </div>
 
-                    <div className="inline-flex items-center px-4 py-1 rounded-full bg-neon-cyan/10 border border-neon-cyan/30 text-[10px] font-bold uppercase tracking-[0.4em] text-neon-cyan mb-6">
-                        {t.welcome_back}
-                    </div>
-
-                    <h1 className="text-5xl sm:text-7xl font-black tracking-tighter italic leading-none text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-                        Congratss
-                    </h1>
-                </div>
+                <Logo size="xl" className="mb-4" />
 
                 <div className="space-y-4 pt-8">
                     <button
@@ -125,7 +99,7 @@ export default function LoginPage() {
                     {t.terms_privacy}
                 </p>
 
-                <div className="pt-4 border-t border-white/5">
+                <div className="pt-4 border-t border-white/5 flex flex-col items-center gap-4">
                     <p className="text-xs text-muted-foreground">
                         {language === 'es' ? '¿no tienes cuenta?' : "don't have an account?"} {' '}
                         <button
@@ -135,6 +109,22 @@ export default function LoginPage() {
                             {language === 'es' ? 'REGÍSTRATE' : 'SIGN UP'}
                         </button>
                     </p>
+
+                    <div className="flex gap-4">
+                        <button
+                            onClick={() => setLanguage("en")}
+                            className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${language === "en" ? "text-neon-cyan shadow-neon-sm" : "text-muted-foreground/40 hover:text-white"}`}
+                        >
+                            English
+                        </button>
+                        <span className="text-white/10 text-[10px]">|</span>
+                        <button
+                            onClick={() => setLanguage("es")}
+                            className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${language === "es" ? "text-neon-cyan shadow-neon-sm" : "text-muted-foreground/40 hover:text-white"}`}
+                        >
+                            Español
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

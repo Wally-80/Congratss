@@ -1,7 +1,7 @@
 {
-    "name": "Congratss.com",
+    "name": "Congratss",
     "short_name": "Congratss",
-    "description": "Celebrate every moment with Congratss.com",
+    "description": "Celebrate every moment with Congratss",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#0a0a1a",
