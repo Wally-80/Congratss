@@ -46,14 +46,14 @@ export default function AuthPage() {
                 <div className="absolute top-6 right-8 flex gap-3">
                     <button
                         onClick={() => setLanguage("en")}
-                        className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${language === "en" ? "text-neon-cyan shadow-neon-sm" : "text-white/20 hover:text-white/40"}`}
+                        className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${language === "en" ? "text-neon-cyan shadow-neon-sm" : "text-[var(--app-text-dim)]/50 dark:text-white/20 hover:text-[var(--app-text)]"}`}
                     >
                         EN
                     </button>
-                    <span className="text-white/10 text-[10px]">|</span>
+                    <span className="text-[var(--app-text-dim)]/20 dark:text-white/10 text-[10px]">|</span>
                     <button
                         onClick={() => setLanguage("es")}
-                        className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${language === "es" ? "text-neon-cyan shadow-neon-sm" : "text-white/20 hover:text-white/40"}`}
+                        className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${language === "es" ? "text-neon-cyan shadow-neon-sm" : "text-[var(--app-text-dim)]/50 dark:text-white/20 hover:text-[var(--app-text)]"}`}
                     >
                         ES
                     </button>
@@ -67,8 +67,8 @@ export default function AuthPage() {
                         </div>
                     </div>
                     <div className="text-center">
-                        <h1 className="text-5xl font-black tracking-tighter italic text-white mb-1 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">Congratss</h1>
-                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">
+                        <h1 className="text-5xl font-black tracking-tighter italic text-[var(--app-text)] mb-1 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">Congratss</h1>
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[var(--app-text-muted)]">
                             {isLogin ? t.welcome_back : t.create_account}
                         </p>
                     </div>
@@ -82,23 +82,23 @@ export default function AuthPage() {
 
                 <form onSubmit={handleSubmit} className="w-full space-y-5 z-10">
                     <div className="space-y-2">
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">{t.email}</label>
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--app-text-dim)] ml-2">{t.email}</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 px-5 text-sm text-white focus:outline-none focus:border-neon-cyan/50 focus:bg-white/[0.05] transition-all duration-300"
+                            className="w-full bg-[var(--app-bg)] border border-[var(--glass-border)] rounded-2xl py-4 px-5 text-sm text-[var(--app-text)] focus:outline-none focus:border-neon-cyan/50 focus:bg-white/10 dark:focus:bg-white/[0.05] transition-all duration-300 shadow-inner"
                             placeholder="your@email.com"
                             required
                         />
                     </div>
                     <div className="space-y-2">
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">{t.password}</label>
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--app-text-dim)] ml-2">{t.password}</label>
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 px-5 text-sm text-white focus:outline-none focus:border-neon-cyan/50 focus:bg-white/[0.05] transition-all duration-300"
+                            className="w-full bg-[var(--app-bg)] border border-[var(--glass-border)] rounded-2xl py-4 px-5 text-sm text-[var(--app-text)] focus:outline-none focus:border-neon-cyan/50 focus:bg-white/10 dark:focus:bg-white/[0.05] transition-all duration-300 shadow-inner"
                             placeholder="••••••••"
                             required
                         />
@@ -108,17 +108,17 @@ export default function AuthPage() {
                         className="w-full relative group"
                     >
                         <div className="absolute inset-0 bg-neon-cyan blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-2xl" />
-                        <div className="relative bg-white text-black font-black py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-neon-cyan transition-all duration-300 active:scale-[0.98]">
+                        <div className="relative bg-black dark:bg-white text-white dark:text-black font-black py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-neon-cyan transition-all duration-300 active:scale-[0.98]">
                             <span className="uppercase tracking-widest text-xs">{isLogin ? t.sign_in : t.sign_up}</span>
                         </div>
                     </button>
                 </form>
 
-                <p className="mt-10 text-center text-white/40 text-xs font-medium z-10">
+                <p className="mt-10 text-center text-[var(--app-text-dim)]/60 text-xs font-medium z-10">
                     {isLogin ? t.dont_have_account : t.already_have_account}{" "}
                     <button
                         onClick={() => setIsLogin(!isLogin)}
-                        className="text-neon-cyan hover:text-white transition-colors duration-300 font-black uppercase tracking-widest text-[10px] ml-1"
+                        className="text-cyan-600 dark:text-neon-cyan hover:text-[var(--app-text)] transition-colors duration-300 font-black uppercase tracking-widest text-[10px] ml-1"
                     >
                         {isLogin ? t.sign_up : t.sign_in}
                     </button>

@@ -19,9 +19,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         if (savedTheme) {
             setTheme(savedTheme);
             document.documentElement.classList.toggle("light-mode", savedTheme === "light");
+            document.documentElement.classList.toggle("dark", savedTheme === "dark");
         } else if (window.matchMedia("(prefers-color-scheme: light)").matches) {
             setTheme("light");
             document.documentElement.classList.add("light-mode");
+            document.documentElement.classList.remove("dark");
+        } else {
+            document.documentElement.classList.add("dark");
         }
     }, []);
 
@@ -30,6 +34,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         setTheme(newTheme);
         localStorage.setItem("app-theme", newTheme);
         document.documentElement.classList.toggle("light-mode", newTheme === "light");
+        document.documentElement.classList.toggle("dark", newTheme === "dark");
     };
 
     return (

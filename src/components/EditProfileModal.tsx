@@ -57,12 +57,12 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
             <div className="glass-pane w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto scrollbar-hide">
                 <button
                     onClick={onClose}
-                    className="absolute top-6 right-6 p-2 text-white/40 hover:text-white transition-colors"
+                    className="absolute top-6 right-6 p-2 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors"
                 >
                     <X className="w-5 h-5" />
                 </button>
 
-                <h2 className="text-2xl font-bold mb-8 text-white/90">{t.edit_profile}</h2>
+                <h2 className="text-2xl font-bold mb-8 text-slate-950 dark:text-white/90">{t.edit_profile}</h2>
 
                 {error && (
                     <div className="mb-6 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm">
@@ -72,7 +72,7 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="flex flex-col items-center mb-6">
-                        <div className="w-24 h-24 rounded-[2rem] border-4 border-white/10 overflow-hidden mb-4 shadow-2xl relative group bg-white/5 flex items-center justify-center">
+                        <div className="w-24 h-24 rounded-[2rem] border-4 border-black/10 dark:border-white/10 overflow-hidden mb-4 shadow-2xl relative group bg-black/5 dark:bg-white/5 flex items-center justify-center">
                             <img
                                 src={photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName || "U")}&background=random&color=fff&size=256`}
                                 alt="Profile Preview"
@@ -82,10 +82,10 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
                     </div>
 
                     <div className="space-y-3">
-                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest ml-1">
+                        <label className="text-[10px] font-bold text-black/40 dark:text-white/40 uppercase tracking-widest ml-1">
                             {language === "es" ? "Elige un Avatar" : "Choose an Avatar"}
                         </label>
-                        <div className="grid grid-cols-6 gap-2 p-3 bg-white/5 border border-white/10 rounded-2xl">
+                        <div className="grid grid-cols-6 gap-2 p-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl">
                             {DEFAULT_AVATARS.slice(0, 18).map((emoji) => {
                                 const url = getAvatarUrl(emoji);
                                 const isSelected = photoURL === url;
@@ -94,7 +94,7 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
                                         key={emoji}
                                         type="button"
                                         onClick={() => setPhotoURL(url)}
-                                        className={`text-2xl p-2 rounded-xl transition-all hover:bg-white/10 ${isSelected ? "bg-cyan-400/20 border-2 border-cyan-400 scale-110" : "border-2 border-transparent"}`}
+                                        className={`text-2xl p-2 rounded-xl transition-all hover:bg-black/10 dark:hover:bg-white/10 ${isSelected ? "bg-cyan-400/20 border-2 border-cyan-400 scale-110" : "border-2 border-transparent"}`}
                                     >
                                         {emoji}
                                     </button>
@@ -104,16 +104,16 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest ml-1">
+                        <label className="text-[10px] font-bold text-black/40 dark:text-white/40 uppercase tracking-widest ml-1">
                             {language === "es" ? "Nombre a mostrar" : "Display Name"}
                         </label>
                         <div className="relative">
-                            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40 dark:text-white/40" />
                             <input
                                 type="text"
                                 value={displayName}
                                 onChange={(e) => setDisplayName(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-cyan-400/50 transition-colors"
+                                className="w-full bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl py-4 pl-12 pr-4 text-slate-950 dark:text-white placeholder:text-black/20 dark:placeholder:text-white/20 focus:outline-none focus:border-cyan-400/50 transition-colors"
                                 placeholder={language === "es" ? "Tu Nombre" : "Your Name"}
                                 required
                             />
@@ -121,16 +121,16 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest ml-1">
+                        <label className="text-[10px] font-bold text-black/40 dark:text-white/40 uppercase tracking-widest ml-1">
                             {language === "es" ? "O usa una URL de foto" : "Or use a Photo URL"}
                         </label>
                         <div className="relative">
-                            <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                            <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40 dark:text-white/40" />
                             <input
                                 type="url"
                                 value={photoURL}
                                 onChange={(e) => setPhotoURL(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-cyan-400/50 transition-colors text-xs"
+                                className="w-full bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl py-4 pl-12 pr-4 text-slate-950 dark:text-white placeholder:text-black/20 dark:placeholder:text-white/20 focus:outline-none focus:border-cyan-400/50 transition-colors text-xs"
                                 placeholder="https://example.com/photo.jpg"
                             />
                         </div>

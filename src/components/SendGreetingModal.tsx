@@ -182,15 +182,15 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
         <div className="fixed inset-0 z-[100] flex items-center justify-center sm:p-4 bg-black/60 backdrop-blur-sm">
             <div className="glass-pane w-full h-full sm:h-auto sm:max-w-md sm:max-h-[90vh] overflow-y-auto flex flex-col relative animate-in fade-in zoom-in duration-300">
                 {/* Header */}
-                <div className="p-6 border-b border-white/10 flex justify-between items-center sticky top-0 bg-[#0a0a1a]/80 backdrop-blur-md z-10">
+                <div className="p-6 border-b border-black/5 dark:border-white/10 flex justify-between items-center sticky top-0 bg-[var(--pane-bg)] backdrop-blur-md z-10">
                     <div>
-                        <h2 className="text-xl font-bold text-white uppercase tracking-tight">{t.pick_and_send}</h2>
-                        <p className="text-xs text-white/40">
+                        <h2 className="text-xl font-bold text-[var(--app-text)] uppercase tracking-tight">{t.pick_and_send}</h2>
+                        <p className="text-xs text-[var(--app-text-dim)]">
                             {celebration ? (language === "es" ? `Felicitación para ${celebration.title}` : `Greeting for ${celebration.title}`) : (language === "es" ? "Comparte con cualquiera" : "Share with anyone")}
                         </p>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-                        <X className="w-5 h-5 text-white/60" />
+                    <button onClick={onClose} className="p-2 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors">
+                        <X className="w-5 h-5 text-[var(--app-text-dim)]" />
                     </button>
                 </div>
 
@@ -198,7 +198,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                     {/* Image Selection with Category Tabs */}
                     <div>
                         <div className="flex flex-col gap-3 mb-3">
-                            <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest block">{t.select_card}</label>
+                            <label className="text-[10px] font-bold text-[var(--app-text-dim)] uppercase tracking-widest block">{t.select_card}</label>
                             <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
                                 {categories.map((cat) => (
                                     <button
@@ -206,7 +206,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                                         onClick={() => setActiveCategory(cat)}
                                         className={`px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase transition-all whitespace-nowrap border ${activeCategory === cat
                                             ? "bg-cyan-400 text-black border-cyan-400 shadow-neon"
-                                            : "text-white/40 border-white/5 hover:text-white/70 bg-white/5"
+                                            : "text-[var(--app-text-dim)] border-black/10 dark:border-white/10 hover:text-[var(--app-text)] bg-black/5 dark:bg-white/5"
                                             }`}
                                     >
                                         {cat === "All" && language === "es" ? "Todos" : cat}
@@ -246,7 +246,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                                     <button
                                         key={img.id}
                                         onClick={() => setSelectedImageId(img.id)}
-                                        className={`relative flex-shrink-0 w-32 h-32 rounded-xl overflow-hidden border-2 transition-all ${selectedImageId === img.id ? "border-cyan-400 scale-105 shadow-neon-sm" : "border-white/10 opacity-60 grayscale-[0.3]"
+                                        className={`relative flex-shrink-0 w-32 h-32 rounded-xl overflow-hidden border-2 transition-all ${selectedImageId === img.id ? "border-cyan-400 scale-105 shadow-neon-sm" : "border-black/10 dark:border-white/10 opacity-60 grayscale-[0.3]"
                                             }`}
                                     >
                                         <img src={img.url} alt={img.label} className="w-full h-full object-cover" />
@@ -268,13 +268,13 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
 
                     {/* Pre-designed Messages */}
                     <div>
-                        <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-3 block">{t.quick_messages}</label>
+                        <label className="text-[10px] font-bold text-[var(--app-text-dim)] uppercase tracking-widest mb-3 block">{t.quick_messages}</label>
                         <div className="flex flex-wrap gap-2">
                             {templates.map((tmp, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => handleTemplateSelect(tmp)}
-                                    className="text-left px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-[11px] text-white/70 hover:bg-white/10 hover:border-white/20 transition-all active:scale-95"
+                                    className="text-left px-3 py-2 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[11px] text-[var(--app-text-dim)] hover:bg-black/10 dark:hover:bg-white/10 hover:border-black/20 dark:hover:border-white/20 transition-all active:scale-95"
                                 >
                                     {tmp.split('!')[0]}!
                                 </button>
@@ -284,12 +284,12 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
 
                     {/* Custom Message */}
                     <div>
-                        <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-3 block">{t.personalize}</label>
+                        <label className="text-[10px] font-bold text-[var(--app-text-dim)] uppercase tracking-widest mb-3 block">{t.personalize}</label>
                         <textarea
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
                             placeholder={language === "es" ? "Añade tus propias palabras..." : "Add your own special words here..."}
-                            className="w-full h-28 bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white focus:outline-none focus:border-cyan-400/50 transition-all resize-none shadow-inner"
+                            className="w-full h-28 bg-[var(--app-bg)] border border-[var(--glass-border)] rounded-2xl p-4 text-sm text-[var(--app-text)] focus:outline-none focus:border-cyan-400/50 transition-all resize-none shadow-inner"
                         />
                     </div>
 
@@ -334,7 +334,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                         <button
                             onClick={handleCopyLink}
                             disabled={!selectedImage}
-                            className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 transition-all disabled:opacity-30"
+                            className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[var(--app-text-dim)] hover:bg-black/10 dark:hover:bg-white/10 transition-all disabled:opacity-30"
                         >
                             <Check className="w-4 h-4" />
                             <span className="text-[10px] font-bold">{t.copy_link}</span>
@@ -349,7 +349,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                         </button>
                     </div>
 
-                    <p className="text-[9px] text-white/20 text-center italic">
+                    <p className="text-[9px] text-black/20 dark:text-white/20 text-center italic">
                         {language === "es"
                             ? "Tip: En móvil, 'Compartir' envía la imagen. En PC, usa 'Guardar' para adjuntarla."
                             : "Tip: On mobile, 'Share with Device' sends the image. On desktop, use 'Save Card' to attach it."}

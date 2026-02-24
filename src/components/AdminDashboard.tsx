@@ -86,8 +86,8 @@ export default function AdminDashboard() {
             {/* Action Bar */}
             <div className="px-6 py-4 border-b border-white/10 dark:border-white/10 flex justify-between items-center bg-[var(--pane-bg)]">
                 <div className="hidden sm:block">
-                    <h2 className="text-xl font-bold tracking-tight">Admin Console</h2>
-                    <p className="text-[10px] opacity-40 uppercase tracking-widest">Library Management</p>
+                    <h2 className="text-xl font-bold tracking-tight text-[var(--app-text)]">Admin Console</h2>
+                    <p className="text-[10px] text-[var(--app-text-dim)] uppercase tracking-widest">Library Management</p>
                 </div>
                 {!isAdding && (
                     <div className="flex gap-2">
@@ -105,7 +105,7 @@ export default function AdminDashboard() {
                                     }
                                 }
                             }}
-                            className="flex items-center gap-2 px-4 py-2 bg-white/5 text-white/40 border border-white/10 rounded-xl font-bold text-xs hover:bg-white/10 hover:text-white transition-all"
+                            className="flex items-center gap-2 px-4 py-2 bg-black/5 dark:bg-white/5 text-[var(--app-text-dim)] border border-black/10 dark:border-white/10 rounded-xl font-bold text-xs hover:bg-black/10 dark:hover:bg-white/10 hover:text-[var(--app-text)] transition-all"
                         >
                             Restore Defaults
                         </button>
@@ -125,41 +125,41 @@ export default function AdminDashboard() {
                 {isAdding ? (
                     <div className="glass-card p-6 animate-in fade-in slide-in-from-top-4 duration-300">
                         <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-lg font-bold text-white/90">
+                            <h3 className="text-lg font-bold text-[var(--app-text)]">
                                 {editingId ? "Edit Card" : "Build New Card"}
                             </h3>
-                            <button onClick={cancel} className="text-white/40 hover:text-white">
+                            <button onClick={cancel} className="text-[var(--app-text-muted)] hover:text-[var(--app-text)]">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest block mb-1.5 ml-1">Card Label</label>
+                                <label className="text-[10px] font-bold text-[var(--app-text-dim)] uppercase tracking-widest block mb-1.5 ml-1">Card Label</label>
                                 <input
                                     type="text"
                                     required
                                     value={formData.label}
                                     onChange={(e) => setFormData({ ...formData, label: e.target.value })}
                                     placeholder="e.g. Birthday Magic"
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-400 transition-all"
+                                    className="w-full bg-[var(--app-bg)] border border-[var(--glass-border)] rounded-xl px-4 py-3 text-sm text-[var(--app-text)] focus:outline-none focus:border-cyan-400 transition-all shadow-inner"
                                 />
                             </div>
 
                             <div>
-                                <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest block mb-1.5 ml-1">Image URL</label>
+                                <label className="text-[10px] font-bold text-black/30 dark:text-white/30 uppercase tracking-widest block mb-1.5 ml-1">Image URL</label>
                                 <input
                                     type="text"
                                     required
                                     value={formData.url}
                                     onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                                     placeholder="e.g. /greeting_new.png"
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-400 transition-all"
+                                    className="w-full bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-950 dark:text-white focus:outline-none focus:border-cyan-400 transition-all shadow-inner"
                                 />
                             </div>
 
                             <div>
-                                <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest block mb-1.5 ml-1">Category</label>
+                                <label className="text-[10px] font-bold text-black/30 dark:text-white/30 uppercase tracking-widest block mb-1.5 ml-1">Category</label>
                                 <div className="grid grid-cols-2 gap-2">
                                     {["Classic", "Special", "Funny", "New"].map((cat) => (
                                         <button
@@ -168,7 +168,7 @@ export default function AdminDashboard() {
                                             onClick={() => setFormData({ ...formData, category: cat })}
                                             className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all ${formData.category === cat
                                                 ? "bg-cyan-400/20 border-cyan-400 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.2)]"
-                                                : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10"
+                                                : "bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/40 dark:text-white/40 hover:bg-black/10 dark:hover:bg-white/10"
                                                 }`}
                                         >
                                             {cat}
@@ -179,7 +179,7 @@ export default function AdminDashboard() {
                                         placeholder="Or type custom..."
                                         value={["Classic", "Special", "Funny", "New"].includes(formData.category) ? "" : formData.category}
                                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                        className="col-span-2 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-400 transition-all mt-1"
+                                        className="col-span-2 bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-950 dark:text-white focus:outline-none focus:border-cyan-400 transition-all mt-1 shadow-inner"
                                     />
                                 </div>
                             </div>
@@ -196,7 +196,7 @@ export default function AdminDashboard() {
                                 <button
                                     type="button"
                                     onClick={cancel}
-                                    className="px-6 bg-white/5 text-white/60 py-3 rounded-xl font-bold text-sm hover:bg-white/10 transition-all"
+                                    className="px-6 bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 py-3 rounded-xl font-bold text-sm hover:bg-black/10 dark:hover:bg-white/10 transition-all"
                                 >
                                     Cancel
                                 </button>
@@ -213,7 +213,7 @@ export default function AdminDashboard() {
                         ) : (
                             categories.map(category => (
                                 <div key={category} className="space-y-3">
-                                    <h4 className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">{category}</h4>
+                                    <h4 className="text-[10px] font-bold text-slate-900/70 dark:text-white/30 uppercase tracking-[0.2em] ml-1">{category}</h4>
                                     <div className="grid grid-cols-2 gap-4">
                                         {cards.filter(c => c.category === category).map(card => (
                                             <div key={card.id} className="glass-card p-2 group overflow-hidden">
@@ -234,7 +234,7 @@ export default function AdminDashboard() {
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <p className="text-[10px] font-bold text-white/70 uppercase text-center truncate px-1">{card.label}</p>
+                                                <p className="text-[10px] font-bold text-slate-900 dark:text-white/70 uppercase text-center truncate px-1">{card.label}</p>
                                             </div>
                                         ))}
                                     </div>
@@ -247,8 +247,8 @@ export default function AdminDashboard() {
 
             {/* Admin Info Tip */}
             {!isAdding && (
-                <div className="p-6 bg-blue-500/10 border-t border-white/5 dark:border-white/5">
-                    <p className="text-[10px] text-blue-400 dark:text-blue-300/60 leading-relaxed italic text-center">
+                <div className="p-6 bg-blue-500/5 dark:bg-blue-500/10 border-t border-black/5 dark:border-white/5">
+                    <p className="text-[10px] text-blue-600 dark:text-blue-300/60 leading-relaxed italic text-center">
                         Any changes made here will be visible to all users in the "Pick & Send" menu instantly via Firestore sync.
                     </p>
                 </div>

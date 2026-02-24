@@ -57,18 +57,18 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
             <div className="glass-pane w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-300">
                 <button
                     onClick={onClose}
-                    className="absolute top-6 right-6 p-2 text-white/40 hover:text-white transition-colors"
+                    className="absolute top-6 right-6 p-2 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors"
                 >
                     <X className="w-6 h-6" />
                 </button>
 
-                <h2 className="text-2xl font-bold mb-8 text-white/90">
+                <h2 className="text-2xl font-bold mb-8 text-slate-950 dark:text-white/90">
                     {initialData ? (language === "es" ? "Editar Celebración" : "Edit Celebration") : (language === "es" ? "Añadir Celebración" : "Add Celebration")}
                 </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-white/40 mb-2 uppercase tracking-widest">
+                        <label className="block text-sm font-medium text-black/40 dark:text-white/40 mb-2 uppercase tracking-widest">
                             {language === "es" ? "Título" : "Title"}
                         </label>
                         <input
@@ -76,34 +76,34 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
                             placeholder={language === "es" ? "ej. Cumpleaños de Walter" : "e.g. Walter's Birthday"}
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:border-neon-cyan transition-colors"
+                            className="w-full bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-950 dark:text-white focus:outline-none focus:border-neon-cyan transition-colors shadow-sm"
                             required
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-white/40 mb-2 uppercase tracking-widest">
+                        <label className="block text-sm font-medium text-black/40 dark:text-white/40 mb-2 uppercase tracking-widest">
                             {language === "es" ? "Fecha" : "Date"}
                         </label>
                         <input
                             type="date"
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:border-neon-cyan transition-colors"
-                            style={{ colorScheme: 'dark' }}
+                            className="w-full bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-950 dark:text-white focus:outline-none focus:border-neon-cyan transition-colors shadow-sm"
+                            style={{ colorScheme: document.documentElement.classList.contains('light-mode') ? 'light' : 'dark' }}
                             required
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-white/40 mb-4 uppercase tracking-widest">
+                        <label className="block text-sm font-medium text-black/40 dark:text-white/40 mb-4 uppercase tracking-widest">
                             {language === "es" ? "Tipo de Evento" : "Event Type"}
                         </label>
                         <div className="grid grid-cols-3 gap-4">
                             <button
                                 type="button"
                                 onClick={() => setType("birthday")}
-                                className={`flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all ${type === "birthday" ? "bg-neon-pink/20 border-neon-pink text-neon-pink" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10"}`}
+                                className={`flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all ${type === "birthday" ? "bg-neon-pink/20 border-neon-pink text-neon-pink" : "bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/40 dark:text-white/40 hover:bg-black/10 dark:hover:bg-white/10"}`}
                             >
                                 <Gift className="w-6 h-6" />
                                 <span className="text-[10px] font-bold uppercase tracking-tighter">
@@ -113,7 +113,7 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
                             <button
                                 type="button"
                                 onClick={() => setType("anniversary")}
-                                className={`flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all ${type === "anniversary" ? "bg-neon-cyan/20 border-neon-cyan text-neon-cyan" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10"}`}
+                                className={`flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all ${type === "anniversary" ? "bg-neon-cyan/20 border-neon-cyan text-neon-cyan" : "bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/40 dark:text-white/40 hover:bg-black/10 dark:hover:bg-white/10"}`}
                             >
                                 <Heart className="w-6 h-6" />
                                 <span className="text-[10px] font-bold uppercase tracking-tighter">
@@ -123,7 +123,7 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
                             <button
                                 type="button"
                                 onClick={() => setType("retirement")}
-                                className={`flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all ${type === "retirement" ? "bg-white/20 border-white text-white" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10"}`}
+                                className={`flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all ${type === "retirement" ? "bg-black/10 dark:bg-white/20 border-black/40 dark:border-white text-slate-900 dark:text-white" : "bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/40 dark:text-white/40 hover:bg-black/10 dark:hover:bg-white/10"}`}
                             >
                                 <User className="w-6 h-6" />
                                 <span className="text-[10px] font-bold uppercase tracking-tighter">
@@ -136,7 +136,7 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full bg-white text-black font-bold py-5 rounded-2xl hover:scale-[1.02] transition-transform active:scale-[0.98] disabled:opacity-50 disabled:scale-100 mt-8"
+                        className="w-full bg-slate-900 dark:bg-white text-white dark:text-black font-bold py-5 rounded-2xl hover:scale-[1.02] transition-transform active:scale-[0.98] disabled:opacity-50 disabled:scale-100 mt-8 shadow-neon-sm dark:shadow-none"
                     >
                         {isSubmitting ? (language === "es" ? "Procesando..." : "Processing...") : (initialData ? (language === "es" ? "Actualizar" : "Update") : (language === "es" ? "Guardar" : "Save"))}
                     </button>

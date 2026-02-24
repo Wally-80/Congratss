@@ -41,7 +41,7 @@ export default function ConfirmModal({
             <div className="glass-pane w-full max-w-sm p-8 relative animate-in fade-in zoom-in duration-300 shadow-2xl premium-border">
                 <button
                     onClick={onClose}
-                    className="absolute top-6 right-6 p-2 text-[var(--app-text)] opacity-40 hover:opacity-100 transition-opacity"
+                    className="absolute top-6 right-6 p-2 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-opacity"
                 >
                     <X className="w-5 h-5" />
                 </button>
@@ -51,11 +51,11 @@ export default function ConfirmModal({
                         <AlertTriangle className="w-8 h-8" />
                     </div>
 
-                    <h3 className="text-xl font-bold mb-2">
+                    <h3 className="text-xl font-bold mb-2 text-slate-950 dark:text-white">
                         {title || (language === "es" ? "¿Estás seguro?" : "Are you sure?")}
                     </h3>
 
-                    <p className="text-sm opacity-50 leading-relaxed mb-8">
+                    <p className="text-sm text-black/50 dark:text-white/50 leading-relaxed mb-8">
                         {message || (language === "es" ? "Esta acción es permanente y no se puede deshacer." : "This action is permanent and cannot be undone.")}
                     </p>
 
@@ -75,7 +75,7 @@ export default function ConfirmModal({
 
                         <button
                             onClick={onClose}
-                            className="w-full py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest opacity-40 hover:opacity-100 hover:bg-white/5 dark:hover:bg-white/5 transition-all"
+                            className="w-full py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest text-black/40 dark:text-white/40 hover:text-black/100 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all"
                         >
                             {cancelText || (language === "es" ? "CANCELAR" : "CANCEL")}
                         </button>

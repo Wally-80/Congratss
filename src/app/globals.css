@@ -17,8 +17,8 @@
     --app-bg: #010103;
     --app-bg-gradient: linear-gradient(135deg, #020204 0%, #050508 100%);
     --app-text: #ffffff;
-    --app-text-dim: rgba(255, 255, 255, 0.5);
-    --app-text-muted: rgba(255, 255, 255, 0.2);
+    --app-text-dim: rgba(255, 255, 255, 0.7);
+    --app-text-muted: rgba(255, 255, 255, 0.4);
     --glass-bg: rgba(255, 255, 255, 0.03);
     --glass-border: rgba(255, 255, 255, 0.1);
     --card-bg: rgba(255, 255, 255, 0.02);
@@ -27,16 +27,20 @@
 }
 
 .light-mode {
-    --app-bg: #f8fafc;
-    --app-bg-gradient: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-    --app-text: #0f172a;
-    --app-text-dim: rgba(15, 23, 42, 0.6);
-    --app-text-muted: rgba(15, 23, 42, 0.3);
-    --glass-bg: rgba(15, 23, 42, 0.03);
-    --glass-border: rgba(15, 23, 42, 0.1);
-    --card-bg: rgba(255, 255, 255, 0.6);
-    --card-hover-bg: rgba(255, 255, 255, 0.8);
-    --pane-bg: rgba(255, 255, 255, 0.6);
+    --app-bg: #ffffff;
+    --app-bg-gradient: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    --app-text: #020617;
+    /* Slate 950 */
+    --app-text-dim: #0f172a;
+    /* Slate 900 */
+    --app-text-muted: #1e293b;
+    /* Slate 800 */
+    --glass-bg: #ffffff;
+    --glass-border: #cbd5e1;
+    /* Slate 300 */
+    --card-bg: #ffffff;
+    --card-hover-bg: #f8fafc;
+    --pane-bg: #ffffff;
 }
 
 @layer base {
