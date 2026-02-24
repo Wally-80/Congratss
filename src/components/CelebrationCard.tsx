@@ -55,7 +55,7 @@ export default function CelebrationCard({
                     <div>
                         <h3 className="text-lg font-bold text-white/90 tracking-tight mb-1">{title}</h3>
                         <p className="text-xs text-white/40 font-medium">
-                            {new Date(rawDate).toLocaleDateString(language === "es" ? "es-ES" : "en-US", { month: "long", day: "numeric" })}
+                            {new Date(rawDate).toLocaleDateString(language === "es" ? "es-ES" : "en-US", { month: "long", day: "numeric", timeZone: "UTC" })}
                         </p>
                     </div>
                 </div>

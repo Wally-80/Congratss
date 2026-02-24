@@ -189,7 +189,7 @@ export default function Dashboard() {
                                         <div className="flex items-start justify-between">
                                             <div>
                                                 <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-1">
-                                                    {new Date(item.rawDate).toLocaleDateString(language === "es" ? "es-ES" : "en-US", { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                    {new Date(item.rawDate).toLocaleDateString(language === "es" ? "es-ES" : "en-US", { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}
                                                 </p>
                                                 <h4 className="text-white/90 font-medium mb-1">{item.title}</h4>
                                                 <p className="text-xs text-white/40">{item.daysLeft} {t.days_to_go}</p>
