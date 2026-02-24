@@ -48,17 +48,13 @@ export default function LoginPage() {
         <div className="min-h-screen flex items-center justify-center p-6 bg-background">
             <div className="glass w-full max-w-sm rounded-[3rem] p-10 shadow-2xl text-center space-y-8 animate-in fade-in zoom-in duration-700">
                 <div className="flex flex-col items-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-white text-black neon-glow-purple overflow-hidden">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-white text-black neon-glow-purple overflow-hidden mb-12">
                         <img src="/logo.png" className="h-full w-full object-cover" alt="Congratss Logo" />
                     </div>
 
-                    <div style={{ height: '48px' }} />
+                    <h1 className="text-5xl font-black tracking-tighter italic leading-tight mb-8">Congratss</h1>
 
-                    <div className="flex flex-col items-center">
-                        <h1 className="text-5xl font-black tracking-tighter italic leading-none">Congratss</h1>
-                        <div style={{ height: '32px' }} />
-                        <p className="text-xs font-bold uppercase tracking-[0.4em] text-muted-foreground leading-none">{t.welcome_back}</p>
-                    </div>
+                    <p className="text-xs font-bold uppercase tracking-[0.4em] text-muted-foreground leading-none">{t.welcome_back}</p>
                 </div>
 
                 <div className="space-y-4 pt-4">
