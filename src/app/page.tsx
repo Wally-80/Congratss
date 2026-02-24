@@ -312,7 +312,7 @@ export default function Dashboard() {
                     </button>
                 )}
 
-                <nav className="bg-white/10 backdrop-blur-3xl border-t border-white/20 flex items-center justify-around px-4 z-30 pwa-nav-spacer">
+                <nav className="bg-white/10 backdrop-blur-3xl border-t border-white/20 flex items-start justify-around px-4 z-30 pwa-nav-spacer">
                     <button
                         onClick={() => setActiveTab("home")}
                         className={`flex flex-col items-center gap-1 transition-all ${activeTab === "home" ? "text-neon-cyan scale-110" : "text-white/30 hover:text-white/50"}`}

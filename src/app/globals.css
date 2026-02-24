@@ -113,7 +113,8 @@
 
     /* PWA Navigation Spacer for modern phones */
     .pwa-nav-spacer {
-        padding-bottom: calc(env(safe-area-inset-bottom) + 1.25rem);
+        padding-top: 0.75rem;
+        padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem);
     }
 
     /* PWA Header Spacer for modern notches */
