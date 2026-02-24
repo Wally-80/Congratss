@@ -46,15 +46,19 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-6 bg-background">
-            <div className="glass w-full max-w-sm rounded-[3rem] p-10 shadow-2xl text-center space-y-8 animate-in fade-in zoom-in duration-700">
-                <div className="flex flex-col items-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-white text-black neon-glow-purple overflow-hidden mb-12">
+            <div className="glass w-full max-w-sm rounded-[3rem] p-10 shadow-2xl text-center space-y-8 animate-in fade-in zoom-in duration-700 bg-black/40 border border-white/10 ring-1 ring-neon-cyan/20">
+                <div className="grid grid-cols-1 justify-items-center">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-[1.8rem] bg-white text-black neon-glow-purple overflow-hidden">
                         <img src="/logo.png" className="h-full w-full object-cover" alt="Congratss Logo" />
                     </div>
 
-                    <h1 className="text-5xl font-black tracking-tighter italic leading-tight mb-8">Congratss</h1>
+                    <div style={{ height: '64px' }} />
 
-                    <p className="text-xs font-bold uppercase tracking-[0.4em] text-muted-foreground leading-none">{t.welcome_back}</p>
+                    <h1 className="text-6xl font-black tracking-tighter italic leading-none text-white">Congratss</h1>
+
+                    <div style={{ height: '48px' }} />
+
+                    <p className="text-sm font-bold uppercase tracking-[0.5em] text-cyan-400 leading-none">{t.welcome_back}</p>
                 </div>
 
                 <div className="space-y-4 pt-4">
