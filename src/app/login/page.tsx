@@ -48,22 +48,20 @@ export default function LoginPage() {
         <div className="min-h-screen flex items-center justify-center p-6 bg-background">
             <div className="glass w-full max-w-sm rounded-[3rem] p-10 shadow-2xl text-center space-y-8 animate-in fade-in zoom-in duration-700 bg-black/40 border border-white/10 ring-1 ring-neon-cyan/20">
                 <div className="flex flex-col items-center">
-                    <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-white text-black ring-4 ring-neon-pink shadow-neon-pink-sm overflow-hidden animate-bounce">
+                    <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-white text-black ring-4 ring-neon-cyan shadow-neon-cyan-sm overflow-hidden mb-12">
                         <img src="/logo.png" className="h-full w-full object-cover" alt="Congratss Logo" />
                     </div>
 
-                    <div className="h-20" />
+                    <div className="inline-flex items-center px-4 py-1 rounded-full bg-neon-cyan/10 border border-neon-cyan/30 text-[10px] font-bold uppercase tracking-[0.4em] text-neon-cyan mb-6">
+                        {t.welcome_back}
+                    </div>
 
-                    <h1 className="text-6xl font-black tracking-tighter italic leading-none text-white">Congratss</h1>
-
-                    <div className="h-16" />
-
-                    <p className="text-sm font-bold uppercase tracking-[0.5em] text-neon-pink leading-none">{t.welcome_back}</p>
-
-                    <div className="h-8" />
+                    <h1 className="text-7xl font-black tracking-tighter italic leading-none text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                        Congratss
+                    </h1>
                 </div>
 
-                <div className="space-y-4 pt-4">
+                <div className="space-y-4 pt-8">
                     <button
                         onClick={handleGoogleLogin}
                         disabled={loading}
@@ -87,7 +85,7 @@ export default function LoginPage() {
                                 placeholder={t.email_placeholder}
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full rounded-2xl bg-white/5 border border-white/10 pl-12 pr-4 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all"
+                                className="w-full rounded-2xl bg-white/5 border border-white/10 pl-12 pr-4 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-neon-cyan/50 transition-all"
                             />
                         </div>
                         <input
@@ -95,13 +93,13 @@ export default function LoginPage() {
                             placeholder={t.password_placeholder}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all"
+                            className="w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-4 text-sm focus:outline-none focus:ring-1 focus:ring-neon-cyan/50 transition-all"
                         />
                         <button
                             disabled={loading}
                             className="w-full rounded-2xl bg-white py-4 text-sm font-black uppercase tracking-widest text-black transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
                         >
-                            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t.sign_in}
+                            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "ACCESS PORTAL"}
                         </button>
                     </form>
                 </div>
@@ -109,6 +107,18 @@ export default function LoginPage() {
                 <p className="text-[10px] text-muted-foreground/60 leading-relaxed px-4">
                     {t.terms_privacy}
                 </p>
+
+                <div className="pt-4 border-t border-white/5">
+                    <p className="text-xs text-muted-foreground">
+                        {language === 'es' ? '¿no tienes cuenta?' : "don't have an account?"} {' '}
+                        <button
+                            onClick={() => router.push('/auth')}
+                            className="text-neon-cyan font-black hover:underline uppercase tracking-widest"
+                        >
+                            {language === 'es' ? 'REGÍSTRATE' : 'SIGN UP'}
+                        </button>
+                    </p>
+                </div>
             </div>
         </div>
     );
