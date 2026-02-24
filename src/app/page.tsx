@@ -291,7 +291,7 @@ export default function Dashboard() {
         <main className="min-h-screen bg-[#030308] flex flex-col items-center justify-start overflow-x-hidden">
             <div
                 onScroll={handleScroll}
-                className="glass-pane w-full max-w-md h-[100dvh] sm:h-[850px] sm:my-8 flex flex-col relative overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-1000"
+                className="glass-pane w-full sm:max-w-md h-[100dvh] sm:h-[850px] sm:my-8 flex flex-col relative overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-1000"
             >
                 {dataError && (
                     <div className="absolute top-0 left-0 right-0 z-50 p-4 bg-red-500/20 border-b border-red-500/50 backdrop-blur-md text-red-200 text-xs text-center">
