@@ -53,8 +53,8 @@ export default function CelebrationCard({
                         {getIcon()}
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold text-white/90 tracking-tight mb-1">{title}</h3>
-                        <p className="text-xs text-white/40 font-medium">
+                        <h3 className="text-lg font-bold opacity-90 tracking-tight mb-1">{title}</h3>
+                        <p className="text-xs opacity-40 font-medium">
                             {new Date(rawDate).toLocaleDateString(language === "es" ? "es-ES" : "en-US", { month: "long", day: "numeric", timeZone: "UTC" })}
                         </p>
                     </div>
@@ -63,13 +63,13 @@ export default function CelebrationCard({
                 <div className="flex items-center gap-1">
                     <button
                         onClick={() => onEdit({ id, title, rawDate, type })}
-                        className="p-2.5 text-white/40 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                        className="p-2.5 opacity-40 hover:opacity-100 hover:bg-white/5 dark:hover:bg-white/5 rounded-xl transition-all"
                     >
                         <Pencil className="w-4 h-4" />
                     </button>
                     <button
                         onClick={() => onDelete(id)}
-                        className="p-2.5 text-white/40 hover:text-red-400 hover:bg-red-500/5 rounded-xl transition-all"
+                        className="p-2.5 opacity-40 hover:text-red-400 hover:bg-red-500/5 rounded-xl transition-all"
                     >
                         <Trash2 className="w-4 h-4" />
                     </button>
@@ -78,10 +78,10 @@ export default function CelebrationCard({
 
             <div className="flex items-end justify-between mb-4">
                 <div className="flex flex-col">
-                    <span className="text-4xl font-black text-white italic tracking-tighter">
+                    <span className="text-4xl font-black italic tracking-tighter">
                         {isToday ? "TODAY" : daysLeft}
                     </span>
-                    <span className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mt-1">
+                    <span className="text-[10px] font-bold opacity-20 uppercase tracking-[0.2em] mt-1">
                         {isToday ? (language === "es" ? "¡ES HOY!" : "CELEBRATE!") : t.days_to_go}
                     </span>
                 </div>
@@ -89,7 +89,7 @@ export default function CelebrationCard({
                     onClick={() => onSendGreeting({ title, type })}
                     className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${isToday
                         ? "bg-neon-cyan text-black shadow-neon animate-pulse"
-                        : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/10 hover:text-white"}`}
+                        : "bg-white/5 dark:bg-white/5 opacity-60 hover:opacity-100 border border-white/10 hover:bg-white/10 dark:hover:bg-white/10"}`}
                 >
                     <Send className={`w-3.5 h-3.5 ${isToday ? "animate-bounce" : ""}`} />
                     {t.pick_and_send}

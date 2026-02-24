@@ -34,14 +34,14 @@ export default function ConfirmModal({
     return (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
             <div
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300"
+                className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm animate-in fade-in duration-300"
                 onClick={onClose}
             />
 
             <div className="glass-pane w-full max-w-sm p-8 relative animate-in fade-in zoom-in duration-300 shadow-2xl premium-border">
                 <button
                     onClick={onClose}
-                    className="absolute top-6 right-6 p-2 text-white/40 hover:text-white transition-colors"
+                    className="absolute top-6 right-6 p-2 text-[var(--app-text)] opacity-40 hover:opacity-100 transition-opacity"
                 >
                     <X className="w-5 h-5" />
                 </button>
@@ -51,11 +51,11 @@ export default function ConfirmModal({
                         <AlertTriangle className="w-8 h-8" />
                     </div>
 
-                    <h3 className="text-xl font-bold text-white mb-2">
+                    <h3 className="text-xl font-bold mb-2">
                         {title || (language === "es" ? "¿Estás seguro?" : "Are you sure?")}
                     </h3>
 
-                    <p className="text-sm text-white/50 leading-relaxed mb-8">
+                    <p className="text-sm opacity-50 leading-relaxed mb-8">
                         {message || (language === "es" ? "Esta acción es permanente y no se puede deshacer." : "This action is permanent and cannot be undone.")}
                     </p>
 
@@ -66,8 +66,8 @@ export default function ConfirmModal({
                                 onClose();
                             }}
                             className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-[0.98] ${isDangerous
-                                    ? "bg-red-500 text-white shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:brightness-110"
-                                    : "bg-cyan-400 text-black shadow-neon hover:brightness-110"
+                                ? "bg-red-500 text-white shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:brightness-110"
+                                : "bg-cyan-400 text-black shadow-neon hover:brightness-110"
                                 }`}
                         >
                             {confirmText || (language === "es" ? "SÍ, ELIMINAR" : "YES, DELETE")}
@@ -75,7 +75,7 @@ export default function ConfirmModal({
 
                         <button
                             onClick={onClose}
-                            className="w-full py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest text-white/40 hover:text-white hover:bg-white/5 transition-all"
+                            className="w-full py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest opacity-40 hover:opacity-100 hover:bg-white/5 dark:hover:bg-white/5 transition-all"
                         >
                             {cancelText || (language === "es" ? "CANCELAR" : "CANCEL")}
                         </button>

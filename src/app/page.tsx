@@ -12,8 +12,10 @@ import { useAuth } from "@/context/AuthContext";
 import { useCelebrations } from "@/hooks/useCelebrations";
 import { translations } from "@/lib/translations";
 import AuthPage from "./auth/page";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function Dashboard() {
+    const { theme, toggleTheme } = useTheme();
     const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
     const { user, isAdmin, language, setLanguage, loading: authLoading, logout, updateUserProfile } = useAuth();
     const t = translations[language];
@@ -283,6 +285,29 @@ export default function Dashboard() {
                                     <div className="absolute right-0 top-0 w-4 h-4 bg-cyan-400 rounded-full shadow-neon" />
                                 </div>
                             </button>
+
+                            {/* Theme Toggle */}
+                            <div className="glass-card p-4 flex flex-col gap-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium opacity-70">Theme</span>
+                                    <div className="flex gap-2 p-1 bg-white/5 rounded-lg border border-white/10">
+                                        <button
+                                            onClick={() => theme === "light" && toggleTheme()}
+                                            className={`flex items-center gap-2 px-3 py-1 rounded-md text-[10px] font-bold transition-all ${theme === "dark" ? "bg-neon-cyan text-black shadow-neon" : "text-white/40 hover:text-white/60"}`}
+                                        >
+                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                                            DARK
+                                        </button>
+                                        <button
+                                            onClick={() => theme === "dark" && toggleTheme()}
+                                            className={`flex items-center gap-2 px-3 py-1 rounded-md text-[10px] font-bold transition-all ${theme === "light" ? "bg-neon-cyan text-black shadow-neon" : "text-white/40 hover:text-white/60"}`}
+                                        >
+                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 9h-1m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                                            LIGHT
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="pt-4">

@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-    --color-glass-white: rgba(255, 255, 255, 0.03);
-    --color-glass-border: rgba(255, 255, 255, 0.1);
+    --color-glass-white: var(--glass-bg);
+    --color-glass-border: var(--glass-border);
 
     /* Reverting to Vibrant Palette */
     --color-neon-pink: #ff007f;
@@ -10,15 +10,41 @@
     --color-neon-blue: #0070f3;
     --color-neon-purple: #bc13fe;
 
-    --background-image-vibrant: linear-gradient(135deg, #020204 0%, #050508 100%);
+    --background-image-vibrant: var(--app-bg-gradient);
+}
+
+:root {
+    --app-bg: #010103;
+    --app-bg-gradient: linear-gradient(135deg, #020204 0%, #050508 100%);
+    --app-text: #ffffff;
+    --app-text-dim: rgba(255, 255, 255, 0.5);
+    --app-text-muted: rgba(255, 255, 255, 0.2);
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --card-bg: rgba(255, 255, 255, 0.02);
+    --card-hover-bg: rgba(255, 255, 255, 0.05);
+    --pane-bg: rgba(0, 0, 0, 0.4);
+}
+
+.light-mode {
+    --app-bg: #f8fafc;
+    --app-bg-gradient: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    --app-text: #0f172a;
+    --app-text-dim: rgba(15, 23, 42, 0.6);
+    --app-text-muted: rgba(15, 23, 42, 0.3);
+    --glass-bg: rgba(15, 23, 42, 0.03);
+    --glass-border: rgba(15, 23, 42, 0.1);
+    --card-bg: rgba(255, 255, 255, 0.6);
+    --card-hover-bg: rgba(255, 255, 255, 0.8);
+    --pane-bg: rgba(255, 255, 255, 0.6);
 }
 
 @layer base {
     body {
-        @apply bg-[#010103] text-white antialiased selection:bg-neon-cyan/30;
+        @apply bg-[var(--app-bg)] text-[var(--app-text)] antialiased selection:bg-neon-cyan/30;
         position: relative;
         min-height: 100vh;
-        overflow-x: hidden;
+        transition: background-color 0.5s ease, color 0.5s ease;
     }
 
     /* Vibrant Mesh - kept subtle to avoid "milky" look */
@@ -39,39 +65,38 @@
         opacity: 0.6;
     }
 
-    @keyframes mesh-flow {
-        0% {
-            transform: rotate(0deg) scale(1);
-        }
-
-        50% {
-            transform: rotate(180deg) scale(1.05);
-        }
-
-        100% {
-            transform: rotate(360deg) scale(1);
-        }
+    .light-mode body::before {
+        opacity: 0.3;
     }
 }
 
 @layer components {
     .glass-pane {
-        @apply bg-black/40 backdrop-blur-[40px] border-white/5 sm:rounded-[48px] sm:border;
-        box-shadow: 0 32px 100px -12px rgba(0, 0, 0, 0.9), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+        @apply bg-[var(--pane-bg)] backdrop-blur-[40px] border-white/5 sm:rounded-[48px] sm:border;
+        box-shadow: 0 32px 100px -12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.05);
 
         @media (max-width: 639px) {
             @apply rounded-none border-none w-screen h-[100dvh] fixed inset-0 z-50;
         }
     }
 
+    .light-mode .glass-pane {
+        box-shadow: 0 32px 100px -12px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+        border-color: rgba(0, 0, 0, 0.05);
+    }
+
     .glass-card {
-        @apply bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-3xl p-6 transition-all duration-500 overflow-hidden;
-        box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.5);
+        @apply bg-[var(--card-bg)] backdrop-blur-xl border border-white/5 rounded-3xl p-6 transition-all duration-500 overflow-hidden;
+        box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.15);
 
         &:hover {
-            @apply bg-white/[0.05] border-white/10 -translate-y-1;
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+            @apply bg-[var(--card-hover-bg)] border-white/10 -translate-y-1;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.2);
         }
+    }
+
+    .light-mode .glass-card {
+        border-color: rgba(0, 0, 0, 0.05);
     }
 
     .premium-border {

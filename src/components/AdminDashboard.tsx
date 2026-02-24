@@ -82,12 +82,12 @@ export default function AdminDashboard() {
     };
 
     return (
-        <div className="flex-1 flex flex-col overflow-hidden bg-[#0a0a1a]">
+        <div className="flex-1 flex flex-col overflow-hidden bg-[var(--app-bg)]">
             {/* Action Bar */}
-            <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+            <div className="px-6 py-4 border-b border-white/10 dark:border-white/10 flex justify-between items-center bg-[var(--pane-bg)]">
                 <div className="hidden sm:block">
-                    <h2 className="text-xl font-bold text-white tracking-tight">Admin Console</h2>
-                    <p className="text-[10px] text-white/40 uppercase tracking-widest">Library Management</p>
+                    <h2 className="text-xl font-bold tracking-tight">Admin Console</h2>
+                    <p className="text-[10px] opacity-40 uppercase tracking-widest">Library Management</p>
                 </div>
                 {!isAdding && (
                     <div className="flex gap-2">
@@ -247,8 +247,8 @@ export default function AdminDashboard() {
 
             {/* Admin Info Tip */}
             {!isAdding && (
-                <div className="p-6 bg-blue-500/10 border-t border-white/5">
-                    <p className="text-[10px] text-blue-300/60 leading-relaxed italic text-center">
+                <div className="p-6 bg-blue-500/10 border-t border-white/5 dark:border-white/5">
+                    <p className="text-[10px] text-blue-400 dark:text-blue-300/60 leading-relaxed italic text-center">
                         Any changes made here will be visible to all users in the "Pick & Send" menu instantly via Firestore sync.
                     </p>
                 </div>

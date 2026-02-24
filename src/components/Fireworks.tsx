@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function Fireworks() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const { theme } = useTheme();
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -122,12 +124,14 @@ export default function Fireworks() {
             if (hasActivity) {
                 // Aggressive clearing to eliminate "marks" or ghosting
                 ctx.globalCompositeOperation = 'source-over';
-                ctx.fillStyle = "rgba(0, 0, 0, 0.5)"; // Significant increase for zero residue
+                // Adjust clearing color based on theme
+                const clearColor = theme === "dark" ? "rgba(0, 0, 0, 0.5)" : "rgba(248, 250, 252, 0.5)";
+                ctx.fillStyle = clearColor;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
             } else {
                 // Total wipe when idle
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = theme === "dark" ? "#000000" : "#f8fafc";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
             }
 
@@ -174,9 +178,9 @@ export default function Fireworks() {
     return (
         <canvas
             ref={canvasRef}
-            className="fixed inset-0 pointer-events-none z-0"
+            className="fixed inset-0 pointer-events-none z-0 transition-colors duration-500"
             style={{
-                backgroundColor: '#000000',
+                backgroundColor: theme === "dark" ? '#000000' : '#f8fafc',
             }}
         />
     );
