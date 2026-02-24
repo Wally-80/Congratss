@@ -43,6 +43,8 @@ export default function Dashboard() {
         }
     };
 
+
+
     useEffect(() => {
         const timeout = setTimeout(() => {
             setShowFab(true);
@@ -383,6 +385,12 @@ export default function Dashboard() {
                 isOpen={isSendGreetingModalOpen}
                 onClose={() => setIsSendGreetingModalOpen(false)}
                 celebration={sendingCelebration}
+            />
+
+            <ConfirmModal
+                isOpen={isConfirmDeleteOpen}
+                onClose={() => setIsConfirmDeleteOpen(false)}
+                onConfirm={handleConfirmDelete}
             />
         </main>
     );
