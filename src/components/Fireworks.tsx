@@ -9,7 +9,7 @@ export default function Fireworks() {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-        const ctx = canvas.getContext("2d", { alpha: false }); // Optimization: set alpha to false for background canvas
+        const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
         let animationFrameId: number;
@@ -117,10 +117,9 @@ export default function Fireworks() {
         };
 
         const render = () => {
-            // OPTIMIZED CLEAR
+            // FIX: Stronger clearing to prevent "marks" or ghosting
             ctx.globalCompositeOperation = 'source-over';
-            ctx.globalAlpha = 1.0;
-            ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+            ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             ctx.globalCompositeOperation = 'lighter';
@@ -135,7 +134,8 @@ export default function Fireworks() {
                 r.draw(ctx);
             });
 
-            particles = particles.filter(p => p.alpha > 0);
+            // FIX: Filter particles more aggressively to prevent invisible ones from consuming resources or leaving tiny marks
+            particles = particles.filter(p => p.alpha > 0.01);
             particles.forEach(p => {
                 p.update();
                 p.draw(ctx);
