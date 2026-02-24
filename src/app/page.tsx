@@ -143,7 +143,7 @@ export default function Dashboard() {
                                     placeholder={t.search_placeholder}
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full bg-white border border-black/10 dark:border-white/10 rounded-2xl py-4 pl-12 pr-5 text-sm text-[var(--app-text)] placeholder:text-[var(--app-text-muted)] focus:outline-none focus:border-cyan-400/50 dark:focus:border-neon-cyan/40 focus:bg-white dark:focus:bg-white/[0.05] transition-all duration-300 relative z-10 shadow-sm"
+                                    className="w-full bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl py-4 pl-12 pr-5 text-sm text-[var(--app-text)] placeholder:text-[var(--app-text-muted)] focus:outline-none focus:border-cyan-400/50 dark:focus:border-neon-cyan/40 focus:bg-white dark:focus:bg-white/[0.1] transition-all duration-300 relative z-10 shadow-sm"
                                 />
                             </div>
                         </div>
@@ -240,8 +240,8 @@ export default function Dashboard() {
                                     className="w-full h-full object-cover"
                                 />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-950 dark:text-white/90">{user.displayName || "Congratss User"}</h3>
-                            <p className="text-sm text-black/40 dark:text-white/40">{user.email}</p>
+                            <h3 className="text-xl font-bold text-[var(--app-text)]">{user.displayName || "Congratss User"}</h3>
+                            <p className="text-sm text-[var(--app-text-dim)]">{user.email}</p>
                             {isAdmin && (
                                 <div className="mt-2 px-3 py-1 bg-cyan-400/10 border border-cyan-400/30 rounded-full">
                                     <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">Admin Access</span>
@@ -249,29 +249,29 @@ export default function Dashboard() {
                             )}
                         </div>
                         <div className="space-y-3">
-                            <h4 className="text-[10px] font-bold text-black/30 dark:text-white/30 uppercase tracking-[0.2em] px-2">Account</h4>
+                            <h4 className="text-[10px] font-bold text-[var(--app-text-muted)] uppercase tracking-[0.2em] px-2">Account</h4>
                             <button
                                 onClick={() => setIsEditProfileModalOpen(true)}
-                                className="w-full glass-card p-4 flex items-center justify-between text-slate-900 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors"
+                                className="w-full glass-card p-4 flex items-center justify-between text-[var(--app-text-dim)] hover:text-[var(--app-text)] transition-colors"
                             >
                                 <span className="text-sm font-medium">{t.edit_profile}</span>
-                                <Settings className="w-4 h-4 opacity-40 dark:opacity-40" />
+                                <Settings className="w-4 h-4 opacity-70" />
                             </button>
 
                             {/* Language Selector */}
                             <div className="glass-card p-4 flex flex-col gap-3">
                                 <div className="flex justify-between items-center">
-                                    <span className="text-sm font-medium text-slate-900 dark:text-white/70">{t.language}</span>
+                                    <span className="text-sm font-medium text-[var(--app-text-dim)]">{t.language}</span>
                                     <div className="flex gap-2 p-1 bg-black/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
                                         <button
                                             onClick={() => setLanguage("en")}
-                                            className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${language === "en" ? "bg-cyan-400 text-black shadow-neon" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
+                                            className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${language === "en" ? "bg-cyan-400 text-black shadow-neon" : "text-[var(--app-text-dim)] hover:text-[var(--app-text)]"}`}
                                         >
                                             EN
                                         </button>
                                         <button
                                             onClick={() => setLanguage("es")}
-                                            className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${language === "es" ? "bg-cyan-400 text-black shadow-neon" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
+                                            className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${language === "es" ? "bg-cyan-400 text-black shadow-neon" : "text-[var(--app-text-dim)] hover:text-[var(--app-text)]"}`}
                                         >
                                             ES
                                         </button>
@@ -279,7 +279,7 @@ export default function Dashboard() {
                                 </div>
                             </div>
 
-                            <button className="w-full glass-card p-4 flex items-center justify-between text-slate-900 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors">
+                            <button className="w-full glass-card p-4 flex items-center justify-between text-[var(--app-text-dim)] hover:text-[var(--app-text)] transition-colors">
                                 <span className="text-sm font-medium">{t.notifications}</span>
                                 <div className="w-8 h-4 bg-black/5 dark:bg-cyan-400/20 rounded-full relative">
                                     <div className={`absolute ${true ? 'right-0' : 'left-0'} top-0 w-4 h-4 bg-cyan-400 rounded-full shadow-neon`} />
@@ -289,18 +289,18 @@ export default function Dashboard() {
                             {/* Theme Toggle */}
                             <div className="glass-card p-4 flex flex-col gap-3">
                                 <div className="flex justify-between items-center">
-                                    <span className="text-sm font-medium text-slate-900 dark:text-white/70">Theme</span>
+                                    <span className="text-sm font-medium text-[var(--app-text-dim)]">Theme</span>
                                     <div className="flex gap-2 p-1 bg-black/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
                                         <button
                                             onClick={() => theme === "light" && toggleTheme()}
-                                            className={`flex items-center gap-2 px-3 py-1 rounded-md text-[10px] font-bold transition-all ${theme === "dark" ? "bg-neon-cyan text-black shadow-neon-sm" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
+                                            className={`flex items-center gap-2 px-3 py-1 rounded-md text-[10px] font-bold transition-all ${theme === "dark" ? "bg-neon-cyan text-black shadow-neon-sm" : "text-[var(--app-text-dim)] hover:text-[var(--app-text)]"}`}
                                         >
                                             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
                                             DARK
                                         </button>
                                         <button
                                             onClick={() => theme === "dark" && toggleTheme()}
-                                            className={`flex items-center gap-2 px-3 py-1 rounded-md text-[10px] font-bold transition-all ${theme === "light" ? "bg-neon-cyan text-black shadow-neon-sm" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
+                                            className={`flex items-center gap-2 px-3 py-1 rounded-md text-[10px] font-bold transition-all ${theme === "light" ? "bg-neon-cyan text-black shadow-neon-sm" : "text-[var(--app-text-dim)] hover:text-[var(--app-text)]"}`}
                                         >
                                             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 9h-1m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                                             LIGHT

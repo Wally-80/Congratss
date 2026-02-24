@@ -206,7 +206,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                                         onClick={() => setActiveCategory(cat)}
                                         className={`px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase transition-all whitespace-nowrap border ${activeCategory === cat
                                             ? "bg-cyan-400 text-black border-cyan-400 shadow-neon"
-                                            : "text-[var(--app-text-dim)] border-black/10 dark:border-white/10 hover:text-[var(--app-text)] bg-black/5 dark:bg-white/5"
+                                            : "text-[var(--app-text-dim)] border-[var(--glass-border)] hover:text-[var(--app-text)] bg-black/5 dark:bg-white/5"
                                             }`}
                                     >
                                         {cat === "All" && language === "es" ? "Todos" : cat}
@@ -246,7 +246,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                                     <button
                                         key={img.id}
                                         onClick={() => setSelectedImageId(img.id)}
-                                        className={`relative flex-shrink-0 w-32 h-32 rounded-xl overflow-hidden border-2 transition-all ${selectedImageId === img.id ? "border-cyan-400 scale-105 shadow-neon-sm" : "border-black/10 dark:border-white/10 opacity-60 grayscale-[0.3]"
+                                        className={`relative flex-shrink-0 w-32 h-32 rounded-xl overflow-hidden border-2 transition-all ${selectedImageId === img.id ? "border-cyan-400 scale-105 shadow-neon-sm" : "border-black/10 dark:border-white/20 opacity-70 grayscale-[0.2]"
                                             }`}
                                     >
                                         <img src={img.url} alt={img.label} className="w-full h-full object-cover" />
@@ -349,7 +349,10 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                         </button>
                     </div>
 
-                    <p className="text-[9px] text-black/20 dark:text-white/20 text-center italic">
+                    <h2 className="text-2xl font-black text-[var(--app-text)] uppercase tracking-tighter italic">
+                        {language === "es" ? "Elige y Envía" : "Pick & Send"}
+                    </h2>
+                    <p className="text-[var(--app-text-muted)] text-center italic text-[9px]">
                         {language === "es"
                             ? "Tip: En móvil, 'Compartir' envía la imagen. En PC, usa 'Guardar' para adjuntarla."
                             : "Tip: On mobile, 'Share with Device' sends the image. On desktop, use 'Save Card' to attach it."}

@@ -57,12 +57,12 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
             <div className="glass-pane w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto scrollbar-hide">
                 <button
                     onClick={onClose}
-                    className="absolute top-6 right-6 p-2 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors"
+                    className="absolute top-6 right-6 p-2 text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors"
                 >
                     <X className="w-5 h-5" />
                 </button>
 
-                <h2 className="text-2xl font-bold mb-8 text-slate-950 dark:text-white/90">{t.edit_profile}</h2>
+                <h2 className="text-2xl font-bold mb-8 text-[var(--app-text)]">{t.edit_profile}</h2>
 
                 {error && (
                     <div className="mb-6 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm">
@@ -82,7 +82,7 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
                     </div>
 
                     <div className="space-y-3">
-                        <label className="text-[10px] font-bold text-black/40 dark:text-white/40 uppercase tracking-widest ml-1">
+                        <label className="text-[10px] font-bold text-[var(--app-text-muted)] uppercase tracking-widest ml-1">
                             {language === "es" ? "Elige un Avatar" : "Choose an Avatar"}
                         </label>
                         <div className="grid grid-cols-6 gap-2 p-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl">
@@ -104,7 +104,7 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-black/40 dark:text-white/40 uppercase tracking-widest ml-1">
+                        <label className="text-[10px] font-bold text-[var(--app-text-muted)] uppercase tracking-widest ml-1">
                             {language === "es" ? "Nombre a mostrar" : "Display Name"}
                         </label>
                         <div className="relative">
@@ -113,7 +113,7 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
                                 type="text"
                                 value={displayName}
                                 onChange={(e) => setDisplayName(e.target.value)}
-                                className="w-full bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl py-4 pl-12 pr-4 text-slate-950 dark:text-white placeholder:text-black/20 dark:placeholder:text-white/20 focus:outline-none focus:border-cyan-400/50 transition-colors"
+                                className="w-full bg-[var(--app-bg)] border border-[var(--glass-border)] rounded-2xl py-4 pl-12 pr-4 text-[var(--app-text)] placeholder:text-[var(--app-text-muted)] focus:outline-none focus:border-cyan-400/50 transition-colors"
                                 placeholder={language === "es" ? "Tu Nombre" : "Your Name"}
                                 required
                             />
@@ -121,7 +121,7 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-black/40 dark:text-white/40 uppercase tracking-widest ml-1">
+                        <label className="text-[10px] font-bold text-[var(--app-text-muted)] uppercase tracking-widest ml-1">
                             {language === "es" ? "O usa una URL de foto" : "Or use a Photo URL"}
                         </label>
                         <div className="relative">
@@ -130,7 +130,7 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
                                 type="url"
                                 value={photoURL}
                                 onChange={(e) => setPhotoURL(e.target.value)}
-                                className="w-full bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl py-4 pl-12 pr-4 text-slate-950 dark:text-white placeholder:text-black/20 dark:placeholder:text-white/20 focus:outline-none focus:border-cyan-400/50 transition-colors text-xs"
+                                className="w-full bg-[var(--app-bg)] border border-[var(--glass-border)] rounded-2xl py-4 pl-12 pr-4 text-[var(--app-text)] placeholder:text-[var(--app-text-muted)] focus:outline-none focus:border-cyan-400/50 transition-colors text-xs"
                                 placeholder="https://example.com/photo.jpg"
                             />
                         </div>
