@@ -46,9 +46,26 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-6 bg-background">
-            <div className="glass w-full max-w-sm rounded-[3rem] p-10 shadow-2xl text-center space-y-8 animate-in fade-in zoom-in duration-700 bg-black/40 border border-white/10 ring-1 ring-neon-cyan/20">
-                <div className="flex flex-col items-center">
-                    <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-white text-black ring-4 ring-neon-cyan shadow-neon-cyan-sm overflow-hidden mb-12">
+            <div className="glass w-full max-w-sm rounded-[3rem] p-10 shadow-2xl text-center space-y-8 animate-in fade-in zoom-in duration-700 bg-black/40 border border-white/10 ring-1 ring-neon-cyan/20 relative pt-20 sm:pt-10">
+                {/* Language Switcher */}
+                <div className="absolute top-4 sm:top-6 right-6 sm:right-8 flex gap-3 z-50">
+                    <button
+                        onClick={() => { }} // Integration with useAuth if needed, but LoginPage already has 'language' from context
+                        className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 px-2 py-1 ${language === "en" ? "text-neon-cyan shadow-neon-sm" : "text-muted-foreground/50 hover:text-white"}`}
+                    >
+                        EN
+                    </button>
+                    <span className="text-white/10 text-[10px] self-center">|</span>
+                    <button
+                        onClick={() => { }} // Mocked for now since AuthContext provides it
+                        className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 px-2 py-1 ${language === "es" ? "text-neon-cyan shadow-neon-sm" : "text-muted-foreground/50 hover:text-white"}`}
+                    >
+                        ES
+                    </button>
+                </div>
+
+                <div className="flex flex-col items-center pt-4 sm:pt-0">
+                    <div className="flex h-16 w-16 sm:h-24 sm:w-24 items-center justify-center rounded-[1.5rem] sm:rounded-[2rem] bg-white text-black ring-4 ring-neon-cyan shadow-neon-cyan-sm overflow-hidden mb-8 sm:mb-12">
                         <img src="/logo.png" className="h-full w-full object-cover" alt="Congratss Logo" />
                     </div>
 
@@ -56,7 +73,7 @@ export default function LoginPage() {
                         {t.welcome_back}
                     </div>
 
-                    <h1 className="text-7xl font-black tracking-tighter italic leading-none text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                    <h1 className="text-5xl sm:text-7xl font-black tracking-tighter italic leading-none text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
                         Congratss
                     </h1>
                 </div>

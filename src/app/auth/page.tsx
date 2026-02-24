@@ -37,37 +37,37 @@ export default function AuthPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-0 sm:p-4">
-            <div className="glass-pane w-full max-w-md p-10 shadow-2xl flex flex-col items-center relative overflow-hidden premium-border h-[100dvh] sm:h-auto pwa-header-spacer pwa-nav-spacer">
+            <div className="glass-pane w-full max-w-md p-10 shadow-2xl flex flex-col items-center relative overflow-hidden premium-border h-[100dvh] sm:h-auto pt-20 sm:pt-10 pwa-header-spacer pwa-nav-spacer">
                 {/* Visual Background Accents */}
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-neon-cyan/5 blur-[80px] rounded-full" />
                 <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-neon-pink/5 blur-[80px] rounded-full" />
 
                 {/* Language Switcher */}
-                <div className="absolute top-6 right-8 flex gap-3">
+                <div className="absolute top-4 sm:top-6 right-6 sm:right-8 flex gap-3 z-50">
                     <button
                         onClick={() => setLanguage("en")}
-                        className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${language === "en" ? "text-neon-cyan shadow-neon-sm" : "text-[var(--app-text-dim)]/50 dark:text-white/20 hover:text-[var(--app-text)]"}`}
+                        className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 px-2 py-1 ${language === "en" ? "text-neon-cyan shadow-neon-sm" : "text-[var(--app-text-dim)]/50 dark:text-white/20 hover:text-[var(--app-text)]"}`}
                     >
                         EN
                     </button>
-                    <span className="text-[var(--app-text-dim)]/20 dark:text-white/10 text-[10px]">|</span>
+                    <span className="text-[var(--app-text-dim)]/20 dark:text-white/10 text-[10px] self-center">|</span>
                     <button
                         onClick={() => setLanguage("es")}
-                        className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${language === "es" ? "text-neon-cyan shadow-neon-sm" : "text-[var(--app-text-dim)]/50 dark:text-white/20 hover:text-[var(--app-text)]"}`}
+                        className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 px-2 py-1 ${language === "es" ? "text-neon-cyan shadow-neon-sm" : "text-[var(--app-text-dim)]/50 dark:text-white/20 hover:text-[var(--app-text)]"}`}
                     >
                         ES
                     </button>
                 </div>
 
-                <div className="flex flex-col items-center gap-4 mb-10 z-10">
+                <div className="flex flex-col items-center gap-4 mb-8 sm:mb-10 z-10 pt-4 sm:pt-0">
                     <div className="group relative">
                         <div className="absolute inset-0 bg-neon-cyan/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                        <div className="flex h-20 w-20 items-center justify-center rounded-[2rem] bg-white text-black shadow-2xl overflow-hidden relative z-10 border-2 border-white/20 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-3">
+                        <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-[1.5rem] sm:rounded-[2rem] bg-white text-black shadow-2xl overflow-hidden relative z-10 border-2 border-white/20 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-3">
                             <img src="/logo.png" className="h-full w-full object-cover" alt="Congratss Logo" />
                         </div>
                     </div>
                     <div className="text-center">
-                        <h1 className="text-5xl font-black tracking-tighter italic text-[var(--app-text)] mb-1 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">Congratss</h1>
+                        <h1 className="text-4xl sm:text-5xl font-black tracking-tighter italic text-[var(--app-text)] mb-1 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">Congratss</h1>
                         <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[var(--app-text-muted)]">
                             {isLogin ? t.welcome_back : t.create_account}
                         </p>
