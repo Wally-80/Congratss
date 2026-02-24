@@ -36,8 +36,8 @@ export default function AuthPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-0 sm:p-4">
-            <div className="glass-pane w-full max-w-md p-10 shadow-2xl flex flex-col items-center relative overflow-hidden premium-border h-[100dvh] sm:h-auto pt-20 sm:pt-10 pwa-header-spacer pwa-nav-spacer">
+        <div className="min-h-[100dvh] flex items-center justify-center p-0 sm:p-4">
+            <div className="glass-pane w-full max-w-md p-10 shadow-2xl flex flex-col items-center justify-center relative overflow-hidden premium-border h-[100dvh] sm:h-auto pwa-header-spacer pwa-nav-spacer">
                 {/* Visual Background Accents */}
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-neon-cyan/5 blur-[80px] rounded-full" />
                 <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-neon-pink/5 blur-[80px] rounded-full" />
@@ -59,7 +59,7 @@ export default function AuthPage() {
                     </button>
                 </div>
 
-                <div className="flex flex-col items-center gap-4 mb-8 sm:mb-10 z-10 pt-4 sm:pt-0">
+                <div className="flex flex-col items-center gap-4 mb-8 sm:mb-10 z-10">
                     <div className="group relative">
                         <div className="absolute inset-0 bg-neon-cyan/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                         <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-[1.5rem] sm:rounded-[2rem] bg-white text-black shadow-2xl overflow-hidden relative z-10 border-2 border-white/20 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-3">
