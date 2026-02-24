@@ -143,7 +143,7 @@ export default function Dashboard() {
                                     placeholder={t.search_placeholder}
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl py-4 pl-12 pr-5 text-sm text-[var(--app-text)] placeholder:text-[var(--app-text-muted)] focus:outline-none focus:border-cyan-400/50 dark:focus:border-neon-cyan/40 focus:bg-white dark:focus:bg-white/[0.1] transition-all duration-300 relative z-10 shadow-sm"
+                                    className="w-full bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-2xl py-4 pl-12 pr-5 text-sm text-[var(--app-text)] placeholder:text-[var(--app-text-muted)] focus:outline-none focus:border-cyan-400/50 dark:focus:border-neon-cyan/40 focus:bg-[var(--glass-bg)] transition-all duration-300 relative z-10 shadow-sm"
                                 />
                             </div>
                         </div>
