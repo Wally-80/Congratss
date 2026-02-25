@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plus, Trash2, Pencil, Image as ImageIcon, Save, X, PlusCircle } from "lucide-react";
+import { Plus, Trash2, Pencil, Image as ImageIcon, Save, X, PlusCircle, Upload, Loader2 } from "lucide-react";
 import { cardService, GreetingCard } from "@/lib/cardService";
 import ConfirmModal from "./ConfirmModal";
 import { useAuth } from "@/context/AuthContext";
 import { translations } from "@/lib/translations";
+import { uploadFile } from "@/lib/storageService";
 
 export default function AdminDashboard() {
     const [cards, setCards] = useState<GreetingCard[]>([]);
@@ -13,6 +14,9 @@ export default function AdminDashboard() {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [formData, setFormData] = useState({ label: "", url: "", category: "Classic" });
     const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [isBulkUploading, setIsBulkUploading] = useState(false);
     const { language } = useAuth();
     const t = translations[language];
 
@@ -30,7 +34,58 @@ export default function AdminDashboard() {
 
     const categories = Array.from(new Set(cards.map(c => c.category))).sort();
 
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(true);
+        setUploadProgress(0);
+        try {
+            const url = await uploadFile(file, "greeting_cards", (progress) => {
+                setUploadProgress(progress);
+            });
+            setFormData(prev => ({ ...prev, url }));
+            alert(t.upload_success);
+        } catch (error) {
+            console.error("Upload error:", error);
+            alert(t.upload_failed);
+        } finally {
+            setUploading(false);
+            setUploadProgress(0);
+        }
+    };
+
+    const handleQuickUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+
+        setIsBulkUploading(true);
+        setLoading(true);
+        try {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const label = file.name.split('.').slice(0, -1).join('.') || file.name;
+                const url = await uploadFile(file, "greeting_cards");
+                await cardService.addCard({
+                    label: label,
+                    url: url,
+                    category: "New"
+                });
+            }
+            alert(language === "es" ? "¡Tarjetas creadas con éxito!" : "Cards created successfully!");
+        } catch (error) {
+            console.error("Bulk upload error:", error);
+            alert(t.upload_failed);
+        } finally {
+            setIsBulkUploading(false);
+            setLoading(false);
+            // Reset input
+            e.target.value = "";
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
+
         e.preventDefault();
         setLoading(true);
         try {
@@ -95,6 +150,22 @@ export default function AdminDashboard() {
                 </div>
                 {!isAdding && (
                     <div className="flex gap-2">
+                        <label className="flex items-center gap-2 px-4 py-2 bg-white/5 dark:bg-white/5 text-[var(--app-text-dim)] border border-dashed border-cyan-400/30 rounded-xl font-bold text-xs hover:bg-cyan-400/10 hover:text-cyan-400 hover:border-cyan-400/50 transition-all cursor-pointer">
+                            {isBulkUploading ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <Plus className="w-4 h-4" />
+                            )}
+                            {isBulkUploading ? t.processing_files : t.quick_upload}
+                            <input
+                                type="file"
+                                multiple
+                                className="hidden"
+                                onChange={handleQuickUpload}
+                                disabled={isBulkUploading}
+                                accept="image/*,video/*"
+                            />
+                        </label>
                         <button
                             onClick={async () => {
                                 if (confirm(language === "es" ? "¿Quieres restaurar las 12 tarjetas originales de Congratss?" : "Do you want to restore the 12 original Congratss cards?")) {
@@ -152,15 +223,40 @@ export default function AdminDashboard() {
 
                             <div>
                                 <label className="text-[10px] font-bold text-black/30 dark:text-white/30 uppercase tracking-widest block mb-1.5 ml-1">{t.image_url}</label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={formData.url}
-                                    onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                                    placeholder="e.g. /greeting_new.png"
-                                    className="w-full bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-950 dark:text-white focus:outline-none focus:border-cyan-400 transition-all shadow-inner"
-                                />
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.url}
+                                        onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                                        placeholder="e.g. /greeting_new.png"
+                                        className="flex-1 bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-950 dark:text-white focus:outline-none focus:border-cyan-400 transition-all shadow-inner"
+                                    />
+                                    <label className="flex items-center justify-center px-4 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl cursor-pointer hover:bg-black/10 dark:hover:bg-white/10 transition-all group">
+                                        {uploading ? (
+                                            <Loader2 className="w-5 h-5 animate-spin text-cyan-400" />
+                                        ) : (
+                                            <Upload className="w-5 h-5 text-[var(--app-text-dim)] group-hover:text-cyan-400" />
+                                        )}
+                                        <input
+                                            type="file"
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={handleImageUpload}
+                                            disabled={uploading}
+                                        />
+                                    </label>
+                                </div>
+                                {uploading && (
+                                    <div className="mt-2 h-1 w-full bg-black/5 dark:bg-white/5 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-cyan-400 transition-all duration-300"
+                                            style={{ width: `${uploadProgress}%` }}
+                                        />
+                                    </div>
+                                )}
                             </div>
+
 
                             <div>
                                 <label className="text-[10px] font-bold text-black/30 dark:text-white/30 uppercase tracking-widest block mb-1.5 ml-1">{t.category}</label>

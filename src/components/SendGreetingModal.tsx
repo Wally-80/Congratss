@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Send, MessageCircle, Mail, Phone, Check, RefreshCw } from "lucide-react";
+import { X, Send, MessageCircle, Mail, Phone, Check, RefreshCw, Upload, Loader2 } from "lucide-react";
 import { cardService, GreetingCard } from "@/lib/cardService";
 
 import { useAuth } from "@/context/AuthContext";
 import { translations } from "@/lib/translations";
+import { uploadFile } from "@/lib/storageService";
 
 interface SendGreetingModalProps {
+
     isOpen: boolean;
     onClose: () => void;
     celebration: {
@@ -15,6 +17,7 @@ interface SendGreetingModalProps {
         type: string;
     } | null;
 }
+
 
 const MESSAGE_TEMPLATES = {
     en: [
@@ -61,6 +64,39 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
     const [sharing, setSharing] = useState(false);
     const [loadingCards, setLoadingCards] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+
+    const handleUserUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(true);
+        setUploadProgress(0);
+        try {
+            const url = await uploadFile(file, "user_uploads", (progress) => {
+                setUploadProgress(progress);
+            });
+
+            const customCard: GreetingCard = {
+                id: `custom_${Date.now()}`,
+                url,
+                label: t.upload_your_own,
+                category: "Custom"
+            };
+
+            setGreetingCards(prev => [customCard, ...prev]);
+            setSelectedImageId(customCard.id);
+            setActiveCategory("All");
+        } catch (error) {
+            console.error("Upload error:", error);
+            alert(t.upload_failed);
+        } finally {
+            setUploading(false);
+            setUploadProgress(0);
+        }
+    };
+
 
     useEffect(() => {
         // Subscribe to cards on mount to ensure data is ready early
@@ -200,6 +236,17 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                         <div className="flex flex-col gap-3 mb-3">
                             <label className="text-[10px] font-bold text-[var(--app-text-dim)] uppercase tracking-widest block">{t.select_card}</label>
                             <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
+                                <label className="flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase transition-all bg-black/5 dark:bg-white/5 border border-dashed border-cyan-400/50 text-cyan-400 cursor-pointer hover:bg-cyan-400/10 whitespace-nowrap">
+                                    {uploading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />}
+                                    {uploading ? t.uploading : t.upload_your_own}
+                                    <input
+                                        type="file"
+                                        className="hidden"
+                                        accept="image/*"
+                                        onChange={handleUserUpload}
+                                        disabled={uploading}
+                                    />
+                                </label>
                                 {categories.map((cat) => (
                                     <button
                                         key={cat}
@@ -213,6 +260,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                                     </button>
                                 ))}
                             </div>
+
                         </div>
 
                         {loadingCards ? (
