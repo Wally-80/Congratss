@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { Gift, Mail, Loader2 } from 'lucide-react';
+import { Mail, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { translations } from '@/lib/translations';
@@ -98,6 +99,16 @@ export default function LoginPage() {
                 <p className="text-[10px] text-muted-foreground/60 leading-relaxed px-4">
                     {t.terms_privacy}
                 </p>
+
+                <div className="flex items-center justify-center gap-4 text-[10px] uppercase tracking-widest">
+                    <Link href="/about" className="text-muted-foreground/60 hover:text-white transition-colors">
+                        {t.about_app}
+                    </Link>
+                    <span className="text-white/10">|</span>
+                    <Link href="/privacy" className="text-muted-foreground/60 hover:text-white transition-colors">
+                        {t.privacy_policy}
+                    </Link>
+                </div>
 
                 <div className="pt-4 border-t border-white/5 flex flex-col items-center gap-4">
                     <p className="text-xs text-muted-foreground">

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import { Plus, Trash2, Pencil, Image as ImageIcon, Save, X, PlusCircle, Upload, Loader2 } from "lucide-react";
@@ -22,7 +22,6 @@ export default function AdminDashboard() {
 
     // Confirmation States
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
-    const [isRestoreConfirmOpen, setIsRestoreConfirmOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
     useEffect(() => {
@@ -72,7 +71,7 @@ export default function AdminDashboard() {
                     category: "New"
                 });
             }
-            alert(language === "es" ? "¡Tarjetas creadas con éxito!" : "Cards created successfully!");
+            alert(language === "es" ? "Â¡Tarjetas creadas con Ã©xito!" : "Cards created successfully!");
         } catch (error) {
             console.error("Bulk upload error:", error);
             alert(t.upload_failed);
@@ -121,19 +120,6 @@ export default function AdminDashboard() {
             setItemToDelete(null);
         }
     };
-
-    const handleRestoreConfirm = async () => {
-        setLoading(true);
-        try {
-            await cardService.seedDefaults();
-            alert(language === "es" ? "¡Galería restaurada con éxito!" : "Gallery restored successfully!");
-        } catch (e) {
-            alert(language === "es" ? "Restauración fallida. Ver consola." : "Restoration failed. See console.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const cancel = () => {
         setIsAdding(false);
         setEditingId(null);
@@ -141,7 +127,10 @@ export default function AdminDashboard() {
     };
 
     return (
-        <div className="flex-1 flex flex-col overflow-hidden bg-[var(--app-bg)]">
+        <div className="relative flex-1 flex flex-col overflow-hidden">
+            <div className="hidden dark:block absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,_#23324a_0%,_#151820_45%,_#111622_100%)]" />
+            <div className="hidden dark:block absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_85%_10%,_#2b4a6a_0%,_transparent_40%)]" />
+            <div className="relative z-10 flex-1 flex flex-col overflow-hidden">
             {/* Action Bar */}
             <div className="px-6 py-4 border-b border-white/10 dark:border-white/10 flex justify-between items-center bg-[var(--pane-bg)]">
                 <div className="hidden sm:block">
@@ -167,24 +156,7 @@ export default function AdminDashboard() {
                             />
                         </label>
                         <button
-                            onClick={async () => {
-                                if (confirm(language === "es" ? "¿Quieres restaurar las 12 tarjetas originales de Congratss?" : "Do you want to restore the 12 original Congratss cards?")) {
-                                    setLoading(true);
-                                    try {
-                                        await cardService.seedDefaults();
-                                        alert(language === "es" ? "¡Galería restaurada con éxito!" : "Gallery restored successfully!");
-                                    } catch (e) {
-                                        alert(language === "es" ? "Restauración fallida. Ver consola." : "Restoration failed. See console.");
-                                    } finally {
-                                        setLoading(false);
-                                    }
-                                }
-                            }}
-                            className="flex items-center gap-2 px-4 py-2 bg-black/5 dark:bg-white/5 text-[var(--app-text-dim)] border border-black/10 dark:border-white/10 rounded-xl font-bold text-xs hover:bg-black/10 dark:hover:bg-white/10 hover:text-[var(--app-text)] transition-all"
-                        >
-                            {t.restore_defaults}
-                        </button>
-                        <button
+                            type="button"
                             onClick={() => setIsAdding(true)}
                             className="flex items-center gap-2 px-4 py-2 bg-cyan-400 text-black rounded-xl font-bold text-xs shadow-neon hover:brightness-110 transition-all"
                         >
@@ -203,7 +175,12 @@ export default function AdminDashboard() {
                             <h3 className="text-lg font-bold text-[var(--app-text)]">
                                 {editingId ? t.edit_card : t.build_new_card}
                             </h3>
-                            <button onClick={cancel} className="text-[var(--app-text-muted)] hover:text-[var(--app-text)]">
+                            <button
+                                type="button"
+                                aria-label="Close editor"
+                                onClick={cancel}
+                                className="w-10 h-10 grid place-items-center rounded-full text-[var(--app-text-muted)] hover:text-[var(--app-text)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                            >
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
@@ -319,16 +296,20 @@ export default function AdminDashboard() {
                                             <div key={card.id} className="glass-card p-2 group overflow-hidden premium-border neon-border-cyan">
                                                 <div className="relative aspect-square rounded-lg overflow-hidden mb-2">
                                                     <img src={card.url} alt={card.label} className="w-full h-full object-cover" />
-                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                                    <div className="absolute inset-0 bg-black/45 opacity-100 pointer-events-auto sm:opacity-0 sm:pointer-events-none sm:group-hover:opacity-100 sm:group-hover:pointer-events-auto transition-opacity flex items-start justify-end gap-2 p-2">
                                                         <button
+                                                            type="button"
                                                             onClick={() => handleEdit(card)}
-                                                            className="p-2 bg-white/10 backdrop-blur-md rounded-lg text-white hover:bg-cyan-400 hover:text-black transition-all"
+                                                            className="p-2 bg-black/35 sm:bg-white/10 backdrop-blur-md rounded-lg text-white hover:bg-cyan-400 hover:text-black transition-all"
+                                                            aria-label="Edit card"
                                                         >
                                                             <Pencil className="w-4 h-4" />
                                                         </button>
                                                         <button
+                                                            type="button"
                                                             onClick={() => handleDeleteClick(card.id)}
-                                                            className="p-2 bg-white/10 backdrop-blur-md rounded-lg text-white hover:bg-red-500 transition-all"
+                                                            className="p-2 bg-black/35 sm:bg-white/10 backdrop-blur-md rounded-lg text-white hover:bg-red-500 transition-all"
+                                                            aria-label="Delete card"
                                                         >
                                                             <Trash2 className="w-4 h-4" />
                                                         </button>
@@ -349,7 +330,7 @@ export default function AdminDashboard() {
             {!isAdding && (
                 <div className="p-6 bg-blue-500/5 dark:bg-blue-500/10 border-t border-black/5 dark:border-white/5">
                     <p className="text-[10px] text-blue-600 dark:text-blue-300/60 leading-relaxed italic text-center">
-                        {language === "es" ? "Cualquier cambio hecho aquí será visible para todos los usuarios en el menú 'Elegir y Enviar' al instante vía Firestore." : "Any changes made here will be visible to all users in the \"Pick & Send\" menu instantly via Firestore sync."}
+                        {language === "es" ? "Cualquier cambio hecho aquÃ­ serÃ¡ visible para todos los usuarios en el menÃº 'Elegir y Enviar' al instante vÃ­a Firestore." : "Any changes made here will be visible to all users in the \"Pick & Send\" menu instantly via Firestore sync."}
                     </p>
                 </div>
             )}
@@ -361,16 +342,8 @@ export default function AdminDashboard() {
                 title={t.delete_card_title}
                 message={t.delete_card_msg}
             />
-
-            <ConfirmModal
-                isOpen={isRestoreConfirmOpen}
-                onClose={() => setIsRestoreConfirmOpen(false)}
-                onConfirm={handleRestoreConfirm}
-                isDangerous={false}
-                title={t.restore_gallery_title}
-                message={t.restore_gallery_msg}
-                confirmText={t.restore_now}
-            />
+            </div>
         </div>
     );
 }
+

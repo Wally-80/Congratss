@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { auth } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { useAuth } from "@/context/AuthContext";
@@ -31,8 +32,8 @@ export default function AuthPage() {
                     await updateUserProfile("Congratss User", getAvatarUrl(avatar));
                 }
             }
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Authentication error");
         }
     };
 
@@ -114,6 +115,16 @@ export default function AuthPage() {
                         >
                             Español
                         </button>
+                    </div>
+
+                    <div className="flex gap-4 text-[10px] uppercase tracking-widest">
+                        <Link href="/about" className="text-[var(--app-text-dim)]/60 hover:text-[var(--app-text)] transition-colors">
+                            {t.about_app}
+                        </Link>
+                        <span className="text-[var(--app-text-dim)]/20">|</span>
+                        <Link href="/privacy" className="text-[var(--app-text-dim)]/60 hover:text-[var(--app-text)] transition-colors">
+                            {t.privacy_policy}
+                        </Link>
                     </div>
                 </div>
             </div>

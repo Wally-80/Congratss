@@ -1,0 +1,77 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdminByDoc() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && (
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin"
+          || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true
+        );
+    }
+
+    function isAdminByEmail() {
+      return isSignedIn() && request.auth.token.email == "walterrpom@gmail.com";
+    }
+
+    function isAdmin() {
+      return isAdminByDoc() || isAdminByEmail();
+    }
+
+    // User settings/preferences document
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+
+      // Users can create their own doc, but cannot self-assign admin fields.
+      allow create: if isOwner(userId)
+        && !request.resource.data.keys().hasAny(["role", "isAdmin"]);
+
+      // Users can update own preferences/profile except admin fields.
+      allow update: if (isOwner(userId)
+          && !request.resource.data.diff(resource.data).changedKeys().hasAny(["role", "isAdmin"]))
+        || isAdmin();
+
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+
+    // Main user celebrations
+    match /celebrations/{celebrationId} {
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.keys().hasAll(["title", "rawDate", "type", "userId"])
+        && request.resource.data.title is string
+        && request.resource.data.rawDate is string
+        && request.resource.data.type is string
+        && (!request.resource.data.keys().hasAny(["customTypeLabel"]) || request.resource.data.customTypeLabel is string);
+
+      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+
+      allow update: if isSignedIn()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.title is string
+        && request.resource.data.rawDate is string
+        && request.resource.data.type is string
+        && (!request.resource.data.keys().hasAny(["customTypeLabel"]) || request.resource.data.customTypeLabel is string);
+    }
+
+    // Public greeting card library
+    match /greeting_cards/{cardId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Deny by default for everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

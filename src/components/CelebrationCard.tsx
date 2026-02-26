@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
-import { Gift, Heart, Trash2, Pencil, Send, PartyPopper } from "lucide-react";
+import { Activity, Baby, Gift, GraduationCap, Heart, House, PartyPopper, Pencil, Send, Sparkles, Trash2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { translations } from "@/lib/translations";
+import { type CelebrationType } from "@/hooks/useCelebrations";
 
 interface CelebrationCardProps {
     id: string;
@@ -12,14 +13,15 @@ interface CelebrationCardProps {
     date: string;
     rawDate: string;
     percentage: number;
-    type: "birthday" | "anniversary" | "retirement";
+    type: CelebrationType;
+    customTypeLabel?: string;
     onDelete: (id: string) => Promise<void>;
-    onEdit: (celebration: any) => void;
-    onSendGreeting: (celebration: any) => void;
+    onEdit: (celebration: { id: string; title: string; rawDate: string; type: CelebrationType; customTypeLabel?: string }) => void;
+    onSendGreeting: (celebration: { title: string; type: CelebrationType; customTypeLabel?: string }) => void;
 }
 
 export default function CelebrationCard({
-    id, title, daysLeft, date, rawDate, percentage, type,
+    id, title, daysLeft, rawDate, type, customTypeLabel,
     onDelete, onEdit, onSendGreeting
 }: CelebrationCardProps) {
     const { language } = useAuth();
@@ -30,6 +32,12 @@ export default function CelebrationCard({
             case "birthday": return <Gift className="w-5 h-5" />;
             case "anniversary": return <Heart className="w-5 h-5" />;
             case "retirement": return <PartyPopper className="w-5 h-5" />;
+            case "graduation": return <GraduationCap className="w-5 h-5" />;
+            case "baby_shower": return <Baby className="w-5 h-5" />;
+            case "wedding": return <Heart className="w-5 h-5" />;
+            case "get_well_soon": return <Activity className="w-5 h-5" />;
+            case "house_warming": return <House className="w-5 h-5" />;
+            case "custom": return <Sparkles className="w-5 h-5" />;
             default: return <Gift className="w-5 h-5" />;
         }
     };
@@ -39,14 +47,60 @@ export default function CelebrationCard({
             case "birthday": return "from-neon-pink to-purple-500 shadow-neon-pink";
             case "anniversary": return "from-neon-cyan to-blue-500 shadow-neon-cyan";
             case "retirement": return "from-white to-gray-400 shadow-white/20";
+            case "graduation": return "from-violet-500 to-indigo-500 shadow-violet-400/50";
+            case "baby_shower": return "from-sky-400 to-cyan-400 shadow-sky-300/50";
+            case "wedding": return "from-rose-500 to-pink-500 shadow-rose-400/50";
+            case "get_well_soon": return "from-emerald-400 to-teal-500 shadow-emerald-300/50";
+            case "house_warming": return "from-amber-400 to-orange-500 shadow-amber-300/50";
+            case "custom": return "from-indigo-500 to-cyan-500 shadow-indigo-400/50";
             default: return "from-neon-cyan to-blue-500 shadow-neon-cyan";
         }
     };
 
+    const getTypeLabel = () => {
+        switch (type) {
+            case "birthday": return t.birthday;
+            case "anniversary": return t.anniversary;
+            case "retirement": return t.retirement;
+            case "graduation": return t.graduation;
+            case "baby_shower": return t.baby_shower;
+            case "wedding": return t.wedding;
+            case "get_well_soon": return t.get_well_soon;
+            case "house_warming": return t.house_warming;
+            case "custom": return customTypeLabel || t.custom;
+            default: return t.event_type;
+        }
+    };
+
+    const borderAccentClass = (() => {
+        switch (type) {
+            case "birthday":
+                return "neon-border-pink";
+            case "anniversary":
+                return "neon-border-cyan";
+            case "retirement":
+                return "border-slate-300/40 dark:border-slate-400/40 shadow-[0_0_14px_rgba(148,163,184,0.18)]";
+            case "graduation":
+                return "border-violet-400/45 shadow-[0_0_14px_rgba(167,139,250,0.2)]";
+            case "baby_shower":
+                return "border-sky-300/50 shadow-[0_0_14px_rgba(125,211,252,0.2)]";
+            case "wedding":
+                return "border-rose-400/45 shadow-[0_0_14px_rgba(251,113,133,0.2)]";
+            case "get_well_soon":
+                return "border-emerald-400/45 shadow-[0_0_14px_rgba(52,211,153,0.2)]";
+            case "house_warming":
+                return "border-amber-400/50 shadow-[0_0_14px_rgba(251,191,36,0.2)]";
+            case "custom":
+                return "border-fuchsia-500/45 shadow-[0_0_14px_rgba(217,70,239,0.2)]";
+            default:
+                return "neon-border-pink";
+        }
+    })();
+
     const isToday = daysLeft === 0;
 
     return (
-        <div className={`glass-card mb-6 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500 premium-border ${type === "birthday" ? "neon-border-pink" : type === "anniversary" ? "neon-border-cyan" : ""}`}>
+        <div className={`glass-card mb-6 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500 premium-border ${borderAccentClass}`}>
             <div className="flex justify-between items-start mb-6">
                 <div className="flex items-start gap-4">
                     <div className={`p-3 rounded-2xl bg-gradient-to-br ${getColors()} text-black flex items-center justify-center transform -rotate-12`}>
@@ -54,6 +108,7 @@ export default function CelebrationCard({
                     </div>
                     <div>
                         <h3 className="text-lg font-bold tracking-tight mb-1 text-[var(--app-text)]">{title}</h3>
+                        <p className="text-[10px] uppercase tracking-widest text-[var(--app-text-muted)] mb-1">{getTypeLabel()}</p>
                         <p className="text-xs text-[var(--app-text-dim)] font-medium">
                             {new Date(rawDate).toLocaleDateString(language === "es" ? "es-ES" : "en-US", { month: "long", day: "numeric", timeZone: "UTC" })}
                         </p>
@@ -62,7 +117,7 @@ export default function CelebrationCard({
 
                 <div className="flex items-center gap-1">
                     <button
-                        onClick={() => onEdit({ id, title, rawDate, type })}
+                        onClick={() => onEdit({ id, title, rawDate, type, customTypeLabel })}
                         className="p-2.5 text-[var(--app-text-dim)] hover:text-[var(--app-text)] hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-all"
                     >
                         <Pencil className="w-4 h-4" />
@@ -86,7 +141,7 @@ export default function CelebrationCard({
                     </span>
                 </div>
                 <button
-                    onClick={() => onSendGreeting({ title, type })}
+                    onClick={() => onSendGreeting({ title, type, customTypeLabel })}
                     className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${isToday
                         ? "bg-neon-cyan text-black shadow-neon animate-pulse"
                         : "bg-black/5 dark:bg-white/10 text-[var(--app-text)] border border-black/10 dark:border-white/20 hover:bg-black/10 dark:hover:bg-white/20"}`}

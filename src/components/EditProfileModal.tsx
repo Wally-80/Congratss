@@ -56,8 +56,10 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
 
             <div className="glass-pane w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto scrollbar-hide premium-border neon-border-cyan pt-[max(2rem,env(safe-area-inset-top))] sm:pt-8">
                 <button
+                    type="button"
+                    aria-label="Close modal"
                     onClick={onClose}
-                    className="absolute top-6 right-6 p-2 text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors mt-[max(0rem,calc(env(safe-area-inset-top)-1.5rem))] sm:mt-0"
+                    className="absolute top-[max(0.75rem,env(safe-area-inset-top))] right-4 sm:top-6 sm:right-6 z-20 w-10 h-10 grid place-items-center text-[var(--app-text-muted)] hover:text-[var(--app-text)] hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors touch-manipulation cursor-pointer"
                 >
                     <X className="w-5 h-5" />
                 </button>

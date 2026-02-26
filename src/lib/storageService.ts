@@ -8,7 +8,6 @@ export const uploadFile = (
 ): Promise<string> => {
     return new Promise((resolve, reject) => {
         const filePath = `${path}/${Date.now()}_${file.name}`;
-        console.log(`Starting upload to: ${filePath}`, { size: file.size, type: file.type });
 
         const storageRef = ref(storage, filePath);
         const uploadTask = uploadBytesResumable(storageRef, file);
@@ -17,7 +16,6 @@ export const uploadFile = (
             "state_changed",
             (snapshot) => {
                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                console.log(`Upload progress for ${file.name}: ${progress.toFixed(2)}%`);
                 if (onProgress) onProgress(progress);
             },
             (error) => {
@@ -36,7 +34,6 @@ export const uploadFile = (
             async () => {
                 try {
                     const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                    console.log(`Upload successful for ${file.name}. URL: ${downloadURL}`);
                     resolve(downloadURL);
                 } catch (urlError) {
                     console.error("Failed to get download URL:", urlError);

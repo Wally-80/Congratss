@@ -7,6 +7,7 @@ import { cardService, GreetingCard } from "@/lib/cardService";
 import { useAuth } from "@/context/AuthContext";
 import { translations } from "@/lib/translations";
 import { uploadFile } from "@/lib/storageService";
+import { type CelebrationType } from "@/hooks/useCelebrations";
 
 interface SendGreetingModalProps {
 
@@ -14,7 +15,8 @@ interface SendGreetingModalProps {
     onClose: () => void;
     celebration: {
         title: string;
-        type: string;
+        type: CelebrationType;
+        customTypeLabel?: string;
     } | null;
 }
 
@@ -66,6 +68,13 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
     const [error, setError] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
+    const modalAccentClass = celebration?.type === "birthday"
+        ? "neon-border-pink"
+        : celebration?.type === "anniversary"
+            ? "neon-border-cyan"
+            : celebration?.type === "wedding"
+                ? "border-rose-400/40"
+                : "neon-border-cyan";
 
     const handleUserUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -215,8 +224,16 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center sm:p-4 bg-black/60 backdrop-blur-sm">
-            <div className={`glass-pane w-full h-full sm:h-auto sm:max-w-md sm:max-h-[90vh] overflow-y-auto flex flex-col relative animate-in fade-in zoom-in duration-300 premium-border ${celebration?.type === "birthday" ? "neon-border-pink" : celebration?.type === "anniversary" ? "neon-border-cyan" : "neon-border-cyan"}`}>
+        <div
+            className="fixed inset-0 z-[100] flex items-center justify-center sm:p-4 bg-black/60 backdrop-blur-sm"
+            onClick={onClose}
+        >
+            <div
+                onClick={(e) => e.stopPropagation()}
+                className={`glass-pane w-full h-full sm:h-auto sm:max-w-md sm:max-h-[90vh] overflow-y-auto flex flex-col relative animate-in fade-in zoom-in duration-300 premium-border ${modalAccentClass}`}
+            >
+                <div className="hidden dark:block absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_0%,_#23324a_0%,_#151820_45%,_#111622_100%)]" />
+                <div className="hidden dark:block absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(circle_at_85%_10%,_#2b4a6a_0%,_transparent_40%)]" />
                 {/* Header */}
                 <div className="p-6 border-b border-black/5 dark:border-white/10 flex justify-between items-center sticky top-0 bg-[var(--pane-bg)] backdrop-blur-md z-10 pt-[max(1.5rem,env(safe-area-inset-top))] sm:pt-6">
                     <div>
@@ -225,12 +242,17 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                             {celebration ? `${t.greeting_for} ${celebration.title}` : t.share_with_anyone}
                         </p>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors mt-[max(0rem,calc(env(safe-area-inset-top)-1rem))] sm:mt-0">
+                    <button
+                        type="button"
+                        aria-label="Close modal"
+                        onClick={onClose}
+                        className="z-20 w-10 h-10 grid place-items-center hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors touch-manipulation cursor-pointer"
+                    >
                         <X className="w-5 h-5 text-[var(--app-text-dim)]" />
                     </button>
                 </div>
 
-                <div className="p-6 space-y-6">
+                <div className="relative z-10 p-6 space-y-6">
                     {/* Image Selection with Category Tabs */}
                     <div>
                         <div className="flex flex-col gap-3 mb-3">

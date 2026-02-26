@@ -4,6 +4,17 @@ import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
 import { calculateCountdown } from "@/lib/dateUtils";
 
+export type CelebrationType =
+    | "birthday"
+    | "anniversary"
+    | "retirement"
+    | "graduation"
+    | "baby_shower"
+    | "wedding"
+    | "get_well_soon"
+    | "house_warming"
+    | "custom";
+
 export interface Celebration {
     id: string;
     title: string;
@@ -11,7 +22,8 @@ export interface Celebration {
     date: string;
     rawDate: string; // Storing the ISO string for editing
     percentage: number;
-    type: "birthday" | "anniversary";
+    type: CelebrationType;
+    customTypeLabel?: string;
     userId: string;
 }
 
@@ -71,14 +83,20 @@ export const useCelebrations = () => {
         return () => unsubscribe();
     }, [user]);
 
-    const addCelebration = async (data: { title: string, rawDate: string, type: string }) => {
+    const addCelebration = async (data: { title: string, rawDate: string, type: CelebrationType, customTypeLabel?: string }) => {
         if (!user) return;
         const nowISO = new Date().toISOString();
         const { daysLeft, percentage, formattedDate } = calculateCountdown(data.rawDate, nowISO);
+        const payload = {
+            title: data.title,
+            rawDate: data.rawDate,
+            type: data.type,
+            ...(typeof data.customTypeLabel === "string" ? { customTypeLabel: data.customTypeLabel } : {}),
+        };
 
         try {
             await addDoc(collection(db, "celebrations"), {
-                ...data,
+                ...payload,
                 daysLeft,
                 percentage,
                 date: formattedDate,
@@ -91,17 +109,23 @@ export const useCelebrations = () => {
         }
     };
 
-    const updateCelebration = async (id: string, data: { title: string, rawDate: string, type: string }) => {
+    const updateCelebration = async (id: string, data: { title: string, rawDate: string, type: CelebrationType, customTypeLabel?: string }) => {
         if (!user) return;
 
         // When updating, we don't easily have the original createdAt here unless we fetch or it's passed.
         // For simplicity, we'll just recalculate. Recurring events don't use it anyway.
         const { daysLeft, percentage, formattedDate } = calculateCountdown(data.rawDate);
+        const payload = {
+            title: data.title,
+            rawDate: data.rawDate,
+            type: data.type,
+            ...(typeof data.customTypeLabel === "string" ? { customTypeLabel: data.customTypeLabel } : {}),
+        };
 
         try {
             const ref = doc(db, "celebrations", id);
             await updateDoc(ref, {
-                ...data,
+                ...payload,
                 daysLeft,
                 percentage,
                 date: formattedDate,
