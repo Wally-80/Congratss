@@ -11,7 +11,9 @@ export const metadata: Metadata = {
         title: "Congratss",
     },
     icons: {
+        icon: "/logo.png",
         apple: "/logo.png",
+        shortcut: "/logo.png",
     },
 };
 
