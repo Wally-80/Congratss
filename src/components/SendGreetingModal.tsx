@@ -218,14 +218,14 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
         <div className="fixed inset-0 z-[100] flex items-center justify-center sm:p-4 bg-black/60 backdrop-blur-sm">
             <div className={`glass-pane w-full h-full sm:h-auto sm:max-w-md sm:max-h-[90vh] overflow-y-auto flex flex-col relative animate-in fade-in zoom-in duration-300 premium-border ${celebration?.type === "birthday" ? "neon-border-pink" : celebration?.type === "anniversary" ? "neon-border-cyan" : "neon-border-cyan"}`}>
                 {/* Header */}
-                <div className="p-6 border-b border-black/5 dark:border-white/10 flex justify-between items-center sticky top-0 bg-[var(--pane-bg)] backdrop-blur-md z-10">
+                <div className="p-6 border-b border-black/5 dark:border-white/10 flex justify-between items-center sticky top-0 bg-[var(--pane-bg)] backdrop-blur-md z-10 pt-[max(1.5rem,env(safe-area-inset-top))] sm:pt-6">
                     <div>
                         <h2 className="text-xl font-bold text-[var(--app-text)] uppercase tracking-tight">{t.pick_and_send}</h2>
                         <p className="text-xs text-[var(--app-text-dim)]">
                             {celebration ? `${t.greeting_for} ${celebration.title}` : t.share_with_anyone}
                         </p>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors">
+                    <button onClick={onClose} className="p-2 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors mt-[max(0rem,calc(env(safe-area-inset-top)-1rem))] sm:mt-0">
                         <X className="w-5 h-5 text-[var(--app-text-dim)]" />
                     </button>
                 </div>

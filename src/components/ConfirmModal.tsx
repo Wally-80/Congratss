@@ -38,10 +38,10 @@ export default function ConfirmModal({
                 onClick={onClose}
             />
 
-            <div className={`glass-pane w-full max-w-sm p-8 relative animate-in fade-in zoom-in duration-300 shadow-2xl premium-border ${isDangerous ? "neon-border-red" : "neon-border-cyan"}`}>
+            <div className={`glass-pane w-full max-w-sm p-8 relative animate-in fade-in zoom-in duration-300 shadow-2xl premium-border ${isDangerous ? "neon-border-red" : "neon-border-cyan"} pt-[max(2rem,env(safe-area-inset-top))] sm:pt-8`}>
                 <button
                     onClick={onClose}
-                    className="absolute top-6 right-6 p-2 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-opacity"
+                    className="absolute top-6 right-6 p-2 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-opacity mt-[max(0rem,calc(env(safe-area-inset-top)-1.5rem))] sm:mt-0"
                 >
                     <X className="w-5 h-5" />
                 </button>

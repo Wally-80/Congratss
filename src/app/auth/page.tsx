@@ -37,8 +37,8 @@ export default function AuthPage() {
     };
 
     return (
-        <div className="min-h-[100dvh] flex items-center justify-center p-0 sm:p-4">
-            <div className="glass-pane w-full max-w-md p-10 shadow-2xl flex flex-col items-center justify-center relative overflow-hidden premium-border h-[100dvh] sm:h-auto pwa-header-spacer pwa-nav-spacer">
+        <div className="min-h-[100dvh] flex items-center justify-center p-0 sm:p-4 pt-[max(0rem,env(safe-area-inset-top))] pb-[max(0rem,env(safe-area-inset-bottom))]">
+            <div className="glass-pane w-full max-w-md p-10 shadow-2xl flex flex-col items-center justify-center relative overflow-hidden premium-border h-[100dvh] sm:h-auto pt-[max(2.5rem,env(safe-area-inset-top))] pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:py-10">
                 {/* Visual Background Accents */}
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-neon-cyan/5 blur-[80px] rounded-full" />
                 <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-neon-pink/5 blur-[80px] rounded-full" />

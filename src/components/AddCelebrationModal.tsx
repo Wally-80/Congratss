@@ -54,10 +54,10 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
-            <div className={`glass-pane w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-300 premium-border ${type === "birthday" ? "neon-border-pink" : type === "anniversary" ? "neon-border-cyan" : ""}`}>
+            <div className={`glass-pane w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-300 premium-border ${type === "birthday" ? "neon-border-pink" : type === "anniversary" ? "neon-border-cyan" : ""} pt-[max(2rem,env(safe-area-inset-top))] sm:pt-8`}>
                 <button
                     onClick={onClose}
-                    className="absolute top-6 right-6 p-2 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors"
+                    className="absolute top-6 right-6 p-2 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors mt-[max(0rem,calc(env(safe-area-inset-top)-1.5rem))] sm:mt-0"
                 >
                     <X className="w-6 h-6" />
                 </button>

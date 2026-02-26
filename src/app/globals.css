@@ -175,6 +175,10 @@
     .pwa-header-spacer {
         padding-top: env(safe-area-inset-top);
     }
+
+    .pwa-safe-top {
+        padding-top: max(1.5rem, env(safe-area-inset-top));
+    }
 }
 
 .scrollbar-hide::-webkit-scrollbar {

@@ -54,10 +54,10 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-            <div className="glass-pane w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto scrollbar-hide premium-border neon-border-cyan">
+            <div className="glass-pane w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto scrollbar-hide premium-border neon-border-cyan pt-[max(2rem,env(safe-area-inset-top))] sm:pt-8">
                 <button
                     onClick={onClose}
-                    className="absolute top-6 right-6 p-2 text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors"
+                    className="absolute top-6 right-6 p-2 text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors mt-[max(0rem,calc(env(safe-area-inset-top)-1.5rem))] sm:mt-0"
                 >
                     <X className="w-5 h-5" />
                 </button>

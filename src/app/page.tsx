@@ -116,7 +116,7 @@ export default function Dashboard() {
         if (activeTab === "admin") title = t.admin_console;
 
         return (
-            <header className="px-6 py-4 flex justify-between items-center bg-white/[0.05] dark:bg-white/[0.02] backdrop-blur-md border-b border-black/5 dark:border-white/5 pwa-header-spacer">
+            <header className="px-6 py-4 flex justify-between items-center bg-white/[0.05] dark:bg-white/[0.02] backdrop-blur-md border-b border-black/5 dark:border-white/5 pt-[max(1rem,env(safe-area-inset-top))] sm:pt-4">
                 <h1 className="text-2xl font-bold tracking-tight text-[var(--app-text)]">{title}</h1>
                 <div className="w-9 h-9 rounded-full border-2 border-black/10 dark:border-white/20 overflow-hidden shadow-lg bg-black/5 dark:bg-white/5 flex items-center justify-center">
                     <img
@@ -219,8 +219,8 @@ export default function Dashboard() {
                                                 <button
                                                     onClick={() => openSendGreetingModal(item)}
                                                     className={`p-3 rounded-2xl transition-all hover:scale-105 active:scale-95 ${item.type === "birthday"
-                                                            ? "bg-neon-pink/10 border border-neon-pink/30 text-neon-pink shadow-neon-pink-sm"
-                                                            : "bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan shadow-neon-cyan-sm"
+                                                        ? "bg-neon-pink/10 border border-neon-pink/30 text-neon-pink shadow-neon-pink-sm"
+                                                        : "bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan shadow-neon-cyan-sm"
                                                         }`}
                                                 >
                                                     <Send className="w-5 h-5" />
