@@ -1,5 +1,10 @@
-import { Gift, Calendar, Heart, Trash2, Pencil, PartyPopper, Star, Send } from "lucide-react";
-import CircularProgress from "./CircularProgress";
+"use client";
+
+import React from "react";
+import { Activity, Baby, Gift, GraduationCap, Heart, House, PartyPopper, Pencil, Send, Sparkles, Trash2 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { translations } from "@/lib/translations";
+import { type CelebrationType } from "@/hooks/useCelebrations";
 
 interface CelebrationCardProps {
     id: string;
@@ -8,98 +13,143 @@ interface CelebrationCardProps {
     date: string;
     rawDate: string;
     percentage: number;
-    type: "birthday" | "anniversary" | "retirement" | "other";
-    onDelete?: (id: string) => void;
-    onEdit?: (data: any) => void;
-    onSendGreeting?: (data: any) => void;
+    type: CelebrationType;
+    customTypeLabel?: string;
+    onDelete: (id: string) => Promise<void>;
+    onEdit: (celebration: { id: string; title: string; rawDate: string; type: CelebrationType; customTypeLabel?: string }) => void;
+    onSendGreeting: (celebration: { title: string; type: CelebrationType; customTypeLabel?: string }) => void;
 }
 
-export default function CelebrationCard({ id, title, daysLeft, date, rawDate, percentage, type, onDelete, onEdit, onSendGreeting }: CelebrationCardProps) {
-    const getCelebrationDetails = () => {
+export default function CelebrationCard({
+    id, title, daysLeft, rawDate, type, customTypeLabel,
+    onDelete, onEdit, onSendGreeting
+}: CelebrationCardProps) {
+    const { language } = useAuth();
+    const t = translations[language];
+
+    const getIcon = () => {
         switch (type) {
-            case "birthday":
-                return {
-                    icon: Gift,
-                    color: "pink",
-                    neonColor: "text-neon-pink",
-                    message: daysLeft === 0 ? "Happy Birthday!" : `${daysLeft} days until your birthday`
-                };
-            case "anniversary":
-                return {
-                    icon: Heart,
-                    color: "cyan",
-                    neonColor: "text-neon-cyan",
-                    message: daysLeft === 0 ? "Happy Anniversary!" : `${daysLeft} days until your anniversary`
-                };
-            case "retirement":
-                return {
-                    icon: PartyPopper,
-                    color: "purple",
-                    neonColor: "text-purple-400",
-                    message: daysLeft === 0 ? "Happy Retirement!" : `${daysLeft} days until freedom (Retirement)`
-                };
-            default:
-                return {
-                    icon: Star,
-                    color: "white",
-                    neonColor: "text-white",
-                    message: `${daysLeft} days left`
-                };
+            case "birthday": return <Gift className="w-5 h-5" />;
+            case "anniversary": return <Heart className="w-5 h-5" />;
+            case "retirement": return <PartyPopper className="w-5 h-5" />;
+            case "graduation": return <GraduationCap className="w-5 h-5" />;
+            case "baby_shower": return <Baby className="w-5 h-5" />;
+            case "wedding": return <Heart className="w-5 h-5" />;
+            case "get_well_soon": return <Activity className="w-5 h-5" />;
+            case "house_warming": return <House className="w-5 h-5" />;
+            case "custom": return <Sparkles className="w-5 h-5" />;
+            default: return <Gift className="w-5 h-5" />;
         }
     };
 
-    const { icon: Icon, color, neonColor, message } = getCelebrationDetails() as {
-        icon: any;
-        color: "pink" | "cyan" | "purple" | "white";
-        neonColor: string;
-        message: string;
+    const getColors = () => {
+        switch (type) {
+            case "birthday": return "from-neon-pink to-purple-500 shadow-neon-pink";
+            case "anniversary": return "from-neon-cyan to-blue-500 shadow-neon-cyan";
+            case "retirement": return "from-white to-gray-400 shadow-white/20";
+            case "graduation": return "from-violet-500 to-indigo-500 shadow-violet-400/50";
+            case "baby_shower": return "from-sky-400 to-cyan-400 shadow-sky-300/50";
+            case "wedding": return "from-rose-500 to-pink-500 shadow-rose-400/50";
+            case "get_well_soon": return "from-emerald-400 to-teal-500 shadow-emerald-300/50";
+            case "house_warming": return "from-amber-400 to-orange-500 shadow-amber-300/50";
+            case "custom": return "from-indigo-500 to-cyan-500 shadow-indigo-400/50";
+            default: return "from-neon-cyan to-blue-500 shadow-neon-cyan";
+        }
     };
 
+    const getTypeLabel = () => {
+        switch (type) {
+            case "birthday": return t.birthday;
+            case "anniversary": return t.anniversary;
+            case "retirement": return t.retirement;
+            case "graduation": return t.graduation;
+            case "baby_shower": return t.baby_shower;
+            case "wedding": return t.wedding;
+            case "get_well_soon": return t.get_well_soon;
+            case "house_warming": return t.house_warming;
+            case "custom": return customTypeLabel || t.custom;
+            default: return t.event_type;
+        }
+    };
+
+    const borderAccentClass = (() => {
+        switch (type) {
+            case "birthday":
+                return "neon-border-pink";
+            case "anniversary":
+                return "neon-border-cyan";
+            case "retirement":
+                return "border-slate-300/40 dark:border-slate-400/40 shadow-[0_0_14px_rgba(148,163,184,0.18)]";
+            case "graduation":
+                return "border-violet-400/45 shadow-[0_0_14px_rgba(167,139,250,0.2)]";
+            case "baby_shower":
+                return "border-sky-300/50 shadow-[0_0_14px_rgba(125,211,252,0.2)]";
+            case "wedding":
+                return "border-rose-400/45 shadow-[0_0_14px_rgba(251,113,133,0.2)]";
+            case "get_well_soon":
+                return "border-emerald-400/45 shadow-[0_0_14px_rgba(52,211,153,0.2)]";
+            case "house_warming":
+                return "border-amber-400/50 shadow-[0_0_14px_rgba(251,191,36,0.2)]";
+            case "custom":
+                return "border-fuchsia-500/45 shadow-[0_0_14px_rgba(217,70,239,0.2)]";
+            default:
+                return "neon-border-pink";
+        }
+    })();
+
+    const isToday = daysLeft === 0;
 
     return (
-        <div className="glass-card flex items-center justify-between mb-4 relative group">
-            <div className="absolute -top-2 -right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all z-10">
-                {onSendGreeting && (
+        <div className={`glass-card mb-6 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500 premium-border ${borderAccentClass}`}>
+            <div className="flex justify-between items-start mb-6">
+                <div className="flex items-start gap-4">
+                    <div className={`p-3 rounded-2xl bg-gradient-to-br ${getColors()} text-black flex items-center justify-center transform -rotate-12`}>
+                        {getIcon()}
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-bold tracking-tight mb-1 text-[var(--app-text)]">{title}</h3>
+                        <p className="text-[10px] uppercase tracking-widest text-[var(--app-text-muted)] mb-1">{getTypeLabel()}</p>
+                        <p className="text-xs text-[var(--app-text-dim)] font-medium">
+                            {new Date(rawDate).toLocaleDateString(language === "es" ? "es-ES" : "en-US", { month: "long", day: "numeric", timeZone: "UTC" })}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-1">
                     <button
-                        onClick={() => onSendGreeting({ title, type })}
-                        className="p-2 bg-cyan-500/20 border border-cyan-500/50 rounded-full text-cyan-200 hover:bg-cyan-500/40 transition-all"
-                    >
-                        <Send className="w-4 h-4" />
-                    </button>
-                )}
-                {onEdit && (
-                    <button
-                        onClick={() => onEdit({ id, title, rawDate, type })}
-                        className="p-2 bg-white/10 border border-white/20 rounded-full text-white/80 hover:bg-white/20 transition-all"
+                        onClick={() => onEdit({ id, title, rawDate, type, customTypeLabel })}
+                        className="p-2.5 text-[var(--app-text-dim)] hover:text-[var(--app-text)] hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-all"
                     >
                         <Pencil className="w-4 h-4" />
                     </button>
-                )}
-                {onDelete && (
                     <button
                         onClick={() => onDelete(id)}
-                        className="p-2 bg-red-500/20 border border-red-500/50 rounded-full text-red-200 hover:bg-red-500/40 transition-all"
+                        className="p-2.5 text-[var(--app-text-dim)] hover:text-red-500 hover:bg-red-500/5 rounded-xl transition-all"
                     >
                         <Trash2 className="w-4 h-4" />
                     </button>
-                )}
-            </div>
-            <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-xl font-semibold text-white/90">{title}</h3>
-                    <Icon className={`w-5 h-5 ${neonColor}`} />
-                </div>
-                <p className="text-lg font-medium text-white/70 mb-4">{message}</p>
-                <div className="flex items-center gap-2 text-white/40">
-                    <Calendar className="w-4 h-4" />
-                    <span className="text-sm uppercase tracking-wider">{date}</span>
                 </div>
             </div>
 
-            <div className="ml-4">
-                <CircularProgress percentage={percentage} color={color} size={110} />
+            <div className="flex items-end justify-between mb-4">
+                <div className="flex flex-col">
+                    <span className="text-4xl font-black italic tracking-tighter">
+                        {isToday ? t.today_badge : daysLeft}
+                    </span>
+                    <span className="text-[10px] font-bold text-[var(--app-text-dim)] uppercase tracking-[0.2em] mt-1">
+                        {isToday ? t.celebrate_badge : t.days_to_go}
+                    </span>
+                </div>
+                <button
+                    onClick={() => onSendGreeting({ title, type, customTypeLabel })}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${isToday
+                        ? "bg-neon-cyan text-black shadow-neon animate-pulse"
+                        : "bg-black/5 dark:bg-white/10 text-[var(--app-text)] border border-black/10 dark:border-white/20 hover:bg-black/10 dark:hover:bg-white/20"}`}
+                >
+                    <Send className={`w-3.5 h-3.5 ${isToday ? "animate-bounce" : ""}`} />
+                    {t.pick_and_send}
+                </button>
             </div>
         </div>
     );
 }
-

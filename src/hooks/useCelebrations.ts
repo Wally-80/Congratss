@@ -1,8 +1,19 @@
 import { useEffect, useState } from "react";
-import { collection, query, where, onSnapshot, orderBy, addDoc, serverTimestamp, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { collection, query, where, onSnapshot, addDoc, serverTimestamp, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
 import { calculateCountdown } from "@/lib/dateUtils";
+
+export type CelebrationType =
+    | "birthday"
+    | "anniversary"
+    | "retirement"
+    | "graduation"
+    | "baby_shower"
+    | "wedding"
+    | "get_well_soon"
+    | "house_warming"
+    | "custom";
 
 export interface Celebration {
     id: string;
@@ -11,7 +22,8 @@ export interface Celebration {
     date: string;
     rawDate: string; // Storing the ISO string for editing
     percentage: number;
-    type: "birthday" | "anniversary";
+    type: CelebrationType;
+    customTypeLabel?: string;
     userId: string;
 }
 
@@ -22,11 +34,7 @@ export const useCelebrations = () => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!user) {
-            setCelebrations([]);
-            setLoading(false);
-            return;
-        }
+        if (!user) return;
 
         // Diagnostic: Removed orderBy to bypass index requirement
         // We will sort manually in the hook for now
@@ -71,43 +79,55 @@ export const useCelebrations = () => {
         return () => unsubscribe();
     }, [user]);
 
-    const addCelebration = async (data: { title: string, rawDate: string, type: string }) => {
+    const addCelebration = async (data: { title: string, rawDate: string, type: CelebrationType, customTypeLabel?: string }) => {
         if (!user) return;
         const nowISO = new Date().toISOString();
         const { daysLeft, percentage, formattedDate } = calculateCountdown(data.rawDate, nowISO);
+        const payload = {
+            title: data.title,
+            rawDate: data.rawDate,
+            type: data.type,
+            ...(typeof data.customTypeLabel === "string" ? { customTypeLabel: data.customTypeLabel } : {}),
+        };
 
         try {
             await addDoc(collection(db, "celebrations"), {
-                ...data,
+                ...payload,
                 daysLeft,
                 percentage,
                 date: formattedDate,
                 userId: user.uid,
                 createdAt: serverTimestamp(),
             });
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error adding celebration:", err);
             throw err;
         }
     };
 
-    const updateCelebration = async (id: string, data: { title: string, rawDate: string, type: string }) => {
+    const updateCelebration = async (id: string, data: { title: string, rawDate: string, type: CelebrationType, customTypeLabel?: string }) => {
         if (!user) return;
 
         // When updating, we don't easily have the original createdAt here unless we fetch or it's passed.
         // For simplicity, we'll just recalculate. Recurring events don't use it anyway.
         const { daysLeft, percentage, formattedDate } = calculateCountdown(data.rawDate);
+        const payload = {
+            title: data.title,
+            rawDate: data.rawDate,
+            type: data.type,
+            ...(typeof data.customTypeLabel === "string" ? { customTypeLabel: data.customTypeLabel } : {}),
+        };
 
         try {
             const ref = doc(db, "celebrations", id);
             await updateDoc(ref, {
-                ...data,
+                ...payload,
                 daysLeft,
                 percentage,
                 date: formattedDate,
                 updatedAt: serverTimestamp(),
             });
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error updating celebration:", err);
             throw err;
         }
@@ -117,11 +137,18 @@ export const useCelebrations = () => {
         if (!user) return;
         try {
             await deleteDoc(doc(db, "celebrations", id));
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error deleting celebration:", err);
             throw err;
         }
     };
 
-    return { celebrations, loading, error, addCelebration, updateCelebration, deleteCelebration };
+    return {
+        celebrations: user ? celebrations : [],
+        loading: user ? loading : false,
+        error: user ? error : null,
+        addCelebration,
+        updateCelebration,
+        deleteCelebration
+    };
 };

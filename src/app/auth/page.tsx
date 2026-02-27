@@ -1,10 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { auth } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { useAuth } from "@/context/AuthContext";
+import { translations } from "@/lib/translations";
+
+import { getRandomAvatar, getAvatarUrl } from "@/lib/avatars";
+import Logo from "@/components/Logo";
+import PageCloseButton from "@/components/PageCloseButton";
 
 export default function AuthPage() {
+    const { language, setLanguage, updateUserProfile } = useAuth();
+    const t = translations[language];
+
     const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -17,64 +27,108 @@ export default function AuthPage() {
             if (isLogin) {
                 await signInWithEmailAndPassword(auth, email, password);
             } else {
-                await createUserWithEmailAndPassword(auth, email, password);
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                if (userCredential.user) {
+                    const avatar = getRandomAvatar();
+                    await updateUserProfile("Congratss User", getAvatarUrl(avatar));
+                }
             }
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Authentication error");
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4">
-            <div className="glass-pane w-full max-w-md p-8 shadow-2xl">
-                <h2 className="text-3xl font-bold mb-6 text-center text-white/90">
-                    {isLogin ? "Welcome Back" : "Create Account"}
-                </h2>
+        <div className="min-h-[100dvh] flex items-center justify-center p-0 sm:p-4 pt-[max(0rem,env(safe-area-inset-top))] pb-[max(0rem,env(safe-area-inset-bottom))]">
+            <div className="glass-pane w-full max-w-md p-10 shadow-2xl flex flex-col items-center justify-center relative overflow-hidden premium-border h-[100dvh] sm:h-auto pt-[max(2.5rem,env(safe-area-inset-top))] pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:py-10">
+                <PageCloseButton className="absolute top-[max(1rem,env(safe-area-inset-top))] right-4 z-20" />
+                {/* Visual Background Accents */}
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-neon-cyan/5 blur-[80px] rounded-full" />
+                <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-neon-pink/5 blur-[80px] rounded-full" />
+
+
+
+                <div className="z-10 mb-8">
+                    <Logo size="lg" className="mb-4" />
+                </div>
 
                 {error && (
-                    <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm">
+                    <div className="mb-6 w-full p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-300 text-xs text-center animate-in fade-in zoom-in duration-300">
                         {error}
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-white/60 mb-1">Email</label>
+                <form onSubmit={handleSubmit} className="w-full space-y-5 z-10">
+                    <div className="space-y-2">
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--app-text-dim)] ml-2">{t.email}</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white focus:outline-none focus:border-neon-cyan transition-colors"
+                            className="w-full bg-[var(--app-bg)] border border-[var(--glass-border)] rounded-2xl py-4 px-5 text-sm text-[var(--app-text)] focus:outline-none focus:border-neon-cyan/50 focus:bg-white/10 dark:focus:bg-white/[0.05] transition-all duration-300 shadow-inner"
+                            placeholder="your@email.com"
                             required
                         />
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-white/60 mb-1">Password</label>
+                    <div className="space-y-2">
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--app-text-dim)] ml-2">{t.password}</label>
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white focus:outline-none focus:border-neon-cyan transition-colors"
+                            className="w-full bg-[var(--app-bg)] border border-[var(--glass-border)] rounded-2xl py-4 px-5 text-sm text-[var(--app-text)] focus:outline-none focus:border-neon-cyan/50 focus:bg-white/10 dark:focus:bg-white/[0.05] transition-all duration-300 shadow-inner"
+                            placeholder="••••••••"
                             required
                         />
                     </div>
                     <button
                         type="submit"
-                        className="w-full bg-neon-cyan/20 border border-neon-cyan/50 hover:bg-neon-cyan/30 text-neon-cyan font-bold py-4 rounded-2xl shadow-neon transition-all active:scale-[0.98]"
+                        className="w-full relative group"
                     >
-                        {isLogin ? "Sign In" : "Sign Up"}
+                        <div className="absolute inset-0 bg-neon-cyan blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-2xl" />
+                        <div className="relative bg-black dark:bg-white text-white dark:text-black font-black py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-neon-cyan transition-all duration-300 active:scale-[0.98]">
+                            <span className="uppercase tracking-widest text-xs">{isLogin ? t.sign_in : t.sign_up}</span>
+                        </div>
                     </button>
                 </form>
 
-                <p className="mt-8 text-center text-white/40 text-sm">
-                    {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-                    <button
-                        onClick={() => setIsLogin(!isLogin)}
-                        className="text-neon-cyan hover:underline font-medium"
-                    >
-                        {isLogin ? "Sign up" : "Sign in"}
-                    </button>
-                </p>
+                <div className="mt-8 pt-6 border-t border-white/5 flex flex-col items-center gap-4 w-full z-10">
+                    <p className="text-center text-[var(--app-text-dim)]/60 text-xs font-medium">
+                        {isLogin ? t.dont_have_account : t.already_have_account}{" "}
+                        <button
+                            onClick={() => setIsLogin(!isLogin)}
+                            className="text-cyan-600 dark:text-neon-cyan hover:text-[var(--app-text)] transition-colors duration-300 font-black uppercase tracking-widest text-[10px] ml-1"
+                        >
+                            {isLogin ? t.sign_up : t.sign_in}
+                        </button>
+                    </p>
+
+                    <div className="flex gap-4">
+                        <button
+                            onClick={() => setLanguage("en")}
+                            className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${language === "en" ? "text-neon-cyan shadow-neon-sm" : "text-[var(--app-text-dim)]/40 hover:text-[var(--app-text)]"}`}
+                        >
+                            English
+                        </button>
+                        <span className="text-[var(--app-text-dim)]/10 text-[10px]">|</span>
+                        <button
+                            onClick={() => setLanguage("es")}
+                            className={`text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${language === "es" ? "text-neon-cyan shadow-neon-sm" : "text-[var(--app-text-dim)]/40 hover:text-[var(--app-text)]"}`}
+                        >
+                            Español
+                        </button>
+                    </div>
+
+                    <div className="flex gap-4 text-[10px] uppercase tracking-widest">
+                        <Link href="/about" className="text-[var(--app-text-dim)]/60 hover:text-[var(--app-text)] transition-colors">
+                            {t.about_app}
+                        </Link>
+                        <span className="text-[var(--app-text-dim)]/20">|</span>
+                        <Link href="/privacy" className="text-[var(--app-text-dim)]/60 hover:text-[var(--app-text)] transition-colors">
+                            {t.privacy_policy}
+                        </Link>
+                    </div>
+                </div>
             </div>
         </div>
     );

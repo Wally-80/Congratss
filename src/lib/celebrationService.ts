@@ -70,11 +70,11 @@ export const celebrationService = {
     async updateCelebration(id: string, data: Partial<Omit<Celebration, 'id' | 'userId' | 'createdAt'>>) {
         try {
             const docRef = doc(db, COLLECTION_NAME, id);
-            const updateData = { ...data };
+            const updateData: Record<string, unknown> = { ...data };
             if (data.date) {
-                updateData.date = Timestamp.fromDate(data.date) as any;
+                updateData.date = Timestamp.fromDate(data.date);
             }
-            await updateDoc(docRef, updateData as any);
+            await updateDoc(docRef, updateData);
         } catch (error) {
             console.error("Error updating celebration: ", error);
             throw error;

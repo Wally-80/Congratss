@@ -1,0 +1,47 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdminByDoc() {
+      return isSignedIn()
+        && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid))
+        && (
+          firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == "admin"
+          || firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin == true
+        );
+    }
+
+    function isAdminByEmail() {
+      return isSignedIn() && request.auth.token.email == "walterrpom@gmail.com";
+    }
+
+    function isAdmin() {
+      return isAdminByDoc() || isAdminByEmail();
+    }
+
+    // Public library assets
+    match /greeting_cards/{allPaths=**} {
+      allow read;
+      allow write: if isAdmin()
+        && request.resource.size < 15 * 1024 * 1024
+        && request.resource.contentType.matches('(image|video)/.*');
+    }
+
+    // User custom uploads for greeting send flow
+    match /user_uploads/{allPaths=**} {
+      allow read;
+      allow write: if isSignedIn()
+        && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    // Deny writes to any other path
+    match /{allPaths=**} {
+      allow read;
+      allow write: if false;
+    }
+  }
+}
