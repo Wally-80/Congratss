@@ -7,6 +7,8 @@ import { db, auth } from "@/lib/firebase";
 
 import { Language } from "@/lib/translations";
 
+const ADMIN_EMAILS = ["walterrpom@gmail.com", "walterciitop@gmail.com"];
+
 interface AuthContextType {
     user: User | null;
     isAdmin: boolean;
@@ -57,7 +59,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     if (snapshot.exists()) {
                         const userData = snapshot.data();
                         // Support both 'role: admin' and 'isAdmin: true' formats
-                        setIsAdmin(userData.role === "admin" || userData.isAdmin === true);
+                        setIsAdmin(
+                            userData.role === "admin" ||
+                            userData.isAdmin === true ||
+                            ADMIN_EMAILS.includes(authUser.email ?? "")
+                        );
                         if (userData.language) {
                             setLanguageState(userData.language as Language);
                             localStorage.setItem("app-language", userData.language as Language);
@@ -65,7 +71,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                         setNotificationsEnabledState(userData.notificationsEnabled === true);
                     } else {
                         // Safe default for new users or missing docs
-                        setIsAdmin(authUser.email === "walterrpom@gmail.com" || authUser.email === "walterrpom@gmail.com");
+                        setIsAdmin(ADMIN_EMAILS.includes(authUser.email ?? ""));
                         setNotificationsEnabledState(false);
                     }
                     setLoading(false);

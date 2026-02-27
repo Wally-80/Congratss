@@ -86,6 +86,28 @@ export default function Dashboard() {
     }, [lastScrollTop]);
 
     useEffect(() => {
+        if (!user || typeof window === "undefined") return;
+
+        const resetViewport = () => {
+            if (document.activeElement instanceof HTMLElement) {
+                document.activeElement.blur();
+            }
+            window.scrollTo(0, 0);
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+        };
+
+        resetViewport();
+        const raf = window.requestAnimationFrame(resetViewport);
+        const timer = window.setTimeout(resetViewport, 80);
+
+        return () => {
+            window.cancelAnimationFrame(raf);
+            window.clearTimeout(timer);
+        };
+    }, [user]);
+
+    useEffect(() => {
         if (typeof window === "undefined" || !("Notification" in window)) return;
 
         const syncPermission = () => setNotificationPermission(Notification.permission);
@@ -309,7 +331,7 @@ export default function Dashboard() {
     };
 
     if (authLoading || dataLoading) return (
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="min-h-[100dvh] flex items-center justify-center">
             <div className="w-12 h-12 border-4 border-neon-cyan/20 border-t-neon-cyan rounded-full animate-spin"></div>
         </div>
     );
@@ -790,7 +812,7 @@ export default function Dashboard() {
     };
 
     return (
-        <main className="min-h-screen bg-[var(--app-bg)] flex flex-col items-center justify-start overflow-x-hidden transition-colors duration-500">
+        <main className="h-[100dvh] min-h-[100dvh] bg-[var(--app-bg)] flex flex-col items-center justify-start overflow-x-hidden overflow-y-hidden transition-colors duration-500">
             <div
                 onScroll={handleScroll}
                 className="glass-pane w-full sm:max-w-md h-[100dvh] sm:h-[850px] sm:my-8 flex flex-col relative overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-1000"
