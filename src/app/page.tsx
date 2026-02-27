@@ -14,6 +14,7 @@ import { translations } from "@/lib/translations";
 import { playCelebrationChime } from "@/lib/sound";
 import AuthPage from "./auth/page";
 import { useTheme } from "@/context/ThemeContext";
+import Fireworks from "@/components/Fireworks";
 
 type CelebrationFormData = {
     id?: string;
@@ -162,6 +163,7 @@ export default function Dashboard() {
     const filteredCelebrations = celebrations
         .filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase()))
         .sort((a, b) => a.daysLeft - b.daysLeft);
+    const hasTodayCelebration = celebrations.some((item) => item.daysLeft === 0);
 
     const handleUpdateProfile = async (displayName: string, photoURL: string) => {
         await updateUserProfile(displayName, photoURL);
@@ -337,6 +339,7 @@ export default function Dashboard() {
     );
 
     if (!user) return <AuthPage />;
+    const showCelebrationFireworks = hasTodayCelebration;
 
     const renderHeader = () => {
         let title = "Congratss";
@@ -812,10 +815,11 @@ export default function Dashboard() {
     };
 
     return (
-        <main className="h-[100dvh] min-h-[100dvh] bg-[var(--app-bg)] flex flex-col items-center justify-start overflow-x-hidden overflow-y-hidden transition-colors duration-500">
+        <main className="relative h-[100dvh] min-h-[100dvh] bg-[var(--app-bg)] flex flex-col items-center justify-start overflow-x-hidden overflow-y-hidden transition-colors duration-500">
+            {showCelebrationFireworks && <Fireworks mode="celebration" className="z-30 opacity-80" />}
             <div
                 onScroll={handleScroll}
-                className="glass-pane w-full sm:max-w-md h-[100dvh] sm:h-[850px] sm:my-8 flex flex-col relative overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-1000"
+                className="glass-pane z-10 w-full sm:max-w-md h-[100dvh] sm:h-[850px] sm:my-8 flex flex-col relative overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-1000"
             >
                 {dataError && (
                     <div className="absolute top-0 left-0 right-0 z-50 p-4 bg-red-500/10 border-b border-red-500/20 backdrop-blur-md text-red-600 dark:text-red-200 text-xs text-center">

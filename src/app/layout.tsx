@@ -28,7 +28,6 @@ export const viewport: Viewport = {
 
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
-import Fireworks from "@/components/Fireworks";
 
 export default function RootLayout({
     children,
@@ -39,7 +38,6 @@ export default function RootLayout({
         <html lang="en" suppressHydrationWarning>
             <body className="antialiased" suppressHydrationWarning>
                 <ThemeProvider>
-                    <Fireworks />
                     <AuthProvider>
                         {children}
                     </AuthProvider>

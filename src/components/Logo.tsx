@@ -33,7 +33,7 @@ export default function Logo({ className = "", showText = true, size = "md" }: L
             </div>
 
             {showText && (
-                <h1 className={`${currentSize.text} font-black tracking-tighter italic text-[#2D3E50] dark:text-white drop-shadow-[0_0_10px_rgba(0,242,255,0.2)] animate-in slide-in-from-bottom-2 duration-1000`}>
+                <h1 className={`${currentSize.text} font-black tracking-tighter italic text-[var(--app-text)] drop-shadow-[0_2px_8px_rgba(0,0,0,0.12)] animate-in slide-in-from-bottom-2 duration-1000`}>
                     Congratss
                 </h1>
             )}
