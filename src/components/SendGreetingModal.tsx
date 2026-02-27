@@ -5,6 +5,7 @@ import { X, Send, MessageCircle, Mail, Phone, Check, RefreshCw, Upload, Loader2 
 import { cardService, GreetingCard } from "@/lib/cardService";
 
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 import { translations } from "@/lib/translations";
 import { uploadFile } from "@/lib/storageService";
 import { type CelebrationType } from "@/hooks/useCelebrations";
@@ -55,6 +56,8 @@ const MESSAGE_TEMPLATES = {
 };
 
 const ALL_CATEGORY_KEY = "__all__";
+const APP_SHARE_URL = "https://congratss.com";
+const APP_CARD_VIEWER_PATH = "/card";
 
 const CATEGORY_ALIASES: Record<string, string> = {
     All: ALL_CATEGORY_KEY,
@@ -143,8 +146,10 @@ const isCardVisibleForLanguage = (card: GreetingCard, language: "en" | "es") => 
 
 export default function SendGreetingModal({ isOpen, onClose, celebration }: SendGreetingModalProps) {
     const { language } = useAuth();
+    const { theme } = useTheme();
     const t = translations[language];
     const templates = MESSAGE_TEMPLATES[language];
+    const isDarkMode = theme === "dark";
 
     const [greetingCards, setGreetingCards] = useState<GreetingCard[]>([]);
     const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
@@ -161,6 +166,12 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
             : celebration?.type === "wedding"
                 ? "border-rose-400/40"
                 : "neon-border-cyan";
+    const desktopBackdropClass = isDarkMode
+        ? "sm:bg-black/60"
+        : "sm:bg-slate-900/20";
+    const desktopPanelClass = isDarkMode
+        ? "sm:bg-black/45 sm:border-white/10"
+        : "sm:bg-white/95 sm:border-slate-200 sm:shadow-[0_25px_65px_-35px_rgba(15,23,42,0.55)]";
 
     const handleUserUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -254,20 +265,30 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
         setMessage(template);
     };
 
+    const getCardViewerLink = () => {
+        if (!selectedImage) return APP_SHARE_URL;
+        if (selectedImage.id.startsWith("custom_")) {
+            return `${APP_SHARE_URL}${APP_CARD_VIEWER_PATH}?img=${encodeURIComponent(selectedImage.url)}`;
+        }
+        return `${APP_SHARE_URL}${APP_CARD_VIEWER_PATH}?id=${encodeURIComponent(selectedImage.id)}`;
+    };
+
+    const getShareText = () => {
+        const cta = language === "es" ? "Mira tu tarjeta aqui" : "View your card here";
+        return `${message}\n\n${cta}: ${getCardViewerLink()}`;
+    };
+
     const getShareUrl = (platform: "whatsapp" | "email" | "sms") => {
         if (!selectedImage) return "";
-        const encodedMessage = encodeURIComponent(message);
-        const cardUrl = selectedImage.url.startsWith('http')
-            ? selectedImage.url
-            : `${window.location.origin}${selectedImage.url}`;
+        const encodedMessage = encodeURIComponent(getShareText());
 
         switch (platform) {
             case "whatsapp":
-                return `https://api.whatsapp.com/send?text=${encodedMessage}${encodeURIComponent("\n\n" + cardUrl)}`;
+                return `https://api.whatsapp.com/send?text=${encodedMessage}`;
             case "email":
-                return `mailto:?body=${encodedMessage}${encodeURIComponent("\n\n" + cardUrl)}`;
+                return `mailto:?body=${encodedMessage}`;
             case "sms":
-                return `sms:?&body=${encodedMessage}${encodeURIComponent("\n\n" + cardUrl)}`;
+                return `sms:?&body=${encodedMessage}`;
             default:
                 return "";
         }
@@ -284,11 +305,8 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
 
     const handleCopyLink = () => {
         if (!selectedImage) return;
-        const cardUrl = selectedImage.url.startsWith('http')
-            ? selectedImage.url
-            : `${window.location.origin}${selectedImage.url}`;
-        const fullText = `${message}\n\n${cardUrl}`;
-        navigator.clipboard.writeText(fullText).then(() => {
+        const shareText = getShareText();
+        navigator.clipboard.writeText(shareText).then(() => {
             alert(language === "es" ? "¡Mensaje y enlace copiados!" : "Message and card link copied to clipboard!");
         });
     };
@@ -313,7 +331,8 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
         setSharing(true);
         try {
             const shareData: ShareData = {
-                text: message,
+                text: getShareText(),
+                url: getCardViewerLink(),
             };
 
             try {
@@ -340,15 +359,19 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
 
     return (
         <div
-            className="fixed inset-0 z-[100] flex items-center justify-center sm:p-4 bg-black/60 backdrop-blur-sm"
+            className={`fixed inset-0 z-[100] flex items-center justify-center sm:p-4 bg-black/60 backdrop-blur-sm ${desktopBackdropClass}`}
             onClick={onClose}
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className={`glass-pane w-full h-full sm:h-auto sm:max-w-md sm:max-h-[90vh] overflow-hidden flex flex-col relative animate-in fade-in zoom-in duration-300 premium-border ${modalAccentClass}`}
+                className={`glass-pane w-full h-full sm:h-auto sm:max-w-md sm:max-h-[90vh] overflow-hidden flex flex-col relative animate-in fade-in zoom-in duration-300 premium-border ${modalAccentClass} ${desktopPanelClass}`}
             >
-                <div className="hidden dark:block absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_0%,_#23324a_0%,_#151820_45%,_#111622_100%)]" />
-                <div className="hidden dark:block absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(circle_at_85%_10%,_#2b4a6a_0%,_transparent_40%)]" />
+                {isDarkMode && (
+                    <>
+                        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_0%,_#23324a_0%,_#151820_45%,_#111622_100%)]" />
+                        <div className="absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(circle_at_85%_10%,_#2b4a6a_0%,_transparent_40%)]" />
+                    </>
+                )}
                 {/* Header */}
                 <div className="p-6 border-b border-black/5 dark:border-white/10 flex justify-between items-center shrink-0 bg-[var(--pane-bg)] backdrop-blur-md z-10 pt-[max(1.5rem,env(safe-area-inset-top))] sm:pt-6">
                     <div>
@@ -367,7 +390,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                     </button>
                 </div>
 
-                <div className="relative z-10 flex-1 overflow-y-auto p-6 space-y-6">
+                <div className="relative z-10 flex-1 overflow-y-auto p-6 space-y-6 bg-[var(--pane-bg)]">
                     {/* Image Selection with Category Tabs */}
                     <div>
                         <div className="flex flex-col gap-3 mb-3">
