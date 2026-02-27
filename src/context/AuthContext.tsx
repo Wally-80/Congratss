@@ -83,6 +83,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         };
     }, []);
 
+    useEffect(() => {
+        if (typeof document !== "undefined") {
+            document.documentElement.lang = language;
+        }
+    }, [language]);
+
     const logout = async () => {
         await signOut(auth);
     };

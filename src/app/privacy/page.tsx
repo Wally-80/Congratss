@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import PageCloseButton from "@/components/PageCloseButton";
 
 export default function PrivacyPage() {
     const { language } = useAuth();
     const isEs = language === "es";
 
     return (
-        <main className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] px-6 py-8 sm:px-10">
+        <main className="relative min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] px-6 py-8 sm:px-10">
+            <PageCloseButton className="fixed top-[max(1rem,env(safe-area-inset-top))] right-6 sm:right-10 z-30" />
             <div className="max-w-3xl mx-auto space-y-6">
                 <header className="space-y-2">
                     <p className="text-xs uppercase tracking-[0.2em] text-[var(--app-text-muted)]">Congratss</p>

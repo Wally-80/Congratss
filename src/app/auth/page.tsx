@@ -9,6 +9,7 @@ import { translations } from "@/lib/translations";
 
 import { getRandomAvatar, getAvatarUrl } from "@/lib/avatars";
 import Logo from "@/components/Logo";
+import PageCloseButton from "@/components/PageCloseButton";
 
 export default function AuthPage() {
     const { language, setLanguage, updateUserProfile } = useAuth();
@@ -40,6 +41,7 @@ export default function AuthPage() {
     return (
         <div className="min-h-[100dvh] flex items-center justify-center p-0 sm:p-4 pt-[max(0rem,env(safe-area-inset-top))] pb-[max(0rem,env(safe-area-inset-bottom))]">
             <div className="glass-pane w-full max-w-md p-10 shadow-2xl flex flex-col items-center justify-center relative overflow-hidden premium-border h-[100dvh] sm:h-auto pt-[max(2.5rem,env(safe-area-inset-top))] pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:py-10">
+                <PageCloseButton className="absolute top-[max(1rem,env(safe-area-inset-top))] right-4 z-20" />
                 {/* Visual Background Accents */}
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-neon-cyan/5 blur-[80px] rounded-full" />
                 <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-neon-pink/5 blur-[80px] rounded-full" />

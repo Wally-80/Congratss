@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { collection, query, where, onSnapshot, orderBy, addDoc, serverTimestamp, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { collection, query, where, onSnapshot, addDoc, serverTimestamp, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
 import { calculateCountdown } from "@/lib/dateUtils";
@@ -34,11 +34,7 @@ export const useCelebrations = () => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!user) {
-            setCelebrations([]);
-            setLoading(false);
-            return;
-        }
+        if (!user) return;
 
         // Diagnostic: Removed orderBy to bypass index requirement
         // We will sort manually in the hook for now
@@ -103,7 +99,7 @@ export const useCelebrations = () => {
                 userId: user.uid,
                 createdAt: serverTimestamp(),
             });
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error adding celebration:", err);
             throw err;
         }
@@ -131,7 +127,7 @@ export const useCelebrations = () => {
                 date: formattedDate,
                 updatedAt: serverTimestamp(),
             });
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error updating celebration:", err);
             throw err;
         }
@@ -141,11 +137,18 @@ export const useCelebrations = () => {
         if (!user) return;
         try {
             await deleteDoc(doc(db, "celebrations", id));
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error deleting celebration:", err);
             throw err;
         }
     };
 
-    return { celebrations, loading, error, addCelebration, updateCelebration, deleteCelebration };
+    return {
+        celebrations: user ? celebrations : [],
+        loading: user ? loading : false,
+        error: user ? error : null,
+        addCelebration,
+        updateCelebration,
+        deleteCelebration
+    };
 };

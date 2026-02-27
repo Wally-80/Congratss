@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { X, Send, MessageCircle, Mail, Phone, Check, RefreshCw, Upload, Loader2 } from "lucide-react";
 import { cardService, GreetingCard } from "@/lib/cardService";
 
@@ -54,6 +54,93 @@ const MESSAGE_TEMPLATES = {
     ]
 };
 
+const ALL_CATEGORY_KEY = "__all__";
+
+const CATEGORY_ALIASES: Record<string, string> = {
+    All: ALL_CATEGORY_KEY,
+    Todos: ALL_CATEGORY_KEY,
+    Classic: "Classic",
+    Clasicas: "Classic",
+    Special: "Special",
+    Especiales: "Special",
+    Funny: "Funny",
+    Divertidas: "Funny",
+    New: "New",
+    Nuevas: "New",
+    Custom: "Custom",
+    Personalizadas: "Custom"
+};
+
+const CATEGORY_LABELS: Record<string, { en: string; es: string }> = {
+    [ALL_CATEGORY_KEY]: { en: "All", es: "Todos" },
+    Classic: { en: "Classic", es: "Clasicas" },
+    Special: { en: "Special", es: "Especiales" },
+    Funny: { en: "Funny", es: "Divertidas" },
+    New: { en: "New", es: "Nuevas" },
+    Custom: { en: "Custom", es: "Personalizadas" }
+};
+
+const CARD_LABEL_ALIASES: Record<string, string> = {
+    Congratss: "Congratss",
+    Flowers: "Flowers",
+    Flores: "Flowers",
+    Balloons: "Balloons",
+    Globos: "Balloons",
+    "Birthday Cake": "Birthday Cake",
+    "Pastel de Cumpleanos": "Birthday Cake",
+    "Party Time": "Party Time",
+    "Hora de Fiesta": "Party Time",
+    Retirement: "Retirement",
+    Jubilacion: "Retirement",
+    Anniversary: "Anniversary",
+    Aniversario: "Anniversary",
+    Congrats: "Congrats",
+    Felicidades: "Congrats",
+    "Cool Grandpa": "Cool Grandpa",
+    "Abuelo Genial": "Cool Grandpa",
+    "Party Puppy": "Party Puppy",
+    "Perrito de Fiesta": "Party Puppy",
+    "Gamer Cat": "Gamer Cat",
+    "Gato Gamer": "Gamer Cat",
+    "Beer Signal": "Beer Signal",
+    "Senal de Cerveza": "Beer Signal",
+    "Upload Your Own": "Upload Your Own",
+    "Sube la Tuya": "Upload Your Own"
+};
+
+const CARD_LABELS: Record<string, { en: string; es: string }> = {
+    Congratss: { en: "Congratss", es: "Congratss" },
+    Flowers: { en: "Flowers", es: "Flores" },
+    Balloons: { en: "Balloons", es: "Globos" },
+    "Birthday Cake": { en: "Birthday Cake", es: "Pastel de Cumpleanos" },
+    "Party Time": { en: "Party Time", es: "Hora de Fiesta" },
+    Retirement: { en: "Retirement", es: "Jubilacion" },
+    Anniversary: { en: "Anniversary", es: "Aniversario" },
+    Congrats: { en: "Congrats", es: "Felicidades" },
+    "Cool Grandpa": { en: "Cool Grandpa", es: "Abuelo Genial" },
+    "Party Puppy": { en: "Party Puppy", es: "Perrito de Fiesta" },
+    "Gamer Cat": { en: "Gamer Cat", es: "Gato Gamer" },
+    "Beer Signal": { en: "Beer Signal", es: "Senal de Cerveza" },
+    "Upload Your Own": { en: "Upload Your Own", es: "Sube la Tuya" }
+};
+
+const normalizeCategory = (category: string) => CATEGORY_ALIASES[category] ?? category;
+
+const localizeCategory = (category: string, language: "en" | "es") => {
+    const canonical = normalizeCategory(category);
+    return CATEGORY_LABELS[canonical]?.[language] ?? category;
+};
+
+const localizeCardLabel = (label: string, language: "en" | "es") => {
+    const canonical = CARD_LABEL_ALIASES[label] ?? label;
+    return CARD_LABELS[canonical]?.[language] ?? label;
+};
+
+const isCardVisibleForLanguage = (card: GreetingCard, language: "en" | "es") => {
+    const locale = card.locale ?? "both";
+    return locale === "both" || locale === language;
+};
+
 export default function SendGreetingModal({ isOpen, onClose, celebration }: SendGreetingModalProps) {
     const { language } = useAuth();
     const t = translations[language];
@@ -61,13 +148,12 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
 
     const [greetingCards, setGreetingCards] = useState<GreetingCard[]>([]);
     const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
-    const [activeCategory, setActiveCategory] = useState("All");
+    const [activeCategory, setActiveCategory] = useState(ALL_CATEGORY_KEY);
     const [message, setMessage] = useState("");
     const [sharing, setSharing] = useState(false);
     const [loadingCards, setLoadingCards] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
-    const [uploadProgress, setUploadProgress] = useState(0);
     const modalAccentClass = celebration?.type === "birthday"
         ? "neon-border-pink"
         : celebration?.type === "anniversary"
@@ -81,28 +167,25 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
         if (!file) return;
 
         setUploading(true);
-        setUploadProgress(0);
         try {
-            const url = await uploadFile(file, "user_uploads", (progress) => {
-                setUploadProgress(progress);
-            });
+            const url = await uploadFile(file, "user_uploads");
 
             const customCard: GreetingCard = {
                 id: `custom_${Date.now()}`,
                 url,
                 label: t.upload_your_own,
-                category: "Custom"
+                category: "Custom",
+                locale: "both"
             };
 
             setGreetingCards(prev => [customCard, ...prev]);
             setSelectedImageId(customCard.id);
-            setActiveCategory("All");
+            setActiveCategory(ALL_CATEGORY_KEY);
         } catch (error) {
             console.error("Upload error:", error);
             alert(t.upload_failed);
         } finally {
             setUploading(false);
-            setUploadProgress(0);
         }
     };
 
@@ -111,29 +194,61 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
         // Subscribe to cards on mount to ensure data is ready early
         const unsubscribe = cardService.subscribeToCards((cards) => {
             setGreetingCards(cards);
-            if (cards.length > 0 && !selectedImageId) {
-                setSelectedImageId(cards[0].id);
-            }
+            setSelectedImageId((previous) => {
+                if (previous && cards.some((card) => card.id === previous)) return previous;
+                return cards[0]?.id ?? null;
+            });
             setLoadingCards(false);
             setError(null);
         }, (err) => {
             console.error("Modal cards error:", err);
-            setError(err.message || t.connection_error);
+            const errMessage = err instanceof Error ? err.message : "";
+            setError(errMessage || translations[language].connection_error);
             setLoadingCards(false);
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [language]);
+
+    const localeFilteredCards = useMemo(
+        () => greetingCards.filter((card) => isCardVisibleForLanguage(card, language)),
+        [greetingCards, language]
+    );
+    const availableCategoryKeys = useMemo(
+        () => Array.from(new Set(localeFilteredCards.map((img) => normalizeCategory(img.category)))),
+        [localeFilteredCards]
+    );
+
+    useEffect(() => {
+        if (localeFilteredCards.length === 0) {
+            setSelectedImageId(null);
+            return;
+        }
+
+        if (!selectedImageId || !localeFilteredCards.some((card) => card.id === selectedImageId)) {
+            setSelectedImageId(localeFilteredCards[0].id);
+        }
+    }, [localeFilteredCards, selectedImageId]);
+
+    useEffect(() => {
+        if (activeCategory === ALL_CATEGORY_KEY) return;
+        if (!availableCategoryKeys.includes(activeCategory)) {
+            setActiveCategory(ALL_CATEGORY_KEY);
+        }
+    }, [activeCategory, availableCategoryKeys]);
 
     if (!isOpen) return null;
 
-    const categories = ["All", ...Array.from(new Set(greetingCards.map(img => img.category)))].sort();
+    const categories = [
+        ALL_CATEGORY_KEY,
+        ...availableCategoryKeys
+    ].sort((a, b) => a.localeCompare(b));
 
-    const selectedImage = greetingCards.find(img => img.id === selectedImageId) || greetingCards[0];
+    const selectedImage = localeFilteredCards.find(img => img.id === selectedImageId) || localeFilteredCards[0];
 
-    const filteredImages = activeCategory === "All"
-        ? greetingCards
-        : greetingCards.filter(img => img.category === activeCategory);
+    const filteredImages = activeCategory === ALL_CATEGORY_KEY
+        ? localeFilteredCards
+        : localeFilteredCards.filter(img => normalizeCategory(img.category) === activeCategory);
 
     const handleTemplateSelect = (template: string) => {
         setMessage(template);
@@ -209,7 +324,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     shareData.files = [file];
                 }
-            } catch (e) {
+            } catch {
                 console.log("Could not attach file, sharing as link instead");
             }
 
@@ -230,12 +345,12 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className={`glass-pane w-full h-full sm:h-auto sm:max-w-md sm:max-h-[90vh] overflow-y-auto flex flex-col relative animate-in fade-in zoom-in duration-300 premium-border ${modalAccentClass}`}
+                className={`glass-pane w-full h-full sm:h-auto sm:max-w-md sm:max-h-[90vh] overflow-hidden flex flex-col relative animate-in fade-in zoom-in duration-300 premium-border ${modalAccentClass}`}
             >
                 <div className="hidden dark:block absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_0%,_#23324a_0%,_#151820_45%,_#111622_100%)]" />
                 <div className="hidden dark:block absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(circle_at_85%_10%,_#2b4a6a_0%,_transparent_40%)]" />
                 {/* Header */}
-                <div className="p-6 border-b border-black/5 dark:border-white/10 flex justify-between items-center sticky top-0 bg-[var(--pane-bg)] backdrop-blur-md z-10 pt-[max(1.5rem,env(safe-area-inset-top))] sm:pt-6">
+                <div className="p-6 border-b border-black/5 dark:border-white/10 flex justify-between items-center shrink-0 bg-[var(--pane-bg)] backdrop-blur-md z-10 pt-[max(1.5rem,env(safe-area-inset-top))] sm:pt-6">
                     <div>
                         <h2 className="text-xl font-bold text-[var(--app-text)] uppercase tracking-tight">{t.pick_and_send}</h2>
                         <p className="text-xs text-[var(--app-text-dim)]">
@@ -252,7 +367,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                     </button>
                 </div>
 
-                <div className="relative z-10 p-6 space-y-6">
+                <div className="relative z-10 flex-1 overflow-y-auto p-6 space-y-6">
                     {/* Image Selection with Category Tabs */}
                     <div>
                         <div className="flex flex-col gap-3 mb-3">
@@ -278,7 +393,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                                             : "text-[var(--app-text-dim)] border-[var(--glass-border)] hover:text-[var(--app-text)] bg-black/5 dark:bg-white/5"
                                             }`}
                                     >
-                                        {cat === "All" ? (language === "es" ? "Todos" : "All") : cat}
+                                        {localizeCategory(cat, language)}
                                     </button>
                                 ))}
                             </div>
@@ -306,7 +421,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                                 <button onClick={() => window.location.reload()} className="px-4 py-2 border border-white/10 rounded-lg text-[9px] uppercase font-bold hover:bg-white/5">
                                     {language === "es" ? "Forzar Actualización" : "Force Refresh"}
                                 </button>
-                                <div className="text-[8px] opacity-20 mt-2">Cards found: {greetingCards.length}</div>
+                                <div className="text-[8px] opacity-20 mt-2">{language === "es" ? "Tarjetas encontradas" : "Cards found"}: {localeFilteredCards.length}</div>
                             </div>
                         ) : (
                             <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
@@ -317,9 +432,9 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                                         className={`relative flex-shrink-0 w-32 h-32 rounded-xl overflow-hidden border-2 transition-all ${selectedImageId === img.id ? "border-cyan-400 scale-105 shadow-neon-sm" : "border-black/10 dark:border-white/20 opacity-70 grayscale-[0.2]"
                                             }`}
                                     >
-                                        <img src={img.url} alt={img.label} className="w-full h-full object-cover" />
+                                        <img src={img.url} alt={localizeCardLabel(img.label, language)} className="w-full h-full object-cover" />
                                         <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm py-1.5 px-2">
-                                            <p className="text-[9px] font-bold text-white/90 uppercase text-center truncate">{img.label}</p>
+                                            <p className="text-[9px] font-bold text-white/90 uppercase text-center truncate">{localizeCardLabel(img.label, language)}</p>
                                         </div>
                                         {selectedImageId === img.id && (
                                             <div className="absolute top-2 right-2">
@@ -417,14 +532,17 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                         </button>
                     </div>
 
-                    <h2 className="text-2xl font-black text-[var(--app-text)] uppercase tracking-tighter italic">
-                        {t.pick_and_send}
-                    </h2>
-                    <p className="text-[var(--app-text-muted)] text-center italic text-[9px]">
-                        {t.share_tip}
-                    </p>
+                    <div className="sticky bottom-0 -mx-6 px-6 py-3 bg-[var(--pane-bg)]/95 backdrop-blur-md border-t border-black/5 dark:border-white/10">
+                        <h2 className="text-2xl font-black text-[var(--app-text)] uppercase tracking-tighter italic">
+                            {t.pick_and_send}
+                        </h2>
+                        <p className="text-[var(--app-text-muted)] text-center italic text-[9px]">
+                            {t.share_tip}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
     );
 }
+

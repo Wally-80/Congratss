@@ -43,8 +43,9 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
         try {
             await onUpdate(displayName, photoURL);
             onClose();
-        } catch (err: any) {
-            setError(err.message || (language === "es" ? "Error al actualizar el perfil" : "Failed to update profile"));
+        } catch (err: unknown) {
+            const errMessage = err instanceof Error ? err.message : "";
+            setError(errMessage || (language === "es" ? "Error al actualizar el perfil" : "Failed to update profile"));
         } finally {
             setIsSubmitting(false);
         }

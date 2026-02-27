@@ -104,6 +104,7 @@ export default function Dashboard() {
         if (!notificationsEnabled) return;
         if (typeof window === "undefined" || !("Notification" in window)) return;
         if (Notification.permission !== "granted") return;
+        const activeTranslations = translations[language];
 
         const todayKey = new Date().toISOString().slice(0, 10);
 
@@ -117,14 +118,15 @@ export default function Dashboard() {
             const dedupeKey = `gratzz_notify_${item.id}_${reminderType}_${todayKey}`;
             if (localStorage.getItem(dedupeKey)) return;
 
-            const reminderBody = reminderType === "today"
-                ? (language === "es" ? `${item.title} es hoy.` : `${item.title} is today.`)
+            const reminderTemplate = reminderType === "today"
+                ? activeTranslations.notification_body_today
                 : reminderType === "tomorrow"
-                    ? (language === "es" ? `${item.title} es manana.` : `${item.title} is tomorrow.`)
-                    : (language === "es" ? `${item.title} es en 7 dias.` : `${item.title} is in 7 days.`);
+                    ? activeTranslations.notification_body_tomorrow
+                    : activeTranslations.notification_body_week;
+            const reminderBody = reminderTemplate.replace("{title}", item.title);
 
             try {
-                new Notification(language === "es" ? "Recordatorio Congratss" : "Congratss Reminder", {
+                new Notification(activeTranslations.notification_title, {
                     body: reminderBody,
                     tag: dedupeKey,
                 });
@@ -326,7 +328,7 @@ export default function Dashboard() {
                 <div className="w-9 h-9 rounded-full border-2 border-black/10 dark:border-white/20 overflow-hidden shadow-lg bg-black/5 dark:bg-white/5 flex items-center justify-center">
                     <img
                         src={user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || "U")}&background=random&color=fff&size=100`}
-                        alt="Profile"
+                        alt={t.profile_image_alt}
                         className="w-full h-full object-cover"
                     />
                 </div>
@@ -375,7 +377,7 @@ export default function Dashboard() {
                                             {searchQuery ? t.no_matches : t.no_celebrations}
                                         </h3>
                                         <p className="text-sm text-[var(--app-text-muted)] px-6">
-                                            {searchQuery ? "Try a different search term" : t.add_first}
+                                            {searchQuery ? t.try_different_search : t.add_first}
                                         </p>
                                     </div>
                                 ) : (
@@ -608,7 +610,7 @@ export default function Dashboard() {
                                                             ? "border-slate-300 text-slate-600 hover:bg-slate-100"
                                                             : "border-slate-600 text-slate-200 hover:bg-slate-700"
                                                             }`}
-                                                        aria-label="Edit celebration"
+                                                        aria-label={t.edit_celebration_aria}
                                                     >
                                                         <Pencil className="w-4 h-4" />
                                                     </button>
@@ -618,7 +620,7 @@ export default function Dashboard() {
                                                             ? "border-red-300 text-red-600 hover:bg-red-50"
                                                             : "border-red-500/40 text-red-400 hover:bg-red-500/10"
                                                             }`}
-                                                        aria-label="Delete celebration"
+                                                        aria-label={t.delete_celebration_aria}
                                                     >
                                                         <Trash2 className="w-4 h-4" />
                                                     </button>
@@ -628,7 +630,7 @@ export default function Dashboard() {
                                                             ? "border-slate-300 text-slate-600 hover:bg-slate-100"
                                                             : "border-slate-600 text-slate-200 hover:bg-slate-700"
                                                             }`}
-                                                        aria-label="Share celebration"
+                                                        aria-label={t.share_celebration_aria}
                                                     >
                                                         <Send className="w-4 h-4" />
                                                     </button>
@@ -658,11 +660,11 @@ export default function Dashboard() {
                             <div className="w-24 h-24 rounded-[2rem] border-4 border-black/10 dark:border-white/10 overflow-hidden shadow-2xl mb-4 relative group bg-black/5 dark:bg-white/5 flex items-center justify-center">
                                 <img
                                     src={user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || "U")}&background=random&color=fff&size=256`}
-                                    alt="Profile"
+                                    alt={t.profile_image_alt}
                                     className="w-full h-full object-cover"
                                 />
                             </div>
-                            <h3 className="text-xl font-bold text-[var(--app-text)]">{user.displayName || "Congratss User"}</h3>
+                            <h3 className="text-xl font-bold text-[var(--app-text)]">{user.displayName || t.default_user_name}</h3>
                             <p className="text-sm text-[var(--app-text-dim)]">{user.email}</p>
                             {isAdmin && (
                                 <div className="mt-2 px-3 py-1 bg-cyan-400/10 border border-cyan-400/30 rounded-full">
@@ -795,7 +797,7 @@ export default function Dashboard() {
             >
                 {dataError && (
                     <div className="absolute top-0 left-0 right-0 z-50 p-4 bg-red-500/10 border-b border-red-500/20 backdrop-blur-md text-red-600 dark:text-red-200 text-xs text-center">
-                        <p>Database Error: {dataError}</p>
+                        <p>{t.database_error_prefix}: {dataError}</p>
                     </div>
                 )}
 

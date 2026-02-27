@@ -2,23 +2,35 @@
 
 import React, { useState, useEffect } from "react";
 import { Plus, Trash2, Pencil, Image as ImageIcon, Save, X, PlusCircle, Upload, Loader2 } from "lucide-react";
-import { cardService, GreetingCard } from "@/lib/cardService";
+import { cardService, GreetingCard, type CardLocale } from "@/lib/cardService";
 import ConfirmModal from "./ConfirmModal";
 import { useAuth } from "@/context/AuthContext";
 import { translations } from "@/lib/translations";
 import { uploadFile } from "@/lib/storageService";
 
+const DEFAULT_FORM_DATA: { label: string; url: string; category: string; locale: CardLocale } = {
+    label: "",
+    url: "",
+    category: "Classic",
+    locale: "both"
+};
+
 export default function AdminDashboard() {
     const [cards, setCards] = useState<GreetingCard[]>([]);
     const [isAdding, setIsAdding] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
-    const [formData, setFormData] = useState({ label: "", url: "", category: "Classic" });
+    const [formData, setFormData] = useState(DEFAULT_FORM_DATA);
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [isBulkUploading, setIsBulkUploading] = useState(false);
     const { language } = useAuth();
     const t = translations[language];
+    const localeLabels: Record<CardLocale, string> = {
+        both: t.all_languages,
+        en: t.only_english,
+        es: t.only_spanish
+    };
 
     // Confirmation States
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
@@ -68,7 +80,8 @@ export default function AdminDashboard() {
                 await cardService.addCard({
                     label: label,
                     url: url,
-                    category: "New"
+                    category: "New",
+                    locale: "both"
                 });
             }
             alert(language === "es" ? "Â¡Tarjetas creadas con Ã©xito!" : "Cards created successfully!");
@@ -95,8 +108,8 @@ export default function AdminDashboard() {
                 await cardService.addCard(formData);
                 setIsAdding(false);
             }
-            setFormData({ label: "", url: "", category: "Classic" });
-        } catch (error) {
+            setFormData(DEFAULT_FORM_DATA);
+        } catch {
             alert(language === "es" ? "Error al guardar la tarjeta. Revisa la consola." : "Error saving card. Check console.");
         } finally {
             setLoading(false);
@@ -105,7 +118,12 @@ export default function AdminDashboard() {
 
     const handleEdit = (card: GreetingCard) => {
         setEditingId(card.id);
-        setFormData({ label: card.label, url: card.url, category: card.category });
+        setFormData({
+            label: card.label,
+            url: card.url,
+            category: card.category,
+            locale: card.locale ?? "both"
+        });
         setIsAdding(true);
     };
 
@@ -123,7 +141,7 @@ export default function AdminDashboard() {
     const cancel = () => {
         setIsAdding(false);
         setEditingId(null);
-        setFormData({ label: "", url: "", category: "Classic" });
+        setFormData(DEFAULT_FORM_DATA);
     };
 
     return (
@@ -199,7 +217,7 @@ export default function AdminDashboard() {
                             </div>
 
                             <div>
-                                <label className="text-[10px] font-bold text-black/30 dark:text-white/30 uppercase tracking-widest block mb-1.5 ml-1">{t.image_url}</label>
+                                <label className="text-[10px] font-bold text-[var(--app-text-dim)] uppercase tracking-widest block mb-1.5 ml-1">{t.image_url}</label>
                                 <div className="flex gap-2">
                                     <input
                                         type="text"
@@ -207,9 +225,9 @@ export default function AdminDashboard() {
                                         value={formData.url}
                                         onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                                         placeholder="e.g. /greeting_new.png"
-                                        className="flex-1 bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-950 dark:text-white focus:outline-none focus:border-cyan-400 transition-all shadow-inner"
+                                        className="flex-1 bg-[var(--app-bg)] border border-[var(--glass-border)] rounded-xl px-4 py-3 text-sm text-[var(--app-text)] focus:outline-none focus:border-cyan-400 transition-all shadow-inner"
                                     />
-                                    <label className="flex items-center justify-center px-4 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl cursor-pointer hover:bg-black/10 dark:hover:bg-white/10 transition-all group">
+                                    <label className="flex items-center justify-center px-4 bg-[var(--app-bg)] border border-[var(--glass-border)] rounded-xl cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 transition-all group">
                                         {uploading ? (
                                             <Loader2 className="w-5 h-5 animate-spin text-cyan-400" />
                                         ) : (
@@ -225,7 +243,7 @@ export default function AdminDashboard() {
                                     </label>
                                 </div>
                                 {uploading && (
-                                    <div className="mt-2 h-1 w-full bg-black/5 dark:bg-white/5 rounded-full overflow-hidden">
+                                    <div className="mt-2 h-1 w-full bg-[var(--app-bg)] rounded-full overflow-hidden">
                                         <div
                                             className="h-full bg-cyan-400 transition-all duration-300"
                                             style={{ width: `${uploadProgress}%` }}
@@ -236,7 +254,7 @@ export default function AdminDashboard() {
 
 
                             <div>
-                                <label className="text-[10px] font-bold text-black/30 dark:text-white/30 uppercase tracking-widest block mb-1.5 ml-1">{t.category}</label>
+                                <label className="text-[10px] font-bold text-[var(--app-text-dim)] uppercase tracking-widest block mb-1.5 ml-1">{t.category}</label>
                                 <div className="grid grid-cols-2 gap-2">
                                     {["Classic", "Special", "Funny", "New"].map((cat) => (
                                         <button
@@ -245,7 +263,7 @@ export default function AdminDashboard() {
                                             onClick={() => setFormData({ ...formData, category: cat })}
                                             className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all ${formData.category === cat
                                                 ? "bg-cyan-400/20 border-cyan-400 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.2)]"
-                                                : "bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/40 dark:text-white/40 hover:bg-black/10 dark:hover:bg-white/10"
+                                                : "bg-[var(--app-bg)] border-[var(--glass-border)] text-[var(--app-text-dim)] hover:text-[var(--app-text)] hover:bg-black/5 dark:hover:bg-white/10"
                                                 }`}
                                         >
                                             {cat}
@@ -256,8 +274,27 @@ export default function AdminDashboard() {
                                         placeholder={language === "es" ? "O escribe una nueva..." : "Or type custom..."}
                                         value={["Classic", "Special", "Funny", "New"].includes(formData.category) ? "" : formData.category}
                                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                        className="col-span-2 bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-950 dark:text-white focus:outline-none focus:border-cyan-400 transition-all mt-1 shadow-inner"
+                                        className="col-span-2 bg-[var(--app-bg)] border border-[var(--glass-border)] rounded-xl px-4 py-3 text-sm text-[var(--app-text)] focus:outline-none focus:border-cyan-400 transition-all mt-1 shadow-inner"
                                     />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="text-[10px] font-bold text-[var(--app-text-dim)] uppercase tracking-widest block mb-1.5 ml-1">{t.card_language}</label>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {(["both", "en", "es"] as CardLocale[]).map((locale) => (
+                                        <button
+                                            key={locale}
+                                            type="button"
+                                            onClick={() => setFormData({ ...formData, locale })}
+                                            className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all ${formData.locale === locale
+                                                ? "bg-cyan-400/20 border-cyan-400 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.2)]"
+                                                : "bg-[var(--app-bg)] border-[var(--glass-border)] text-[var(--app-text-dim)] hover:text-[var(--app-text)] hover:bg-black/5 dark:hover:bg-white/10"
+                                                }`}
+                                        >
+                                            {localeLabels[locale]}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
 
@@ -273,7 +310,7 @@ export default function AdminDashboard() {
                                 <button
                                     type="button"
                                     onClick={cancel}
-                                    className="px-6 bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 py-3 rounded-xl font-bold text-sm hover:bg-black/10 dark:hover:bg-white/10 transition-all"
+                                    className="px-6 bg-[var(--app-bg)] border border-[var(--glass-border)] text-[var(--app-text-dim)] py-3 rounded-xl font-bold text-sm hover:text-[var(--app-text)] hover:bg-black/5 dark:hover:bg-white/10 transition-all"
                                 >
                                     {t.cancel}
                                 </button>
@@ -316,6 +353,7 @@ export default function AdminDashboard() {
                                                     </div>
                                                 </div>
                                                 <p className="text-[10px] font-bold text-slate-900 dark:text-white/70 uppercase text-center truncate px-1">{card.label}</p>
+                                                <p className="text-[9px] text-slate-500 dark:text-white/40 text-center uppercase tracking-wider">{localeLabels[card.locale ?? "both"]}</p>
                                             </div>
                                         ))}
                                     </div>

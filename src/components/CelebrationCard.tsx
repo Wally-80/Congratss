@@ -134,10 +134,10 @@ export default function CelebrationCard({
             <div className="flex items-end justify-between mb-4">
                 <div className="flex flex-col">
                     <span className="text-4xl font-black italic tracking-tighter">
-                        {isToday ? "TODAY" : daysLeft}
+                        {isToday ? t.today_badge : daysLeft}
                     </span>
                     <span className="text-[10px] font-bold text-[var(--app-text-dim)] uppercase tracking-[0.2em] mt-1">
-                        {isToday ? (language === "es" ? "¡ES HOY!" : "CELEBRATE!") : t.days_to_go}
+                        {isToday ? t.celebrate_badge : t.days_to_go}
                     </span>
                 </div>
                 <button
