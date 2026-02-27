@@ -424,12 +424,12 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                                 <div className="text-[8px] opacity-20 mt-2">{language === "es" ? "Tarjetas encontradas" : "Cards found"}: {localeFilteredCards.length}</div>
                             </div>
                         ) : (
-                            <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+                            <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide sm:grid sm:grid-cols-3 sm:gap-3 sm:overflow-x-visible sm:overflow-y-auto sm:max-h-80 sm:pr-1">
                                 {filteredImages.map((img) => (
                                     <button
                                         key={img.id}
                                         onClick={() => setSelectedImageId(img.id)}
-                                        className={`relative flex-shrink-0 w-32 h-32 rounded-xl overflow-hidden border-2 transition-all ${selectedImageId === img.id ? "border-cyan-400 scale-105 shadow-neon-sm" : "border-black/10 dark:border-white/20 opacity-70 grayscale-[0.2]"
+                                        className={`relative flex-shrink-0 w-32 h-32 sm:w-full sm:h-28 rounded-xl overflow-hidden border-2 transition-all ${selectedImageId === img.id ? "border-cyan-400 scale-105 shadow-neon-sm" : "border-black/10 dark:border-white/20 opacity-70 grayscale-[0.2]"
                                             }`}
                                     >
                                         <img src={img.url} alt={localizeCardLabel(img.label, language)} className="w-full h-full object-cover" />
