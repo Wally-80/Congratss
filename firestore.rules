@@ -19,7 +19,12 @@ service cloud.firestore {
     }
 
     function isAdminByEmail() {
-      return isSignedIn() && request.auth.token.email == "walterrpom@gmail.com";
+      return isSignedIn()
+        && request.auth.token.email != null
+        && [
+          "walterrpom@gmail.com",
+          "walterciitop@gmail.com"
+        ].hasAny([request.auth.token.email]);
     }
 
     function isAdmin() {
