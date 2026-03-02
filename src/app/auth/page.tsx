@@ -52,7 +52,7 @@ export default function AuthPage() {
 
     return (
         <div className="min-h-[100dvh] flex items-center justify-center p-0 sm:p-4 pt-[max(0rem,env(safe-area-inset-top))] pb-[max(0rem,env(safe-area-inset-bottom))] relative">
-            <Fireworks mode="elegant" className="z-0 opacity-65" />
+            <Fireworks mode="elegant" className="z-0 opacity-65" disableOnMobile={true} maxRuntimeMs={6000} />
             <div className={`glass-pane z-10 w-full max-w-md p-10 shadow-2xl flex flex-col items-center justify-center relative overflow-hidden premium-border h-[100dvh] sm:h-auto pt-[max(2.5rem,env(safe-area-inset-top))] pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:py-10 ${panelToneClass}`}>
                 <PageCloseButton className="absolute top-[max(1rem,env(safe-area-inset-top))] right-4 z-20" />
                 {/* Visual Background Accents */}

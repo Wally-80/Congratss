@@ -1,20 +1,22 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { Plus, Home as HomeIcon, Calendar as CalendarIcon, Settings, Search, LogOut, Send, ChevronLeft, ChevronRight, Pencil, Trash2, Info, Shield } from "lucide-react";
 import CelebrationCard from "@/components/CelebrationCard";
 import AddCelebrationModal from "@/components/AddCelebrationModal";
 import EditProfileModal from "@/components/EditProfileModal";
-import SendGreetingModal from "@/components/SendGreetingModal";
-import AdminDashboard from "@/components/AdminDashboard";
 import ConfirmModal from "@/components/ConfirmModal";
 import { useAuth } from "@/context/AuthContext";
 import { type Celebration, useCelebrations } from "@/hooks/useCelebrations";
 import { translations } from "@/lib/translations";
 import { playCelebrationChime } from "@/lib/sound";
-import AuthPage from "./auth/page";
 import { useTheme } from "@/context/ThemeContext";
-import Fireworks from "@/components/Fireworks";
+
+const AuthPage = dynamic(() => import("./auth/page"), { ssr: false });
+const SendGreetingModal = dynamic(() => import("@/components/SendGreetingModal"), { ssr: false });
+const AdminDashboard = dynamic(() => import("@/components/AdminDashboard"), { ssr: false });
+const Fireworks = dynamic(() => import("@/components/Fireworks"), { ssr: false });
 
 type CelebrationFormData = {
     id?: string;
@@ -53,8 +55,8 @@ export default function Dashboard() {
     const [addModalDefaultDate, setAddModalDefaultDate] = useState("");
     const [activeTab, setActiveTab] = useState("home");
     const [searchQuery, setSearchQuery] = useState("");
-    const [lastScrollTop, setLastScrollTop] = useState(0);
     const [showFab, setShowFab] = useState(true);
+    const lastScrollTopRef = useRef(0);
     const [calendarMonthStart, setCalendarMonthStart] = useState(() => {
         const now = new Date();
         return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
@@ -78,13 +80,6 @@ export default function Dashboard() {
     };
 
 
-
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            setShowFab(true);
-        }, 600);
-        return () => clearTimeout(timeout);
-    }, [lastScrollTop]);
 
     useEffect(() => {
         if (!user || typeof window === "undefined") return;
@@ -160,10 +155,16 @@ export default function Dashboard() {
         });
     }, [celebrations, language, notificationsEnabled]);
 
-    const filteredCelebrations = celebrations
-        .filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase()))
-        .sort((a, b) => a.daysLeft - b.daysLeft);
-    const hasTodayCelebration = celebrations.some((item) => item.daysLeft === 0);
+    const filteredCelebrations = useMemo(
+        () => celebrations
+            .filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase()))
+            .sort((a, b) => a.daysLeft - b.daysLeft),
+        [celebrations, searchQuery]
+    );
+    const hasTodayCelebration = useMemo(
+        () => celebrations.some((item) => item.daysLeft === 0),
+        [celebrations]
+    );
 
     const handleUpdateProfile = async (displayName: string, photoURL: string) => {
         await updateUserProfile(displayName, photoURL);
@@ -214,18 +215,13 @@ export default function Dashboard() {
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const currentScrollTop = e.currentTarget.scrollTop;
+        const lastScrollTop = lastScrollTopRef.current;
 
-        // Only trigger if scroll distance is significant (> 10px)
         if (Math.abs(currentScrollTop - lastScrollTop) < 20) return;
 
-        if (currentScrollTop > lastScrollTop && currentScrollTop > 50) {
-            // Scrolling down
-            setShowFab(false);
-        } else {
-            // Scrolling up
-            setShowFab(true);
-        }
-        setLastScrollTop(currentScrollTop);
+        const shouldShowFab = !(currentScrollTop > lastScrollTop && currentScrollTop > 50);
+        setShowFab((previous) => previous === shouldShowFab ? previous : shouldShowFab);
+        lastScrollTopRef.current = currentScrollTop;
     };
 
     const handleAddOrEdit = async (data: CelebrationFormData) => {
@@ -816,7 +812,14 @@ export default function Dashboard() {
 
     return (
         <main className="relative h-[100dvh] min-h-[100dvh] bg-[var(--app-bg)] flex flex-col items-center justify-start overflow-x-hidden overflow-y-hidden transition-colors duration-500">
-            {showCelebrationFireworks && <Fireworks mode="celebration" className="z-30 opacity-80" />}
+            {showCelebrationFireworks && (
+                <Fireworks
+                    mode="celebration"
+                    className="z-30 opacity-80"
+                    disableOnMobile={true}
+                    maxRuntimeMs={7000}
+                />
+            )}
             <div
                 onScroll={handleScroll}
                 className="glass-pane z-10 w-full sm:max-w-md h-[100dvh] sm:h-[850px] sm:my-8 flex flex-col relative overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-1000"
@@ -892,11 +895,13 @@ export default function Dashboard() {
                 }}
             />
 
-            <SendGreetingModal
-                isOpen={isSendGreetingModalOpen}
-                onClose={() => setIsSendGreetingModalOpen(false)}
-                celebration={sendingCelebration}
-            />
+            {isSendGreetingModalOpen && (
+                <SendGreetingModal
+                    isOpen={isSendGreetingModalOpen}
+                    onClose={() => setIsSendGreetingModalOpen(false)}
+                    celebration={sendingCelebration}
+                />
+            )}
 
             <ConfirmModal
                 isOpen={isConfirmDeleteOpen}

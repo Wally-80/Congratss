@@ -5,6 +5,7 @@ import {
     deleteDoc,
     doc,
     onSnapshot,
+    getDocs,
     query,
     Timestamp,
     writeBatch
@@ -75,6 +76,22 @@ export const cardService = {
         }, (error) => {
             console.error("Error subscribing to cards: ", error);
             if (onError) onError(error);
+        });
+    },
+
+    async getCards() {
+        const q = query(collection(db, COLLECTION_NAME));
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                ...data,
+                locale: (data.locale as CardLocale | undefined) ?? "both",
+                createdAt: data.createdAt && typeof data.createdAt.toDate === 'function'
+                    ? data.createdAt.toDate()
+                    : undefined
+            } as GreetingCard;
         });
     },
 

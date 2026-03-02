@@ -202,24 +202,36 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
 
 
     useEffect(() => {
-        // Subscribe to cards on mount to ensure data is ready early
-        const unsubscribe = cardService.subscribeToCards((cards) => {
-            setGreetingCards(cards);
-            setSelectedImageId((previous) => {
-                if (previous && cards.some((card) => card.id === previous)) return previous;
-                return cards[0]?.id ?? null;
-            });
-            setLoadingCards(false);
-            setError(null);
-        }, (err) => {
-            console.error("Modal cards error:", err);
-            const errMessage = err instanceof Error ? err.message : "";
-            setError(errMessage || translations[language].connection_error);
-            setLoadingCards(false);
-        });
+        if (!isOpen) return;
 
-        return () => unsubscribe();
-    }, [language]);
+        let alive = true;
+        setLoadingCards(true);
+        setError(null);
+
+        const loadCards = async () => {
+            try {
+                const cards = await cardService.getCards();
+                if (!alive) return;
+                setGreetingCards(cards);
+                setSelectedImageId((previous) => {
+                    if (previous && cards.some((card) => card.id === previous)) return previous;
+                    return cards[0]?.id ?? null;
+                });
+                setLoadingCards(false);
+            } catch (err) {
+                if (!alive) return;
+                console.error("Modal cards error:", err);
+                const errMessage = err instanceof Error ? err.message : "";
+                setError(errMessage || translations[language].connection_error);
+                setLoadingCards(false);
+            }
+        };
+
+        loadCards();
+        return () => {
+            alive = false;
+        };
+    }, [isOpen, language]);
 
     const localeFilteredCards = useMemo(
         () => greetingCards.filter((card) => isCardVisibleForLanguage(card, language)),

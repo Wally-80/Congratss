@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -17,6 +17,26 @@ const isSafeImageSource = (value: string) => {
 };
 
 export default function SharedCardPage() {
+    return (
+        <Suspense
+            fallback={(
+                <main className="min-h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] px-4 py-8 sm:px-8">
+                    <div className="max-w-3xl mx-auto flex flex-col items-center gap-6">
+                        <div className="w-full rounded-3xl border border-[var(--glass-border)] bg-[var(--card-bg)] p-3 sm:p-5 shadow-2xl">
+                            <div className="h-72 grid place-items-center rounded-2xl border border-dashed border-[var(--glass-border)] text-[var(--app-text-muted)] text-sm text-center px-6">
+                                Loading shared card...
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            )}
+        >
+            <SharedCardContent />
+        </Suspense>
+    );
+}
+
+function SharedCardContent() {
     const searchParams = useSearchParams();
     const cardId = searchParams.get("id") ?? "";
     const rawImage = searchParams.get("img") ?? "";

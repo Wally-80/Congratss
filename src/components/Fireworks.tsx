@@ -8,6 +8,8 @@ type BurstType = "peony" | "ring" | "chrysanthemum" | "willow";
 type FireworksProps = {
     mode?: FireworksMode;
     className?: string;
+    disableOnMobile?: boolean;
+    maxRuntimeMs?: number;
 };
 
 type ModeConfig = {
@@ -85,25 +87,28 @@ const MODE: Record<FireworksMode, ModeConfig> = {
 
 const randomBetween = (min: number, max: number) => Math.random() * (max - min) + min;
 
-export default function Fireworks({ mode = "celebration", className = "" }: FireworksProps) {
+export default function Fireworks({ mode = "celebration", className = "", disableOnMobile = false, maxRuntimeMs }: FireworksProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        if (disableOnMobile && window.innerWidth < 768) return;
 
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
         const config = MODE[mode];
         let animationFrameId = 0;
+        const startedAt = performance.now();
         let width = window.innerWidth;
         let height = window.innerHeight;
         let lastLaunch = 0;
         let sparks: Spark[] = [];
         let trails: Trail[] = [];
         let rockets: Rocket[] = [];
+        let isVisible = document.visibilityState === "visible";
 
         const pickHue = () => {
             const band = config.hueBands[Math.floor(Math.random() * config.hueBands.length)];
@@ -228,6 +233,7 @@ export default function Fireworks({ mode = "celebration", className = "" }: Fire
                 }
             }
             rockets = rockets.filter((rocket) => rocket.alive);
+            if (rockets.length > 20) rockets = rockets.slice(-20);
         };
 
         const updateTrails = () => {
@@ -238,6 +244,7 @@ export default function Fireworks({ mode = "celebration", className = "" }: Fire
                 trail.life -= 1;
             }
             trails = trails.filter((trail) => trail.life > 0);
+            if (trails.length > 900) trails = trails.slice(-900);
         };
 
         const updateSparks = () => {
@@ -263,6 +270,7 @@ export default function Fireworks({ mode = "celebration", className = "" }: Fire
                 }
             }
             sparks = sparks.filter((spark) => spark.life > 0);
+            if (sparks.length > 1200) sparks = sparks.slice(-1200);
         };
 
         const drawTrails = () => {
@@ -302,6 +310,15 @@ export default function Fireworks({ mode = "celebration", className = "" }: Fire
         };
 
         const render = (timestamp: number) => {
+            if (typeof maxRuntimeMs === "number" && timestamp - startedAt > maxRuntimeMs) {
+                ctx.clearRect(0, 0, width, height);
+                return;
+            }
+            if (!isVisible) {
+                animationFrameId = requestAnimationFrame(render);
+                return;
+            }
+
             ctx.clearRect(0, 0, width, height);
 
             const [minDelay, maxDelay] = width >= 1024 ? config.launchMsDesktop : config.launchMsMobile;
@@ -323,7 +340,12 @@ export default function Fireworks({ mode = "celebration", className = "" }: Fire
             animationFrameId = requestAnimationFrame(render);
         };
 
+        const handleVisibilityChange = () => {
+            isVisible = document.visibilityState === "visible";
+        };
+
         window.addEventListener("resize", resize);
+        document.addEventListener("visibilitychange", handleVisibilityChange);
         resize();
 
         for (let i = 0; i < config.initialLaunches; i++) {
@@ -333,9 +355,10 @@ export default function Fireworks({ mode = "celebration", className = "" }: Fire
 
         return () => {
             window.removeEventListener("resize", resize);
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
             cancelAnimationFrame(animationFrameId);
         };
-    }, [mode]);
+    }, [disableOnMobile, maxRuntimeMs, mode]);
 
     return <canvas ref={canvasRef} className={`fixed inset-0 pointer-events-none ${className}`.trim()} />;
 }
