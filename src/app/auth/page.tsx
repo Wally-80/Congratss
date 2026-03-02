@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { auth } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { useAuth } from "@/context/AuthContext";
 import { translations } from "@/lib/translations";
 import { useTheme } from "@/context/ThemeContext";
+import { useRouter } from "next/navigation";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 import { getRandomAvatar, getAvatarUrl } from "@/lib/avatars";
 import Logo from "@/components/Logo";
@@ -14,15 +17,23 @@ import PageCloseButton from "@/components/PageCloseButton";
 import Fireworks from "@/components/Fireworks";
 
 export default function AuthPage() {
-    const { language, setLanguage, updateUserProfile } = useAuth();
+    const { user, loading, language, setLanguage, updateUserProfile } = useAuth();
     const { theme } = useTheme();
     const t = translations[language];
     const isDarkMode = theme === "dark";
+    const router = useRouter();
 
     const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+
+    useEffect(() => {
+        if (loading) return;
+        if (user) {
+            router.replace("/");
+        }
+    }, [loading, router, user]);
 
     const panelToneClass = isDarkMode
         ? "sm:bg-black/45 sm:border-white/10"
@@ -42,6 +53,16 @@ export default function AuthPage() {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 if (userCredential.user) {
                     const avatar = getRandomAvatar();
+                    await setDoc(doc(db, "users", userCredential.user.uid), {
+                        language,
+                        notificationsEnabled: false,
+                        onboardingCompleted: false,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp(),
+                    }, { merge: true });
+                    if (typeof window !== "undefined") {
+                        localStorage.setItem("gratzz_force_onboarding_once", "1");
+                    }
                     await updateUserProfile("Congratss User", getAvatarUrl(avatar));
                 }
             }

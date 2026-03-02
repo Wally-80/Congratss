@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { Plus, Home as HomeIcon, Calendar as CalendarIcon, Settings, Search, LogOut, Send, ChevronLeft, ChevronRight, Pencil, Trash2, Info, Shield } from "lucide-react";
+import { Plus, Home as HomeIcon, Calendar as CalendarIcon, Settings, Search, LogOut, Send, ChevronLeft, ChevronRight, Pencil, Trash2, Info, Shield, Download } from "lucide-react";
 import CelebrationCard from "@/components/CelebrationCard";
 import AddCelebrationModal from "@/components/AddCelebrationModal";
 import EditProfileModal from "@/components/EditProfileModal";
 import ConfirmModal from "@/components/ConfirmModal";
+import OnboardingModal from "@/components/OnboardingModal";
 import { useAuth } from "@/context/AuthContext";
 import { type Celebration, useCelebrations } from "@/hooks/useCelebrations";
 import { translations } from "@/lib/translations";
@@ -43,7 +44,7 @@ type SendGreetingTarget = {
 export default function Dashboard() {
     const { theme, toggleTheme } = useTheme();
     const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
-    const { user, isAdmin, language, notificationsEnabled, setNotificationsEnabled, setLanguage, loading: authLoading, logout, updateUserProfile } = useAuth();
+    const { user, isAdmin, language, notificationsEnabled, onboardingCompleted, setNotificationsEnabled, setLanguage, loading: authLoading, logout, updateUserProfile, completeOnboarding } = useAuth();
     const t = translations[language];
     const isDarkMode = theme === "dark";
 
@@ -66,6 +67,15 @@ export default function Dashboard() {
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<string | null>(null);
     const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>("default");
+    const [isAppUpdateAvailable, setIsAppUpdateAvailable] = useState(false);
+    const [isApplyingAppUpdate, setIsApplyingAppUpdate] = useState(false);
+    const [isReplayTourOpen, setIsReplayTourOpen] = useState(false);
+    const [forceOnboardingOnce, setForceOnboardingOnce] = useState(() => {
+        if (typeof window === "undefined") return false;
+        return localStorage.getItem("gratzz_force_onboarding_once") === "1";
+    });
+    const waitingServiceWorkerRef = useRef<ServiceWorker | null>(null);
+    const autoUpdateTimerRef = useRef<number | null>(null);
 
     const handleDeleteClick = async (id: string) => {
         setItemToDelete(id);
@@ -155,6 +165,89 @@ export default function Dashboard() {
         });
     }, [celebrations, language, notificationsEnabled]);
 
+    useEffect(() => {
+        if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
+        if (process.env.NODE_ENV !== "production") {
+            void navigator.serviceWorker.getRegistrations()
+                .then((registrations) => Promise.all(registrations.map((registration) => registration.unregister())))
+                .catch(() => undefined);
+            return;
+        }
+
+        let hasReloaded = false;
+        let isMounted = true;
+        let updateIntervalId: number | null = null;
+
+        const clearAutoUpdateTimer = () => {
+            if (autoUpdateTimerRef.current !== null) {
+                window.clearTimeout(autoUpdateTimerRef.current);
+                autoUpdateTimerRef.current = null;
+            }
+        };
+
+        const applyWaitingUpdate = () => {
+            const waitingWorker = waitingServiceWorkerRef.current;
+            if (!waitingWorker) return;
+            setIsApplyingAppUpdate(true);
+            waitingWorker.postMessage({ type: "SKIP_WAITING" });
+        };
+
+        const markUpdateAsAvailable = (registration: ServiceWorkerRegistration) => {
+            const waitingWorker = registration.waiting;
+            if (!waitingWorker || !navigator.serviceWorker.controller) return;
+            waitingServiceWorkerRef.current = waitingWorker;
+            setIsAppUpdateAvailable(true);
+            clearAutoUpdateTimer();
+            autoUpdateTimerRef.current = window.setTimeout(() => {
+                if (!isMounted) return;
+                applyWaitingUpdate();
+            }, 3500);
+        };
+
+        const handleControllerChange = () => {
+            if (hasReloaded) return;
+            hasReloaded = true;
+            window.location.reload();
+        };
+
+        void (async () => {
+            try {
+                const registration = await navigator.serviceWorker.register("/sw.js");
+                markUpdateAsAvailable(registration);
+
+                registration.addEventListener("updatefound", () => {
+                    const installingWorker = registration.installing;
+                    if (!installingWorker) return;
+                    installingWorker.addEventListener("statechange", () => {
+                        if (installingWorker.state === "installed") {
+                            markUpdateAsAvailable(registration);
+                        }
+                    });
+                });
+
+                updateIntervalId = window.setInterval(() => {
+                    void registration.update().catch(() => undefined);
+                }, 30 * 60 * 1000);
+            } catch (error) {
+                console.error("Service worker registration failed:", error);
+            }
+        })();
+
+        navigator.serviceWorker.addEventListener("controllerchange", handleControllerChange);
+
+        return () => {
+            isMounted = false;
+            navigator.serviceWorker.removeEventListener("controllerchange", handleControllerChange);
+            clearAutoUpdateTimer();
+            if (updateIntervalId !== null) {
+                window.clearInterval(updateIntervalId);
+            }
+        };
+    }, []);
+
+    const isOnboardingPending = Boolean(user && (!onboardingCompleted || forceOnboardingOnce));
+    const isTourOpen = isOnboardingPending || isReplayTourOpen;
+
     const filteredCelebrations = useMemo(
         () => celebrations
             .filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -200,6 +293,49 @@ export default function Dashboard() {
         }
 
         await setNotificationsEnabled(true);
+    };
+
+    const handleApplyAppUpdate = () => {
+        if (autoUpdateTimerRef.current !== null) {
+            window.clearTimeout(autoUpdateTimerRef.current);
+            autoUpdateTimerRef.current = null;
+        }
+        if (!waitingServiceWorkerRef.current) return;
+        setIsApplyingAppUpdate(true);
+        waitingServiceWorkerRef.current.postMessage({ type: "SKIP_WAITING" });
+    };
+
+    const handleCompleteOnboarding = async () => {
+        if (typeof window !== "undefined") {
+            localStorage.removeItem("gratzz_force_onboarding_once");
+        }
+        setForceOnboardingOnce(false);
+        if (user && !onboardingCompleted) {
+            await completeOnboarding();
+        }
+        setIsReplayTourOpen(false);
+    };
+
+    const handleOnboardingEnableNotifications = async () => {
+        if (notificationsEnabled) return;
+        await handleToggleNotifications();
+    };
+
+    const openHomeTab = useCallback(() => {
+        setActiveTab("home");
+    }, []);
+
+    const openCalendarTab = useCallback(() => {
+        setActiveTab("calendar");
+    }, []);
+
+    const openSettingsTab = useCallback(() => {
+        setActiveTab("settings");
+    }, []);
+
+    const handleReplayTour = () => {
+        setIsReplayTourOpen(true);
+        setActiveTab("home");
     };
 
     const openInfoPage = (path: "/about" | "/privacy") => {
@@ -727,6 +863,7 @@ export default function Dashboard() {
                             <button
                                 type="button"
                                 onClick={handleToggleNotifications}
+                                data-tour="notifications-toggle"
                                 className="w-full glass-card p-4 flex items-center justify-between text-[var(--app-text-dim)] hover:text-[var(--app-text)] transition-colors premium-border neon-border-cyan"
                             >
                                 <span className="text-sm font-medium">{t.notifications}</span>
@@ -744,6 +881,15 @@ export default function Dashboard() {
                                     {t.notifications_blocked}
                                 </p>
                             )}
+
+                            <button
+                                type="button"
+                                onClick={handleReplayTour}
+                                className="w-full glass-card p-4 flex items-center justify-between text-[var(--app-text-dim)] hover:text-[var(--app-text)] transition-colors premium-border neon-border-cyan"
+                            >
+                                <span className="text-sm font-medium">{t.replay_tour}</span>
+                                <Info className="w-4 h-4 opacity-70" />
+                            </button>
 
                             <div className="glass-card p-4 flex flex-col gap-3 premium-border neon-border-cyan">
                                 <h4 className="text-[10px] font-bold text-[var(--app-text-muted)] uppercase tracking-[0.2em]">{t.legal_info}</h4>
@@ -820,6 +966,22 @@ export default function Dashboard() {
                     maxRuntimeMs={7000}
                 />
             )}
+            {isAppUpdateAvailable && (
+                <div className="fixed top-[calc(env(safe-area-inset-top)+0.75rem)] left-1/2 -translate-x-1/2 z-[230] w-[calc(100%-1.5rem)] max-w-md rounded-2xl border border-cyan-400/30 bg-slate-950/90 text-white shadow-2xl backdrop-blur-xl p-4">
+                    <p className="text-xs uppercase tracking-[0.2em] text-cyan-300 font-black">{t.app_update_available}</p>
+                    <p className="text-xs text-white/80 mt-1">{isApplyingAppUpdate ? t.app_update_installing : t.app_update_body}</p>
+                    {!isApplyingAppUpdate && (
+                        <button
+                            type="button"
+                            onClick={handleApplyAppUpdate}
+                            className="mt-3 w-full rounded-xl bg-cyan-400 text-black py-2.5 text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center justify-center gap-2"
+                        >
+                            <Download className="w-4 h-4" />
+                            {t.app_update_now}
+                        </button>
+                    )}
+                </div>
+            )}
             <div
                 onScroll={handleScroll}
                 className="glass-pane z-10 w-full sm:max-w-md h-[100dvh] sm:h-[850px] sm:my-8 flex flex-col relative overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-1000"
@@ -837,6 +999,7 @@ export default function Dashboard() {
                 {(activeTab === "home" || activeTab === "calendar") && (
                     <button
                         onClick={openAddModal}
+                        data-tour="add-button"
                         className={`fixed z-50 w-16 h-16 rounded-[2rem] bg-neon-cyan text-black flex items-center justify-center shadow-neon hover:brightness-110 hover:scale-110 active:scale-95 transition-all duration-500 left-1/2 -translate-x-1/2 bottom-[calc(env(safe-area-inset-bottom)+5.25rem)] sm:left-auto sm:right-8 sm:translate-x-0 sm:bottom-28 ${showFab ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20 pointer-events-none'}`}
                     >
                         <Plus className="w-8 h-8 font-black" />
@@ -846,6 +1009,7 @@ export default function Dashboard() {
                 <nav className="bg-[var(--pane-bg)] backdrop-blur-3xl border-t border-black/5 dark:border-white/20 flex items-start justify-around px-4 z-30 pwa-nav-spacer">
                     <button
                         onClick={() => setActiveTab("home")}
+                        data-tour="tab-home"
                         className={`flex flex-col items-center gap-1 transition-all ${activeTab === "home" ? "text-neon-cyan scale-110" : "text-[var(--app-text-dim)] hover:text-[var(--app-text)]"}`}
                     >
                         <HomeIcon className={`w-6 h-6 ${activeTab === "home" ? "fill-neon-cyan/20" : ""}`} />
@@ -853,6 +1017,7 @@ export default function Dashboard() {
                     </button>
                     <button
                         onClick={() => setActiveTab("calendar")}
+                        data-tour="tab-calendar"
                         className={`flex flex-col items-center gap-1 transition-all ${activeTab === "calendar" ? "text-neon-cyan scale-110" : "text-[var(--app-text-dim)] hover:text-[var(--app-text)]"}`}
                     >
                         <CalendarIcon className={`w-6 h-6 ${activeTab === "calendar" ? "fill-neon-cyan/20" : ""}`} />
@@ -860,6 +1025,7 @@ export default function Dashboard() {
                     </button>
                     <button
                         onClick={() => setActiveTab("settings")}
+                        data-tour="tab-settings"
                         className={`flex flex-col items-center gap-1 transition-all ${activeTab === "settings" ? "text-neon-cyan scale-110" : "text-[var(--app-text-dim)] hover:text-[var(--app-text)]"}`}
                     >
                         <Settings className={`w-6 h-6 ${activeTab === "settings" ? "fill-neon-cyan/20" : ""}`} />
@@ -907,6 +1073,15 @@ export default function Dashboard() {
                 isOpen={isConfirmDeleteOpen}
                 onClose={() => setIsConfirmDeleteOpen(false)}
                 onConfirm={handleConfirmDelete}
+            />
+
+            <OnboardingModal
+                isOpen={isTourOpen}
+                onFinish={handleCompleteOnboarding}
+                onEnableNotifications={handleOnboardingEnableNotifications}
+                onGoHome={openHomeTab}
+                onGoCalendar={openCalendarTab}
+                onGoSettings={openSettingsTab}
             />
         </main>
     );

@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User, signOut, updateProfile } from "firebase/auth";
-import { doc, onSnapshot, setDoc } from "firebase/firestore";
+import { doc, onSnapshot, serverTimestamp, setDoc } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
 
 import { Language } from "@/lib/translations";
@@ -14,11 +14,13 @@ interface AuthContextType {
     isAdmin: boolean;
     language: Language;
     notificationsEnabled: boolean;
+    onboardingCompleted: boolean;
     loading: boolean;
     logout: () => Promise<void>;
     updateUserProfile: (displayName: string, photoURL: string) => Promise<void>;
     setLanguage: (lang: Language) => Promise<void>;
     setNotificationsEnabled: (enabled: boolean) => Promise<void>;
+    completeOnboarding: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -26,11 +28,13 @@ const AuthContext = createContext<AuthContextType>({
     isAdmin: false,
     language: "en",
     notificationsEnabled: false,
+    onboardingCompleted: true,
     loading: true,
     logout: async () => { },
     updateUserProfile: async () => { },
     setLanguage: async () => { },
     setNotificationsEnabled: async () => { },
+    completeOnboarding: async () => { },
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -44,6 +48,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return "en";
     });
     const [notificationsEnabled, setNotificationsEnabledState] = useState(false);
+    const [onboardingCompleted, setOnboardingCompletedState] = useState(true);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -69,16 +74,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                             localStorage.setItem("app-language", userData.language as Language);
                         }
                         setNotificationsEnabledState(userData.notificationsEnabled === true);
+                        setOnboardingCompletedState(userData.onboardingCompleted === true);
                     } else {
                         // Safe default for new users or missing docs
                         setIsAdmin(ADMIN_EMAILS.includes(authUser.email ?? ""));
                         setNotificationsEnabledState(false);
+                        setOnboardingCompletedState(false);
+                        const fallbackLanguage: Language =
+                            typeof window !== "undefined" && localStorage.getItem("app-language") === "es"
+                                ? "es"
+                                : "en";
+                        void setDoc(userRef, {
+                            language: fallbackLanguage,
+                            notificationsEnabled: false,
+                            onboardingCompleted: false,
+                            createdAt: serverTimestamp(),
+                            updatedAt: serverTimestamp(),
+                        }, { merge: true }).catch((error) => {
+                            console.error("Failed to initialize user profile:", error);
+                        });
                     }
                     setLoading(false);
                 });
             } else {
                 setIsAdmin(false);
                 setNotificationsEnabledState(false);
+                setOnboardingCompletedState(true);
                 setLoading(false);
             }
         });
@@ -117,7 +138,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
         if (user) {
             const userRef = doc(db, "users", user.uid);
-            await setDoc(userRef, { language: lang }, { merge: true });
+            await setDoc(userRef, { language: lang, updatedAt: serverTimestamp() }, { merge: true });
         }
     };
 
@@ -125,12 +146,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setNotificationsEnabledState(enabled);
         if (user) {
             const userRef = doc(db, "users", user.uid);
-            await setDoc(userRef, { notificationsEnabled: enabled }, { merge: true });
+            await setDoc(userRef, { notificationsEnabled: enabled, updatedAt: serverTimestamp() }, { merge: true });
+        }
+    };
+
+    const completeOnboarding = async () => {
+        setOnboardingCompletedState(true);
+        if (user) {
+            const userRef = doc(db, "users", user.uid);
+            await setDoc(userRef, {
+                onboardingCompleted: true,
+                onboardingCompletedAt: serverTimestamp(),
+                updatedAt: serverTimestamp(),
+            }, { merge: true });
         }
     };
 
     return (
-        <AuthContext.Provider value={{ user, isAdmin, language, notificationsEnabled, loading, logout, updateUserProfile, setLanguage, setNotificationsEnabled }}>
+        <AuthContext.Provider value={{ user, isAdmin, language, notificationsEnabled, onboardingCompleted, loading, logout, updateUserProfile, setLanguage, setNotificationsEnabled, completeOnboarding }}>
             {children}
         </AuthContext.Provider>
     );
