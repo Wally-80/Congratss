@@ -142,6 +142,7 @@ export default function CelebrationCard({
                 </div>
                 <button
                     onClick={() => onSendGreeting({ title, type, customTypeLabel })}
+                    data-tour="pick-send-button"
                     className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${isToday
                         ? "bg-neon-cyan text-black shadow-neon animate-pulse"
                         : "bg-black/5 dark:bg-white/10 text-[var(--app-text)] border border-black/10 dark:border-white/20 hover:bg-black/10 dark:hover:bg-white/20"}`}

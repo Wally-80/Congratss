@@ -74,6 +74,44 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Per-user scheduled card deliveries
+    match /scheduled_messages/{messageId} {
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.keys().hasAll([
+          "userId",
+          "celebrationTitle",
+          "channel",
+          "recipient",
+          "message",
+          "shareUrl",
+          "cardLabel",
+          "cardUrl",
+          "scheduledAt",
+          "status"
+        ])
+        && request.resource.data.celebrationTitle is string
+        && request.resource.data.channel is string
+        && ["whatsapp", "email", "sms"].hasAny([request.resource.data.channel])
+        && request.resource.data.recipient is string
+        && request.resource.data.message is string
+        && request.resource.data.shareUrl is string
+        && request.resource.data.cardLabel is string
+        && request.resource.data.cardUrl is string
+        && request.resource.data.status == "scheduled";
+
+      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+
+      allow update: if isSignedIn()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.channel == resource.data.channel
+        && request.resource.data.recipient == resource.data.recipient
+        && request.resource.data.shareUrl == resource.data.shareUrl
+        && request.resource.data.cardUrl == resource.data.cardUrl
+        && request.resource.data.status is string;
+    }
+
     // Deny by default for everything else
     match /{document=**} {
       allow read, write: if false;

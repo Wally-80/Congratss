@@ -28,6 +28,7 @@ export default function AboutPage() {
                         <li>{isEs ? "Crear y administrar celebraciones en un solo panel." : "Create and manage celebrations in one dashboard."}</li>
                         <li>{isEs ? "Usar vista de calendario mensual para planificar eventos." : "Use month calendar view to plan upcoming events."}</li>
                         <li>{isEs ? "Enviar tarjetas y mensajes rapidos en pocos toques." : "Send greeting cards and quick messages in a few taps."}</li>
+                        <li>{isEs ? "Programar envios automaticos por WhatsApp, Email o SMS para fecha y hora futura." : "Schedule automatic sends via WhatsApp, Email, or SMS for a future date and time."}</li>
                         <li>{isEs ? "Elegir modo claro/oscuro y preferencias de idioma." : "Choose light or dark mode and language preferences."}</li>
                     </ul>
                 </section>

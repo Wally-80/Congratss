@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { Plus, Home as HomeIcon, Calendar as CalendarIcon, Settings, Search, LogOut, Send, ChevronLeft, ChevronRight, Pencil, Trash2, Info, Shield, Download } from "lucide-react";
+import { Plus, Home as HomeIcon, Calendar as CalendarIcon, Settings, Search, LogOut, Send, ChevronLeft, ChevronRight, Pencil, Trash2, Info, Shield, Download, Clock3 } from "lucide-react";
 import CelebrationCard from "@/components/CelebrationCard";
 import AddCelebrationModal from "@/components/AddCelebrationModal";
 import EditProfileModal from "@/components/EditProfileModal";
@@ -10,6 +10,7 @@ import ConfirmModal from "@/components/ConfirmModal";
 import OnboardingModal from "@/components/OnboardingModal";
 import { useAuth } from "@/context/AuthContext";
 import { type Celebration, useCelebrations } from "@/hooks/useCelebrations";
+import { useScheduledMessages } from "@/hooks/useScheduledMessages";
 import { translations } from "@/lib/translations";
 import { playCelebrationChime } from "@/lib/sound";
 import { useTheme } from "@/context/ThemeContext";
@@ -47,8 +48,28 @@ export default function Dashboard() {
     const { user, isAdmin, language, notificationsEnabled, onboardingCompleted, setNotificationsEnabled, setLanguage, loading: authLoading, logout, updateUserProfile, completeOnboarding } = useAuth();
     const t = translations[language];
     const isDarkMode = theme === "dark";
+    const scheduleCopy = language === "es"
+        ? {
+            panelTitle: "Envios Programados",
+            panelEmpty: "No tienes envios programados.",
+            panelNote: "Los envios automaticos se procesan mientras la app esta activa.",
+            cancel: "Cancelar",
+            channelWhatsapp: "WhatsApp",
+            channelEmail: "Email",
+            channelSms: "SMS",
+        }
+        : {
+            panelTitle: "Scheduled Deliveries",
+            panelEmpty: "No scheduled deliveries yet.",
+            panelNote: "Automatic sends are processed while the app is active.",
+            cancel: "Cancel",
+            channelWhatsapp: "WhatsApp",
+            channelEmail: "Email",
+            channelSms: "SMS",
+        };
 
     const { celebrations, loading: dataLoading, error: dataError, addCelebration, updateCelebration, deleteCelebration } = useCelebrations();
+    const { scheduledMessages, updateScheduledMessageStatus, cancelScheduledMessage } = useScheduledMessages();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSendGreetingModalOpen, setIsSendGreetingModalOpen] = useState(false);
     const [editingCelebration, setEditingCelebration] = useState<EditableCelebration | null>(null);
@@ -76,6 +97,8 @@ export default function Dashboard() {
     });
     const waitingServiceWorkerRef = useRef<ServiceWorker | null>(null);
     const autoUpdateTimerRef = useRef<number | null>(null);
+    const scheduleProcessingRef = useRef<Set<string>>(new Set());
+    const [scheduleTick, setScheduleTick] = useState(() => Date.now());
 
     const handleDeleteClick = async (id: string) => {
         setItemToDelete(id);
@@ -164,6 +187,51 @@ export default function Dashboard() {
             }
         });
     }, [celebrations, language, notificationsEnabled]);
+
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        const intervalId = window.setInterval(() => {
+            setScheduleTick(Date.now());
+        }, 30 * 1000);
+        return () => window.clearInterval(intervalId);
+    }, []);
+
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        if (!user) return;
+
+        const now = scheduleTick;
+        const dueMessage = scheduledMessages
+            .filter((item) => item.status === "scheduled" && item.scheduledAt.getTime() <= now)
+            .sort((a, b) => a.scheduledAt.getTime() - b.scheduledAt.getTime())[0];
+
+        if (!dueMessage) return;
+        if (scheduleProcessingRef.current.has(dueMessage.id)) return;
+
+        scheduleProcessingRef.current.add(dueMessage.id);
+
+        void (async () => {
+            try {
+                if (dueMessage.channel === "whatsapp") {
+                    const popup = window.open(dueMessage.shareUrl, "_blank", "noopener,noreferrer");
+                    if (!popup) {
+                        throw new Error("Popup blocked by the browser");
+                    }
+                    await updateScheduledMessageStatus(dueMessage.id, "sent");
+                    return;
+                }
+
+                // For SMS/email we mark as sent then hand off to device messaging apps.
+                await updateScheduledMessageStatus(dueMessage.id, "sent");
+                window.location.href = dueMessage.shareUrl;
+            } catch (processError) {
+                const message = processError instanceof Error ? processError.message : "Dispatch failed";
+                await updateScheduledMessageStatus(dueMessage.id, "failed", message);
+            } finally {
+                scheduleProcessingRef.current.delete(dueMessage.id);
+            }
+        })();
+    }, [scheduleTick, scheduledMessages, updateScheduledMessageStatus, user]);
 
     useEffect(() => {
         if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
@@ -258,6 +326,19 @@ export default function Dashboard() {
         () => celebrations.some((item) => item.daysLeft === 0),
         [celebrations]
     );
+    const upcomingScheduledMessages = useMemo(
+        () => scheduledMessages
+            .filter((item) => item.status === "scheduled")
+            .sort((a, b) => a.scheduledAt.getTime() - b.scheduledAt.getTime())
+            .slice(0, 5),
+        [scheduledMessages]
+    );
+
+    const getScheduledChannelLabel = (channel: string) => {
+        if (channel === "whatsapp") return scheduleCopy.channelWhatsapp;
+        if (channel === "email") return scheduleCopy.channelEmail;
+        return scheduleCopy.channelSms;
+    };
 
     const handleUpdateProfile = async (displayName: string, photoURL: string) => {
         await updateUserProfile(displayName, photoURL);
@@ -664,9 +745,9 @@ export default function Dashboard() {
 
                             <div className="p-4">
                                 <div className="grid grid-cols-7 gap-1.5 mb-2">
-                                    {weekDays.map((day) => (
+                                    {weekDays.map((day, index) => (
                                         <div
-                                            key={day}
+                                            key={`${day}-${index}`}
                                             className={`text-center text-[10px] font-bold uppercase tracking-widest ${isLightMode ? "text-slate-500" : "text-slate-400"}`}
                                         >
                                             {day}
@@ -890,6 +971,36 @@ export default function Dashboard() {
                                 <span className="text-sm font-medium">{t.replay_tour}</span>
                                 <Info className="w-4 h-4 opacity-70" />
                             </button>
+
+                            <div data-tour="scheduled-deliveries-panel" className="glass-card p-4 flex flex-col gap-3 premium-border neon-border-cyan">
+                                <div className="flex items-center justify-between">
+                                    <h4 className="text-[10px] font-bold text-[var(--app-text-muted)] uppercase tracking-[0.2em]">{scheduleCopy.panelTitle}</h4>
+                                    <Clock3 className="w-4 h-4 text-cyan-400" />
+                                </div>
+                                {upcomingScheduledMessages.length === 0 ? (
+                                    <p className="text-xs text-[var(--app-text-dim)]">{scheduleCopy.panelEmpty}</p>
+                                ) : (
+                                    <div className="space-y-2">
+                                        {upcomingScheduledMessages.map((item) => (
+                                            <div key={item.id} className="rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 p-3">
+                                                <p className="text-xs font-semibold text-[var(--app-text)]">{item.celebrationTitle}</p>
+                                                <p className="text-[10px] text-[var(--app-text-dim)] mt-1">
+                                                    {new Date(item.scheduledAt).toLocaleString()} - {getScheduledChannelLabel(item.channel)}
+                                                </p>
+                                                <p className="text-[10px] text-[var(--app-text-muted)] truncate mt-1">{item.recipient}</p>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => void cancelScheduledMessage(item.id)}
+                                                    className="mt-2 text-[10px] uppercase tracking-widest text-red-400 hover:text-red-300 transition-colors"
+                                                >
+                                                    {scheduleCopy.cancel}
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                <p className="text-[10px] text-[var(--app-text-muted)]">{scheduleCopy.panelNote}</p>
+                            </div>
 
                             <div className="glass-card p-4 flex flex-col gap-3 premium-border neon-border-cyan">
                                 <h4 className="text-[10px] font-bold text-[var(--app-text-muted)] uppercase tracking-[0.2em]">{t.legal_info}</h4>

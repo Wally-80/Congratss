@@ -51,6 +51,13 @@ export default function OnboardingModal({
             focusTab: "home" as const,
         },
         {
+            id: "pick-send",
+            selector: "[data-tour='pick-send-button']",
+            title: t.onboarding_tour_pick_send_title,
+            description: t.onboarding_tour_pick_send_desc,
+            focusTab: "home" as const,
+        },
+        {
             id: "calendar",
             selector: "[data-tour='tab-calendar']",
             title: t.onboarding_tour_calendar_title,
@@ -62,6 +69,13 @@ export default function OnboardingModal({
             selector: "[data-tour='tab-settings']",
             title: t.onboarding_tour_settings_title,
             description: t.onboarding_tour_settings_desc,
+            focusTab: "settings" as const,
+        },
+        {
+            id: "scheduled-deliveries",
+            selector: "[data-tour='scheduled-deliveries-panel']",
+            title: t.onboarding_tour_scheduled_title,
+            description: t.onboarding_tour_scheduled_desc,
             focusTab: "settings" as const,
         },
         {

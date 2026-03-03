@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { X, Send, MessageCircle, Mail, Phone, Check, RefreshCw, Upload, Loader2 } from "lucide-react";
+import { X, Send, MessageCircle, Mail, Phone, Check, RefreshCw, Upload, Loader2, CalendarClock } from "lucide-react";
 import { cardService, GreetingCard } from "@/lib/cardService";
 
 import { useAuth } from "@/context/AuthContext";
@@ -9,6 +9,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { translations } from "@/lib/translations";
 import { uploadFile } from "@/lib/storageService";
 import { type CelebrationType } from "@/hooks/useCelebrations";
+import { type ScheduledChannel, useScheduledMessages } from "@/hooks/useScheduledMessages";
 
 interface SendGreetingModalProps {
 
@@ -56,8 +57,19 @@ const MESSAGE_TEMPLATES = {
 };
 
 const ALL_CATEGORY_KEY = "__all__";
-const APP_SHARE_URL = "https://congratss.com";
 const APP_CARD_VIEWER_PATH = "/card";
+const CARD_FETCH_TIMEOUT_MS = 10000;
+
+type SharePlatform = "whatsapp" | "email" | "sms";
+
+const FALLBACK_CARDS: GreetingCard[] = [
+    { id: "custom_fallback_gratzz", url: "/greeting_gratzz.png", label: "Congratss", category: "Classic", locale: "both" },
+    { id: "custom_fallback_flowers", url: "/greeting_flowers.png", label: "Flowers", category: "Classic", locale: "both" },
+    { id: "custom_fallback_balloons", url: "/greeting_balloons.png", label: "Balloons", category: "Classic", locale: "both" },
+    { id: "custom_fallback_cake", url: "/greeting_cake.png", label: "Birthday Cake", category: "Special", locale: "both" },
+    { id: "custom_fallback_party", url: "/greeting_party.png", label: "Party Time", category: "Special", locale: "both" },
+    { id: "custom_fallback_retirement", url: "/greeting_retirement.png", label: "Retirement", category: "Special", locale: "both" },
+];
 
 const CATEGORY_ALIASES: Record<string, string> = {
     All: ALL_CATEGORY_KEY,
@@ -144,9 +156,36 @@ const isCardVisibleForLanguage = (card: GreetingCard, language: "en" | "es") => 
     return locale === "both" || locale === language;
 };
 
+const toDateInputValue = (date: Date) => {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, "0");
+    const day = `${date.getDate()}`.padStart(2, "0");
+    return `${year}-${month}-${day}`;
+};
+
+const toTimeInputValue = (date: Date) => {
+    const hour = `${date.getHours()}`.padStart(2, "0");
+    const minute = `${date.getMinutes()}`.padStart(2, "0");
+    return `${hour}:${minute}`;
+};
+
+const normalizePhone = (value: string) => value.replace(/[^\d+]/g, "");
+
+const getAppShareBaseUrl = () => {
+    const configured = process.env.NEXT_PUBLIC_APP_URL?.trim();
+    if (configured) {
+        return configured.replace(/\/+$/, "");
+    }
+    if (typeof window !== "undefined") {
+        return window.location.origin.replace(/\/+$/, "");
+    }
+    return "https://congratss.com";
+};
+
 export default function SendGreetingModal({ isOpen, onClose, celebration }: SendGreetingModalProps) {
     const { language } = useAuth();
     const { theme } = useTheme();
+    const { createScheduledMessage } = useScheduledMessages();
     const t = translations[language];
     const templates = MESSAGE_TEMPLATES[language];
     const isDarkMode = theme === "dark";
@@ -156,9 +195,51 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
     const [activeCategory, setActiveCategory] = useState(ALL_CATEGORY_KEY);
     const [message, setMessage] = useState("");
     const [sharing, setSharing] = useState(false);
+    const [isScheduleMode, setIsScheduleMode] = useState(false);
+    const [scheduleChannel, setScheduleChannel] = useState<ScheduledChannel>("whatsapp");
+    const [scheduleRecipient, setScheduleRecipient] = useState("");
+    const [scheduleDate, setScheduleDate] = useState(() => toDateInputValue(new Date(Date.now() + 60 * 60 * 1000)));
+    const [scheduleTime, setScheduleTime] = useState(() => toTimeInputValue(new Date(Date.now() + 60 * 60 * 1000)));
+    const [scheduleSaving, setScheduleSaving] = useState(false);
     const [loadingCards, setLoadingCards] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [info, setInfo] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
+    const scheduleCopy = language === "es"
+        ? {
+            sendNow: "Enviar ahora",
+            schedule: "Programar",
+            schedule_title: "Envio automatico",
+            schedule_date: "Fecha",
+            schedule_time: "Hora",
+            schedule_channel: "Canal",
+            schedule_recipient: "Destino",
+            schedule_destination_placeholder_email: "correo@ejemplo.com",
+            schedule_destination_placeholder_phone: "+1 555 123 4567",
+            schedule_save: "Programar envio",
+            schedule_saving: "Programando...",
+            schedule_success: "Envio programado correctamente.",
+            schedule_error_past: "El horario debe ser en el futuro.",
+            schedule_error_destination: "Completa un destino valido para ese canal.",
+            schedule_helper: "Los envios automaticos se ejecutan cuando la app este activa en tu dispositivo.",
+        }
+        : {
+            sendNow: "Send now",
+            schedule: "Schedule",
+            schedule_title: "Auto delivery",
+            schedule_date: "Date",
+            schedule_time: "Time",
+            schedule_channel: "Channel",
+            schedule_recipient: "Destination",
+            schedule_destination_placeholder_email: "name@example.com",
+            schedule_destination_placeholder_phone: "+1 555 123 4567",
+            schedule_save: "Schedule delivery",
+            schedule_saving: "Scheduling...",
+            schedule_success: "Delivery scheduled successfully.",
+            schedule_error_past: "Schedule time must be in the future.",
+            schedule_error_destination: "Please enter a valid destination for that channel.",
+            schedule_helper: "Automatic sends run while the app is active on your device.",
+        };
     const modalAccentClass = celebration?.type === "birthday"
         ? "neon-border-pink"
         : celebration?.type === "anniversary"
@@ -210,7 +291,12 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
 
         const loadCards = async () => {
             try {
-                const cards = await cardService.getCards();
+                const cards = await Promise.race([
+                    cardService.getCards(),
+                    new Promise<GreetingCard[]>((_, reject) => {
+                        window.setTimeout(() => reject(new Error("Card library fetch timeout")), CARD_FETCH_TIMEOUT_MS);
+                    })
+                ]);
                 if (!alive) return;
                 setGreetingCards(cards);
                 setSelectedImageId((previous) => {
@@ -221,8 +307,15 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
             } catch (err) {
                 if (!alive) return;
                 console.error("Modal cards error:", err);
-                const errMessage = err instanceof Error ? err.message : "";
-                setError(errMessage || translations[language].connection_error);
+                setGreetingCards(FALLBACK_CARDS);
+                setSelectedImageId((previous) => {
+                    if (previous && FALLBACK_CARDS.some((card) => card.id === previous)) return previous;
+                    return FALLBACK_CARDS[0]?.id ?? null;
+                });
+                setError(null);
+                setInfo(language === "es"
+                    ? "Mostrando tarjetas base mientras se restablece la conexion."
+                    : "Showing base cards while connection recovers.");
                 setLoadingCards(false);
             }
         };
@@ -232,6 +325,17 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
             alive = false;
         };
     }, [isOpen, language]);
+
+    useEffect(() => {
+        if (!isOpen) return;
+        const nextHour = new Date(Date.now() + 60 * 60 * 1000);
+        setScheduleDate(toDateInputValue(nextHour));
+        setScheduleTime(toTimeInputValue(nextHour));
+        setScheduleRecipient("");
+        setScheduleChannel("whatsapp");
+        setIsScheduleMode(false);
+        setInfo(null);
+    }, [isOpen]);
 
     const localeFilteredCards = useMemo(
         () => greetingCards.filter((card) => isCardVisibleForLanguage(card, language)),
@@ -278,11 +382,12 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
     };
 
     const getCardViewerLink = () => {
-        if (!selectedImage) return APP_SHARE_URL;
+        const appShareUrl = getAppShareBaseUrl();
+        if (!selectedImage) return appShareUrl;
         if (selectedImage.id.startsWith("custom_")) {
-            return `${APP_SHARE_URL}${APP_CARD_VIEWER_PATH}?img=${encodeURIComponent(selectedImage.url)}`;
+            return `${appShareUrl}${APP_CARD_VIEWER_PATH}?img=${encodeURIComponent(selectedImage.url)}`;
         }
-        return `${APP_SHARE_URL}${APP_CARD_VIEWER_PATH}?id=${encodeURIComponent(selectedImage.id)}`;
+        return `${appShareUrl}${APP_CARD_VIEWER_PATH}?id=${encodeURIComponent(selectedImage.id)}`;
     };
 
     const getShareText = () => {
@@ -290,28 +395,77 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
         return `${message}\n\n${cta}: ${getCardViewerLink()}`;
     };
 
-    const getShareUrl = (platform: "whatsapp" | "email" | "sms") => {
+    const getShareUrl = (platform: SharePlatform, recipient?: string) => {
         if (!selectedImage) return "";
         const encodedMessage = encodeURIComponent(getShareText());
+        const target = (recipient ?? "").trim();
 
         switch (platform) {
             case "whatsapp":
+                if (target) {
+                    const cleanPhone = normalizePhone(target).replace(/^\+/, "");
+                    return `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
+                }
                 return `https://api.whatsapp.com/send?text=${encodedMessage}`;
             case "email":
-                return `mailto:?body=${encodedMessage}`;
+                return `mailto:${encodeURIComponent(target)}?subject=${encodeURIComponent("Congratss Greeting")}&body=${encodedMessage}`;
             case "sms":
-                return `sms:?&body=${encodedMessage}`;
+                return `sms:${encodeURIComponent(normalizePhone(target))}?&body=${encodedMessage}`;
             default:
                 return "";
         }
     };
 
-    const handleShare = (platform: "whatsapp" | "email" | "sms") => {
+    const handleShare = (platform: SharePlatform) => {
         const url = getShareUrl(platform);
         if (platform === "whatsapp") {
             window.open(url, "_blank");
         } else {
             window.location.href = url;
+        }
+    };
+
+    const handleScheduleDelivery = async () => {
+        if (!selectedImage) return;
+        setError(null);
+
+        const targetDate = new Date(`${scheduleDate}T${scheduleTime}`);
+        if (Number.isNaN(targetDate.getTime()) || targetDate.getTime() <= Date.now()) {
+            setError(scheduleCopy.schedule_error_past);
+            return;
+        }
+
+        const recipient = scheduleRecipient.trim();
+        if (scheduleChannel === "email" && !recipient.includes("@")) {
+            setError(scheduleCopy.schedule_error_destination);
+            return;
+        }
+        if ((scheduleChannel === "sms" || scheduleChannel === "whatsapp") && normalizePhone(recipient).replace(/^\+/, "").length < 7) {
+            setError(scheduleCopy.schedule_error_destination);
+            return;
+        }
+
+        setScheduleSaving(true);
+        try {
+            await createScheduledMessage({
+                celebrationTitle: celebration?.title ?? (language === "es" ? "Celebracion" : "Celebration"),
+                channel: scheduleChannel,
+                recipient,
+                message: getShareText(),
+                shareUrl: getShareUrl(scheduleChannel, recipient),
+                cardLabel: localizeCardLabel(selectedImage.label, language),
+                cardUrl: selectedImage.url,
+                scheduledAt: targetDate,
+            });
+            setInfo(scheduleCopy.schedule_success);
+            setError(null);
+            setIsScheduleMode(false);
+            setScheduleRecipient("");
+        } catch (scheduleError) {
+            console.error("Schedule creation error:", scheduleError);
+            setError(scheduleError instanceof Error ? scheduleError.message : translations[language].connection_error);
+        } finally {
+            setScheduleSaving(false);
         }
     };
 
@@ -403,6 +557,28 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                 </div>
 
                 <div className="relative z-10 flex-1 overflow-y-auto p-6 space-y-6 bg-[var(--pane-bg)]">
+                    {info && (
+                        <div className={`rounded-2xl border p-3 text-xs ${isDarkMode ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-200" : "border-emerald-200 bg-emerald-50 text-emerald-700"}`}>
+                            {info}
+                        </div>
+                    )}
+                    <div className={`grid grid-cols-2 rounded-2xl border p-1 ${isDarkMode ? "border-white/10 bg-white/5" : "border-slate-200 bg-slate-100"}`}>
+                        <button
+                            type="button"
+                            onClick={() => setIsScheduleMode(false)}
+                            className={`py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!isScheduleMode ? "bg-cyan-400 text-black shadow-neon-sm" : "text-[var(--app-text-dim)]"}`}
+                        >
+                            {scheduleCopy.sendNow}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setIsScheduleMode(true)}
+                            className={`py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${isScheduleMode ? "bg-cyan-400 text-black shadow-neon-sm" : "text-[var(--app-text-dim)]"}`}
+                        >
+                            {scheduleCopy.schedule}
+                        </button>
+                    </div>
+
                     {/* Image Selection with Category Tabs */}
                     <div>
                         <div className="flex flex-col gap-3 mb-3">
@@ -511,61 +687,129 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                         />
                     </div>
 
-                    {/* Native Share / Primary Action */}
-                    <div className="pt-2">
-                        <button
-                            onClick={handleNativeShare}
-                            disabled={sharing || !selectedImage}
-                            className="w-full py-4 rounded-2xl bg-cyan-400 text-black font-bold text-sm flex items-center justify-center gap-3 hover:brightness-110 active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(0,242,255,0.4)] disabled:opacity-50"
-                        >
-                            <Send className="w-5 h-5 flex-shrink-0" />
-                            {sharing ? t.sharing : t.share_with_device}
-                        </button>
-                    </div>
+                    {isScheduleMode ? (
+                        <div className="space-y-4 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 p-4">
+                            <div className="flex items-center gap-2 text-cyan-400">
+                                <CalendarClock className="w-4 h-4" />
+                                <p className="text-[10px] font-black uppercase tracking-widest">{scheduleCopy.schedule_title}</p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="space-y-1">
+                                    <label className="text-[9px] font-bold uppercase tracking-widest text-[var(--app-text-dim)]">{scheduleCopy.schedule_date}</label>
+                                    <input
+                                        type="date"
+                                        value={scheduleDate}
+                                        onChange={(e) => setScheduleDate(e.target.value)}
+                                        className="w-full rounded-xl border border-[var(--glass-border)] bg-[var(--app-bg)] px-3 py-2 text-xs"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[9px] font-bold uppercase tracking-widest text-[var(--app-text-dim)]">{scheduleCopy.schedule_time}</label>
+                                    <input
+                                        type="time"
+                                        value={scheduleTime}
+                                        onChange={(e) => setScheduleTime(e.target.value)}
+                                        className="w-full rounded-xl border border-[var(--glass-border)] bg-[var(--app-bg)] px-3 py-2 text-xs"
+                                    />
+                                </div>
+                            </div>
 
-                    {/* Secondary Share Icons */}
-                    <div className="flex flex-wrap gap-3">
-                        <button
-                            onClick={() => handleShare("whatsapp")}
-                            disabled={!selectedImage}
-                            className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20 transition-all disabled:opacity-30"
-                        >
-                            <MessageCircle className="w-4 h-4" />
-                            <span className="text-[10px] font-bold">WhatsApp</span>
-                        </button>
-                        <button
-                            onClick={() => handleShare("email")}
-                            disabled={!selectedImage}
-                            className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 transition-all disabled:opacity-30"
-                        >
-                            <Mail className="w-4 h-4" />
-                            <span className="text-[10px] font-bold">Email</span>
-                        </button>
-                        <button
-                            onClick={() => handleShare("sms")}
-                            disabled={!selectedImage}
-                            className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-cyan-400/10 border border-cyan-400/20 text-cyan-400 hover:bg-cyan-400/20 transition-all disabled:opacity-30"
-                        >
-                            <Phone className="w-4 h-4" />
-                            <span className="text-[10px] font-bold">SMS</span>
-                        </button>
-                        <button
-                            onClick={handleCopyLink}
-                            disabled={!selectedImage}
-                            className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[var(--app-text-dim)] hover:bg-black/10 dark:hover:bg-white/10 transition-all disabled:opacity-30"
-                        >
-                            <Check className="w-4 h-4" />
-                            <span className="text-[10px] font-bold">{t.copy_link}</span>
-                        </button>
-                        <button
-                            onClick={handleDownload}
-                            disabled={!selectedImage}
-                            className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-cyan-400/5 border border-cyan-400/10 text-cyan-400/80 hover:bg-cyan-400/10 transition-all disabled:opacity-30"
-                        >
-                            <Send className="w-4 h-4 rotate-90" />
-                            <span className="text-[10px] font-bold">{t.save_card}</span>
-                        </button>
-                    </div>
+                            <div className="space-y-2">
+                                <label className="text-[9px] font-bold uppercase tracking-widest text-[var(--app-text-dim)]">{scheduleCopy.schedule_channel}</label>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {(["whatsapp", "email", "sms"] as SharePlatform[]).map((channel) => (
+                                        <button
+                                            key={channel}
+                                            type="button"
+                                            onClick={() => setScheduleChannel(channel)}
+                                            className={`rounded-xl border py-2 text-[10px] font-bold uppercase tracking-widest transition-all ${scheduleChannel === channel ? "border-cyan-400 bg-cyan-400/20 text-cyan-300" : "border-[var(--glass-border)] text-[var(--app-text-dim)] hover:text-[var(--app-text)]"}`}
+                                        >
+                                            {channel}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="space-y-1">
+                                <label className="text-[9px] font-bold uppercase tracking-widest text-[var(--app-text-dim)]">{scheduleCopy.schedule_recipient}</label>
+                                <input
+                                    type={scheduleChannel === "email" ? "email" : "tel"}
+                                    value={scheduleRecipient}
+                                    onChange={(e) => setScheduleRecipient(e.target.value)}
+                                    placeholder={scheduleChannel === "email" ? scheduleCopy.schedule_destination_placeholder_email : scheduleCopy.schedule_destination_placeholder_phone}
+                                    className="w-full rounded-xl border border-[var(--glass-border)] bg-[var(--app-bg)] px-3 py-2 text-xs"
+                                />
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={handleScheduleDelivery}
+                                disabled={scheduleSaving || !selectedImage}
+                                className="w-full rounded-xl bg-cyan-400 py-3 text-xs font-black uppercase tracking-widest text-black transition-all hover:brightness-110 disabled:opacity-50"
+                            >
+                                {scheduleSaving ? scheduleCopy.schedule_saving : scheduleCopy.schedule_save}
+                            </button>
+                            <p className="text-[10px] text-[var(--app-text-muted)]">{scheduleCopy.schedule_helper}</p>
+                        </div>
+                    ) : (
+                        <>
+                            {/* Native Share / Primary Action */}
+                            <div className="pt-2">
+                                <button
+                                    onClick={handleNativeShare}
+                                    disabled={sharing || !selectedImage}
+                                    className="w-full py-4 rounded-2xl bg-cyan-400 text-black font-bold text-sm flex items-center justify-center gap-3 hover:brightness-110 active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(0,242,255,0.4)] disabled:opacity-50"
+                                >
+                                    <Send className="w-5 h-5 flex-shrink-0" />
+                                    {sharing ? t.sharing : t.share_with_device}
+                                </button>
+                            </div>
+
+                            {/* Secondary Share Icons */}
+                            <div className="flex flex-wrap gap-3">
+                                <button
+                                    onClick={() => handleShare("whatsapp")}
+                                    disabled={!selectedImage}
+                                    className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20 transition-all disabled:opacity-30"
+                                >
+                                    <MessageCircle className="w-4 h-4" />
+                                    <span className="text-[10px] font-bold">WhatsApp</span>
+                                </button>
+                                <button
+                                    onClick={() => handleShare("email")}
+                                    disabled={!selectedImage}
+                                    className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 transition-all disabled:opacity-30"
+                                >
+                                    <Mail className="w-4 h-4" />
+                                    <span className="text-[10px] font-bold">Email</span>
+                                </button>
+                                <button
+                                    onClick={() => handleShare("sms")}
+                                    disabled={!selectedImage}
+                                    className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-cyan-400/10 border border-cyan-400/20 text-cyan-400 hover:bg-cyan-400/20 transition-all disabled:opacity-30"
+                                >
+                                    <Phone className="w-4 h-4" />
+                                    <span className="text-[10px] font-bold">SMS</span>
+                                </button>
+                                <button
+                                    onClick={handleCopyLink}
+                                    disabled={!selectedImage}
+                                    className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[var(--app-text-dim)] hover:bg-black/10 dark:hover:bg-white/10 transition-all disabled:opacity-30"
+                                >
+                                    <Check className="w-4 h-4" />
+                                    <span className="text-[10px] font-bold">{t.copy_link}</span>
+                                </button>
+                                <button
+                                    onClick={handleDownload}
+                                    disabled={!selectedImage}
+                                    className="flex-1 min-w-[100px] flex items-center justify-center gap-2 p-3 rounded-xl bg-cyan-400/5 border border-cyan-400/10 text-cyan-400/80 hover:bg-cyan-400/10 transition-all disabled:opacity-30"
+                                >
+                                    <Send className="w-4 h-4 rotate-90" />
+                                    <span className="text-[10px] font-bold">{t.save_card}</span>
+                                </button>
+                            </div>
+                        </>
+                    )}
 
                     <div className="sticky bottom-0 -mx-6 px-6 py-3 bg-[var(--pane-bg)]/95 backdrop-blur-md border-t border-black/5 dark:border-white/10">
                         <h2 className="text-2xl font-black text-[var(--app-text)] uppercase tracking-tighter italic">
