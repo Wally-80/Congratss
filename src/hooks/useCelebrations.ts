@@ -32,15 +32,16 @@ export const useCelebrations = () => {
     const [celebrations, setCelebrations] = useState<Celebration[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const userId = user?.uid;
 
     useEffect(() => {
-        if (!user) return;
+        if (!userId) return;
 
         // Diagnostic: Removed orderBy to bypass index requirement
         // We will sort manually in the hook for now
         const q = query(
             collection(db, "celebrations"),
-            where("userId", "==", user.uid)
+            where("userId", "==", userId)
         );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -70,10 +71,10 @@ export const useCelebrations = () => {
         });
 
         return () => unsubscribe();
-    }, [user]);
+    }, [userId]);
 
     const addCelebration = async (data: { title: string, rawDate: string, type: CelebrationType, customTypeLabel?: string }) => {
-        if (!user) return;
+        if (!userId) return;
         const { daysLeft, percentage, formattedDate } = calculateCountdown(data.rawDate);
         const payload = {
             title: data.title,
@@ -88,7 +89,7 @@ export const useCelebrations = () => {
                 daysLeft,
                 percentage,
                 date: formattedDate,
-                userId: user.uid,
+                userId,
                 createdAt: serverTimestamp(),
             });
         } catch (err: unknown) {
@@ -98,7 +99,7 @@ export const useCelebrations = () => {
     };
 
     const updateCelebration = async (id: string, data: { title: string, rawDate: string, type: CelebrationType, customTypeLabel?: string }) => {
-        if (!user) return;
+        if (!userId) return;
 
         const { daysLeft, percentage, formattedDate } = calculateCountdown(data.rawDate);
         const payload = {
@@ -124,7 +125,7 @@ export const useCelebrations = () => {
     };
 
     const deleteCelebration = async (id: string) => {
-        if (!user) return;
+        if (!userId) return;
         try {
             await deleteDoc(doc(db, "celebrations", id));
         } catch (err: unknown) {
@@ -134,9 +135,9 @@ export const useCelebrations = () => {
     };
 
     return {
-        celebrations: user ? celebrations : [],
-        loading: user ? loading : false,
-        error: user ? error : null,
+        celebrations: userId ? celebrations : [],
+        loading: userId ? loading : false,
+        error: userId ? error : null,
         addCelebration,
         updateCelebration,
         deleteCelebration

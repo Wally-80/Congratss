@@ -55,6 +55,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         let unsubscribeUserDoc: (() => void) | undefined;
 
         const unsubscribeAuth = onAuthStateChanged(auth, (authUser) => {
+            const isPasswordProviderUser = Boolean(
+                authUser?.providerData?.some((provider) => provider.providerId === "password")
+            );
+
+            if (authUser && isPasswordProviderUser && !authUser.emailVerified) {
+                void signOut(auth).catch((error) => {
+                    console.error("Failed to sign out unverified user:", error);
+                });
+                setUser(null);
+                setIsAdmin(false);
+                setNotificationsEnabledState(false);
+                setOnboardingCompletedState(true);
+                setLoading(false);
+                return;
+            }
+
             setUser(authUser);
 
             if (authUser) {
@@ -126,8 +142,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 displayName,
                 photoURL
             });
-            // Force context to recognize the change by cloning the user object
-            setUser({ ...auth.currentUser });
+            // Keep the Firebase User instance intact to avoid losing required fields like uid.
+            setUser(auth.currentUser);
         }
     };
 
