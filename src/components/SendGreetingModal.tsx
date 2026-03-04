@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { X, Send, MessageCircle, Mail, Phone, Check, RefreshCw, Upload, Loader2, CalendarClock } from "lucide-react";
 import { cardService, GreetingCard } from "@/lib/cardService";
 
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { translations } from "@/lib/translations";
-import { uploadFile } from "@/lib/storageService";
 import { type CelebrationType } from "@/hooks/useCelebrations";
 import { type ScheduledChannel, useScheduledMessages } from "@/hooks/useScheduledMessages";
 
@@ -59,8 +58,10 @@ const MESSAGE_TEMPLATES = {
 const ALL_CATEGORY_KEY = "__all__";
 const APP_CARD_VIEWER_PATH = "/card";
 const CARD_FETCH_TIMEOUT_MS = 10000;
+const LOCAL_UPLOAD_ID_PREFIX = "local_upload_";
 
 type SharePlatform = "whatsapp" | "email" | "sms";
+type LocalUploadEntry = { file: File; previewUrl: string };
 
 const FALLBACK_CARDS: GreetingCard[] = [
     { id: "custom_fallback_gratzz", url: "/greeting_gratzz.png", label: "Congratss", category: "Classic", locale: "both" },
@@ -205,6 +206,9 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
     const [error, setError] = useState<string | null>(null);
     const [info, setInfo] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
+    const [localUploads, setLocalUploads] = useState<Record<string, LocalUploadEntry>>({});
+    const localUploadsRef = useRef<Record<string, LocalUploadEntry>>({});
+    const wasOpenRef = useRef(false);
     const scheduleCopy = language === "es"
         ? {
             sendNow: "Enviar ahora",
@@ -254,32 +258,68 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
         ? "sm:bg-black/45 sm:border-white/10"
         : "sm:bg-white/95 sm:border-slate-200 sm:shadow-[0_25px_65px_-35px_rgba(15,23,42,0.55)]";
 
-    const handleUserUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleUserUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
         setUploading(true);
+        setError(null);
+        setInfo(t.local_upload_privacy_notice);
         try {
-            const url = await uploadFile(file, "user_uploads");
-
+            const id = `${LOCAL_UPLOAD_ID_PREFIX}${Date.now()}`;
+            const previewUrl = URL.createObjectURL(file);
             const customCard: GreetingCard = {
-                id: `custom_${Date.now()}`,
-                url,
+                id,
+                url: previewUrl,
                 label: t.upload_your_own,
                 category: "Custom",
                 locale: "both"
             };
 
-            setGreetingCards(prev => [customCard, ...prev]);
-            setSelectedImageId(customCard.id);
+            setLocalUploads((previous) => ({
+                ...previous,
+                [id]: { file, previewUrl }
+            }));
+            setGreetingCards((previous) => [customCard, ...previous]);
+            setSelectedImageId(id);
             setActiveCategory(ALL_CATEGORY_KEY);
-        } catch (error) {
-            console.error("Upload error:", error);
+        } catch (uploadError) {
+            console.error("Local upload error:", uploadError);
             alert(t.upload_failed);
         } finally {
             setUploading(false);
+            e.target.value = "";
         }
     };
+
+    useEffect(() => {
+        localUploadsRef.current = localUploads;
+    }, [localUploads]);
+
+    useEffect(() => {
+        return () => {
+            Object.values(localUploadsRef.current).forEach((entry) => {
+                URL.revokeObjectURL(entry.previewUrl);
+            });
+        };
+    }, []);
+
+    useEffect(() => {
+        if (isOpen) {
+            wasOpenRef.current = true;
+            return;
+        }
+        if (!wasOpenRef.current) return;
+        wasOpenRef.current = false;
+
+        setGreetingCards((previous) => previous.filter((card) => !card.id.startsWith(LOCAL_UPLOAD_ID_PREFIX)));
+        setLocalUploads((previous) => {
+            Object.values(previous).forEach((entry) => {
+                URL.revokeObjectURL(entry.previewUrl);
+            });
+            return {};
+        });
+    }, [isOpen]);
 
 
     useEffect(() => {
@@ -372,6 +412,8 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
     ].sort((a, b) => a.localeCompare(b));
 
     const selectedImage = localeFilteredCards.find(img => img.id === selectedImageId) || localeFilteredCards[0];
+    const selectedLocalUpload = selectedImage ? localUploads[selectedImage.id] : undefined;
+    const isLocalUploadSelected = Boolean(selectedLocalUpload);
 
     const filteredImages = activeCategory === ALL_CATEGORY_KEY
         ? localeFilteredCards
@@ -384,6 +426,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
     const getCardViewerLink = () => {
         const appShareUrl = getAppShareBaseUrl();
         if (!selectedImage) return appShareUrl;
+        if (selectedImage.id.startsWith(LOCAL_UPLOAD_ID_PREFIX)) return "";
         if (selectedImage.id.startsWith("custom_")) {
             return `${appShareUrl}${APP_CARD_VIEWER_PATH}?img=${encodeURIComponent(selectedImage.url)}`;
         }
@@ -391,8 +434,12 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
     };
 
     const getShareText = () => {
+        const baseMessage = message.trim();
+        const viewerLink = getCardViewerLink();
+        if (!viewerLink) return baseMessage;
         const cta = language === "es" ? "Mira tu tarjeta aqui" : "View your card here";
-        return `${message}\n\n${cta}: ${getCardViewerLink()}`;
+        if (!baseMessage) return `${cta}: ${viewerLink}`;
+        return `${baseMessage}\n\n${cta}: ${viewerLink}`;
     };
 
     const getShareUrl = (platform: SharePlatform, recipient?: string) => {
@@ -416,7 +463,12 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
         }
     };
 
-    const handleShare = (platform: SharePlatform) => {
+    const handleShare = async (platform: SharePlatform) => {
+        if (isLocalUploadSelected) {
+            setInfo(t.local_upload_share_hint);
+            await handleNativeShare();
+            return;
+        }
         const url = getShareUrl(platform);
         if (platform === "whatsapp") {
             window.open(url, "_blank");
@@ -427,6 +479,10 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
 
     const handleScheduleDelivery = async () => {
         if (!selectedImage) return;
+        if (isLocalUploadSelected) {
+            setError(t.local_upload_schedule_disabled);
+            return;
+        }
         setError(null);
 
         const targetDate = new Date(`${scheduleDate}T${scheduleTime}`);
@@ -471,6 +527,10 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
 
     const handleCopyLink = () => {
         if (!selectedImage) return;
+        if (isLocalUploadSelected) {
+            setInfo(t.local_upload_link_unavailable);
+            return;
+        }
         const shareText = getShareText();
         navigator.clipboard.writeText(shareText).then(() => {
             alert(language === "es" ? "¡Mensaje y enlace copiados!" : "Message and card link copied to clipboard!");
@@ -496,21 +556,33 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
 
         setSharing(true);
         try {
-            const shareData: ShareData = {
-                text: getShareText(),
-                url: getCardViewerLink(),
-            };
+            const shareData: ShareData = {};
 
-            try {
-                const response = await fetch(selectedImage.url);
-                const blob = await response.blob();
-                const file = new File([blob], `${selectedImageId}.png`, { type: 'image/png' });
-
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    shareData.files = [file];
+            if (selectedLocalUpload) {
+                if (navigator.canShare && navigator.canShare({ files: [selectedLocalUpload.file] })) {
+                    shareData.files = [selectedLocalUpload.file];
+                } else {
+                    setInfo(t.local_upload_share_hint);
+                    return;
                 }
-            } catch {
-                console.log("Could not attach file, sharing as link instead");
+            } else {
+                shareData.text = getShareText();
+                const viewerLink = getCardViewerLink();
+                if (viewerLink) {
+                    shareData.url = viewerLink;
+                }
+
+                try {
+                    const response = await fetch(selectedImage.url);
+                    const blob = await response.blob();
+                    const file = new File([blob], `${selectedImageId}.png`, { type: "image/png" });
+
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        shareData.files = [file];
+                    }
+                } catch {
+                    console.log("Could not attach file, sharing as link instead");
+                }
             }
 
             await navigator.share(shareData);
@@ -566,18 +638,24 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                         <button
                             type="button"
                             onClick={() => setIsScheduleMode(false)}
-                            className={`py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!isScheduleMode ? "bg-cyan-400 text-black shadow-neon-sm" : "text-[var(--app-text-dim)]"}`}
+                            className={`py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${(!isScheduleMode || isLocalUploadSelected) ? "bg-cyan-400 text-black shadow-neon-sm" : "text-[var(--app-text-dim)]"}`}
                         >
                             {scheduleCopy.sendNow}
                         </button>
                         <button
                             type="button"
                             onClick={() => setIsScheduleMode(true)}
-                            className={`py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${isScheduleMode ? "bg-cyan-400 text-black shadow-neon-sm" : "text-[var(--app-text-dim)]"}`}
+                            disabled={isLocalUploadSelected}
+                            className={`py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${(isScheduleMode && !isLocalUploadSelected) ? "bg-cyan-400 text-black shadow-neon-sm" : "text-[var(--app-text-dim)]"} disabled:opacity-40`}
                         >
                             {scheduleCopy.schedule}
                         </button>
                     </div>
+                    {isLocalUploadSelected && (
+                        <p className="text-[10px] text-[var(--app-text-muted)]">
+                            {t.local_upload_privacy_notice}
+                        </p>
+                    )}
 
                     {/* Image Selection with Category Tabs */}
                     <div>
@@ -592,7 +670,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                                         className="hidden"
                                         accept="image/*"
                                         onChange={handleUserUpload}
-                                        disabled={uploading}
+                                        disabled={uploading || loadingCards}
                                     />
                                 </label>
                                 {categories.map((cat) => (
@@ -687,7 +765,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                         />
                     </div>
 
-                    {isScheduleMode ? (
+                    {isScheduleMode && !isLocalUploadSelected ? (
                         <div className="space-y-4 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 p-4">
                             <div className="flex items-center gap-2 text-cyan-400">
                                 <CalendarClock className="w-4 h-4" />
