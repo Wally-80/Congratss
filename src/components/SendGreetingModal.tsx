@@ -244,6 +244,19 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
             schedule_error_destination: "Please enter a valid destination for that channel.",
             schedule_helper: "Automatic sends run while the app is active on your device.",
         };
+    const previewCopy = language === "es"
+        ? {
+            card_preview: "Vista previa de tarjeta",
+            inside_preview: "Vista previa del mensaje",
+            no_card_selected: "No hay tarjeta seleccionada todavia.",
+            no_message_yet: "Tu mensaje aparecera aqui cuando elijas una plantilla o escribas uno personalizado.",
+        }
+        : {
+            card_preview: "Card preview",
+            inside_preview: "Inside message preview",
+            no_card_selected: "No card selected yet.",
+            no_message_yet: "Your message will appear here once you pick a template or type your own.",
+        };
     const modalAccentClass = celebration?.type === "birthday"
         ? "neon-border-pink"
         : celebration?.type === "anniversary"
@@ -414,6 +427,8 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
     const selectedImage = localeFilteredCards.find(img => img.id === selectedImageId) || localeFilteredCards[0];
     const selectedLocalUpload = selectedImage ? localUploads[selectedImage.id] : undefined;
     const isLocalUploadSelected = Boolean(selectedLocalUpload);
+    const selectedCardLabel = selectedImage ? localizeCardLabel(selectedImage.label, language) : previewCopy.no_card_selected;
+    const messagePreview = message.trim() || previewCopy.no_message_yet;
 
     const filteredImages = activeCategory === ALL_CATEGORY_KEY
         ? localeFilteredCards
@@ -686,7 +701,30 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                                     </button>
                                 ))}
                             </div>
+                        </div>
 
+                        <div className={`mb-4 rounded-2xl border p-3 space-y-3 ${isDarkMode ? "border-white/10 bg-white/5" : "border-slate-200 bg-slate-50"}`}>
+                            <div>
+                                <p className="text-[9px] font-black uppercase tracking-widest text-[var(--app-text-dim)]">{previewCopy.card_preview}</p>
+                            </div>
+                            {selectedImage ? (
+                                <div className="rounded-xl overflow-hidden border border-black/10 dark:border-white/15 bg-black/5 dark:bg-black/30">
+                                    <img
+                                        src={selectedImage.url}
+                                        alt={selectedCardLabel}
+                                        className="w-full h-44 sm:h-52 object-contain bg-black/10"
+                                    />
+                                </div>
+                            ) : (
+                                <div className="h-36 grid place-items-center rounded-xl border border-dashed border-[var(--glass-border)] text-xs text-[var(--app-text-muted)]">
+                                    {previewCopy.no_card_selected}
+                                </div>
+                            )}
+                            <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--app-text)]">{selectedCardLabel}</p>
+                            <div className="rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-black/30 p-3">
+                                <p className="text-[9px] font-black uppercase tracking-widest text-[var(--app-text-dim)] mb-2">{previewCopy.inside_preview}</p>
+                                <p className="text-xs leading-relaxed text-[var(--app-text)] whitespace-pre-wrap break-words">{messagePreview}</p>
+                            </div>
                         </div>
 
                         {loadingCards ? (
