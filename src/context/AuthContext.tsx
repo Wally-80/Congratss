@@ -130,6 +130,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (typeof document !== "undefined") {
             document.documentElement.lang = language;
         }
+        auth.languageCode = language;
     }, [language]);
 
     const logout = async () => {
@@ -149,6 +150,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const setLanguage = async (lang: Language) => {
         setLanguageState(lang);
+        auth.languageCode = lang;
         if (typeof window !== "undefined") {
             localStorage.setItem("app-language", lang);
         }

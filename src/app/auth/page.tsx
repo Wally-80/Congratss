@@ -134,6 +134,7 @@ export default function AuthPage() {
         setLoadingMode(isLogin ? "sign-in" : "sign-up");
 
         try {
+            auth.languageCode = language;
             if (isLogin) {
                 const credential = await signInWithEmailAndPassword(auth, email, password);
                 if (!credential.user.emailVerified) {
@@ -171,6 +172,7 @@ export default function AuthPage() {
         setLoadingMode("password-reset");
 
         try {
+            auth.languageCode = language;
             let targetEmail = email.trim();
             if (!targetEmail && typeof window !== "undefined") {
                 targetEmail = (window.prompt("Enter your email:") || "").trim();
