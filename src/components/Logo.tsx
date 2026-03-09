@@ -27,7 +27,7 @@ export default function Logo({ className = "", showText = true, size = "md" }: L
 
                 <img
                     src="/logo-256.png"
-                    alt="Congratss Logo"
+                    alt="Congratss logo"
                     className="w-full h-full relative z-10 object-contain drop-shadow-[0_0_15px_rgba(0,242,255,0.3)] animate-in fade-in zoom-in duration-1000"
                 />
             </div>

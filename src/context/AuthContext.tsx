@@ -1,8 +1,28 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged, User, signOut, updateProfile } from "firebase/auth";
-import { doc, onSnapshot, serverTimestamp, setDoc } from "firebase/firestore";
+import { FirebaseError } from "firebase/app";
+import {
+    EmailAuthProvider,
+    deleteUser,
+    onAuthStateChanged,
+    reauthenticateWithCredential,
+    signOut,
+    updateProfile,
+    User
+} from "firebase/auth";
+import {
+    collection,
+    deleteDoc,
+    doc,
+    getDocs,
+    onSnapshot,
+    query,
+    serverTimestamp,
+    setDoc,
+    where,
+    writeBatch
+} from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
 
 import { Language } from "@/lib/translations";
@@ -21,6 +41,7 @@ interface AuthContextType {
     setLanguage: (lang: Language) => Promise<void>;
     setNotificationsEnabled: (enabled: boolean) => Promise<void>;
     completeOnboarding: () => Promise<void>;
+    deleteAccount: (password?: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -35,7 +56,61 @@ const AuthContext = createContext<AuthContextType>({
     setLanguage: async () => { },
     setNotificationsEnabled: async () => { },
     completeOnboarding: async () => { },
+    deleteAccount: async () => { },
 });
+
+const clearLocalAppState = () => {
+    if (typeof window === "undefined") return;
+    localStorage.removeItem("app-language");
+    localStorage.removeItem("gratzz_force_onboarding_once");
+};
+
+const formatDeleteAccountError = (error: unknown, language: Language) => {
+    const fallback = language === "es"
+        ? "No se pudo eliminar la cuenta. Intenta de nuevo."
+        : "Could not delete the account. Please try again.";
+
+    if (!(error instanceof FirebaseError)) {
+        return error instanceof Error ? error.message : fallback;
+    }
+
+    switch (error.code) {
+        case "auth/wrong-password":
+        case "auth/invalid-credential":
+            return language === "es"
+                ? "La contrasena no es correcta."
+                : "The password is not correct.";
+        case "auth/requires-recent-login":
+            return language === "es"
+                ? "Por seguridad, vuelve a iniciar sesion e intenta eliminar la cuenta otra vez."
+                : "For security, sign in again and then try deleting the account again.";
+        default:
+            return error.message || fallback;
+    }
+};
+
+const deleteDocsForUser = async (collectionName: string, userId: string) => {
+    const snapshot = await getDocs(query(collection(db, collectionName), where("userId", "==", userId)));
+    if (snapshot.empty) return;
+
+    let batch = writeBatch(db);
+    let count = 0;
+
+    for (const item of snapshot.docs) {
+        batch.delete(item.ref);
+        count += 1;
+
+        if (count === 400) {
+            await batch.commit();
+            batch = writeBatch(db);
+            count = 0;
+        }
+    }
+
+    if (count > 0) {
+        await batch.commit();
+    }
+};
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
@@ -180,8 +255,46 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    const deleteAccount = async (password?: string) => {
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            throw new Error(language === "es" ? "No hay una sesion activa." : "No active session.");
+        }
+
+        const hasPasswordProvider = currentUser.providerData.some((provider) => provider.providerId === "password");
+        if (hasPasswordProvider) {
+            if (!currentUser.email) {
+                throw new Error(language === "es" ? "Falta el email de la cuenta." : "Missing account email.");
+            }
+            if (!password) {
+                throw new Error(language === "es" ? "Debes confirmar tu contrasena." : "You must confirm your password.");
+            }
+
+            try {
+                const credential = EmailAuthProvider.credential(currentUser.email, password);
+                await reauthenticateWithCredential(currentUser, credential);
+            } catch (error) {
+                throw new Error(formatDeleteAccountError(error, language));
+            }
+        }
+
+        try {
+            await deleteDocsForUser("celebrations", currentUser.uid);
+            await deleteDocsForUser("scheduled_messages", currentUser.uid);
+            await deleteDoc(doc(db, "users", currentUser.uid));
+            await deleteUser(currentUser);
+            clearLocalAppState();
+            setUser(null);
+            setIsAdmin(false);
+            setNotificationsEnabledState(false);
+            setOnboardingCompletedState(true);
+        } catch (error) {
+            throw new Error(formatDeleteAccountError(error, language));
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, isAdmin, language, notificationsEnabled, onboardingCompleted, loading, logout, updateUserProfile, setLanguage, setNotificationsEnabled, completeOnboarding }}>
+        <AuthContext.Provider value={{ user, isAdmin, language, notificationsEnabled, onboardingCompleted, loading, logout, updateUserProfile, setLanguage, setNotificationsEnabled, completeOnboarding, deleteAccount }}>
             {children}
         </AuthContext.Provider>
     );

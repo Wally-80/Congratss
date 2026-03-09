@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { collection, query, where, onSnapshot, addDoc, serverTimestamp, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
-import { calculateCountdown } from "@/lib/dateUtils";
+import { calculateCountdown, type CelebrationRecurrence } from "@/lib/dateUtils";
 
 export type CelebrationType =
     | "birthday"
@@ -15,6 +15,15 @@ export type CelebrationType =
     | "house_warming"
     | "custom";
 
+export type CelebrationReminderTiming =
+    | "default"
+    | "none"
+    | "day_of"
+    | "day_before"
+    | "week_before"
+    | "month_before"
+    | "year_before";
+
 export interface Celebration {
     id: string;
     title: string;
@@ -24,6 +33,9 @@ export interface Celebration {
     percentage: number;
     type: CelebrationType;
     customTypeLabel?: string;
+    recurrence?: CelebrationRecurrence;
+    reminderTiming?: CelebrationReminderTiming;
+    isPast?: boolean;
     userId: string;
 }
 
@@ -47,20 +59,28 @@ export const useCelebrations = () => {
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const data = snapshot.docs.map((doc) => {
                 const docData = doc.data();
+                const recurrence = (docData.recurrence as CelebrationRecurrence | undefined) ?? "annual";
 
                 // Fallback to .date if .rawDate is missing (for legacy data)
-                const { daysLeft, percentage, formattedDate } = calculateCountdown(docData.rawDate || docData.date);
+                const { daysLeft, percentage, formattedDate, isPast } = calculateCountdown(docData.rawDate || docData.date, recurrence);
 
                 return {
                     id: doc.id,
                     ...docData,
+                    recurrence,
                     daysLeft,
                     percentage,
-                    date: formattedDate
+                    date: formattedDate,
+                    isPast,
                 };
             }) as Celebration[];
 
-            const sortedData = data.sort((a, b) => a.daysLeft - b.daysLeft);
+            const sortedData = data.sort((a, b) => {
+                if (Boolean(a.isPast) !== Boolean(b.isPast)) {
+                    return a.isPast ? 1 : -1;
+                }
+                return a.daysLeft - b.daysLeft;
+            });
             setCelebrations(sortedData);
             setLoading(false);
             setError(null);
@@ -73,14 +93,17 @@ export const useCelebrations = () => {
         return () => unsubscribe();
     }, [userId]);
 
-    const addCelebration = async (data: { title: string, rawDate: string, type: CelebrationType, customTypeLabel?: string }) => {
+    const addCelebration = async (data: { title: string, rawDate: string, type: CelebrationType, customTypeLabel?: string, recurrence?: CelebrationRecurrence, reminderTiming?: CelebrationReminderTiming }) => {
         if (!userId) return;
-        const { daysLeft, percentage, formattedDate } = calculateCountdown(data.rawDate);
+        const recurrence = data.recurrence ?? "annual";
+        const { daysLeft, percentage, formattedDate, isPast } = calculateCountdown(data.rawDate, recurrence);
         const payload = {
             title: data.title,
             rawDate: data.rawDate,
             type: data.type,
             ...(typeof data.customTypeLabel === "string" ? { customTypeLabel: data.customTypeLabel } : {}),
+            recurrence,
+            ...(typeof data.reminderTiming === "string" ? { reminderTiming: data.reminderTiming } : {}),
         };
 
         try {
@@ -89,6 +112,7 @@ export const useCelebrations = () => {
                 daysLeft,
                 percentage,
                 date: formattedDate,
+                isPast,
                 userId,
                 createdAt: serverTimestamp(),
             });
@@ -98,15 +122,18 @@ export const useCelebrations = () => {
         }
     };
 
-    const updateCelebration = async (id: string, data: { title: string, rawDate: string, type: CelebrationType, customTypeLabel?: string }) => {
+    const updateCelebration = async (id: string, data: { title: string, rawDate: string, type: CelebrationType, customTypeLabel?: string, recurrence?: CelebrationRecurrence, reminderTiming?: CelebrationReminderTiming }) => {
         if (!userId) return;
 
-        const { daysLeft, percentage, formattedDate } = calculateCountdown(data.rawDate);
+        const recurrence = data.recurrence ?? "annual";
+        const { daysLeft, percentage, formattedDate, isPast } = calculateCountdown(data.rawDate, recurrence);
         const payload = {
             title: data.title,
             rawDate: data.rawDate,
             type: data.type,
             ...(typeof data.customTypeLabel === "string" ? { customTypeLabel: data.customTypeLabel } : {}),
+            recurrence,
+            ...(typeof data.reminderTiming === "string" ? { reminderTiming: data.reminderTiming } : {}),
         };
 
         try {
@@ -116,6 +143,7 @@ export const useCelebrations = () => {
                 daysLeft,
                 percentage,
                 date: formattedDate,
+                isPast,
                 updatedAt: serverTimestamp(),
             });
         } catch (err: unknown) {

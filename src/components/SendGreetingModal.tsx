@@ -15,6 +15,7 @@ interface SendGreetingModalProps {
     isOpen: boolean;
     onClose: () => void;
     celebration: {
+        id: string;
         title: string;
         type: CelebrationType;
         customTypeLabel?: string;
@@ -225,6 +226,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
             schedule_success: "Envio programado correctamente.",
             schedule_error_past: "El horario debe ser en el futuro.",
             schedule_error_destination: "Completa un destino valido para ese canal.",
+            schedule_selected_notice: "Programacion activada. Esta tarjeta se guardara como envio programado para despues.",
             schedule_helper: "Los envios automaticos se ejecutan cuando la app este activa en tu dispositivo.",
         }
         : {
@@ -242,6 +244,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
             schedule_success: "Delivery scheduled successfully.",
             schedule_error_past: "Schedule time must be in the future.",
             schedule_error_destination: "Please enter a valid destination for that channel.",
+            schedule_selected_notice: "Scheduling is on. This card will be saved as a scheduled delivery for later.",
             schedule_helper: "Automatic sends run while the app is active on your device.",
         };
     const previewCopy = language === "es"
@@ -519,6 +522,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
         setScheduleSaving(true);
         try {
             await createScheduledMessage({
+                celebrationId: celebration?.id,
                 celebrationTitle: celebration?.title ?? (language === "es" ? "Celebracion" : "Celebration"),
                 channel: scheduleChannel,
                 recipient,
@@ -809,6 +813,9 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
                                 <CalendarClock className="w-4 h-4" />
                                 <p className="text-[10px] font-black uppercase tracking-widest">{scheduleCopy.schedule_title}</p>
                             </div>
+                            <p className="text-xs text-cyan-300">
+                                {scheduleCopy.schedule_selected_notice}
+                            </p>
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="space-y-1">
                                     <label className="text-[9px] font-bold uppercase tracking-widest text-[var(--app-text-dim)]">{scheduleCopy.schedule_date}</label>

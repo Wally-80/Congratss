@@ -16,7 +16,7 @@ export default function PrivacyPage() {
                     <p className="text-xs uppercase tracking-[0.2em] text-[var(--app-text-muted)]">Congratss</p>
                     <h1 className="text-3xl font-bold">{isEs ? "Politica de Privacidad" : "Privacy Policy"}</h1>
                     <p className="text-sm text-[var(--app-text-dim)]">
-                        {isEs ? "Actualizado: 26 de febrero de 2026" : "Last updated: February 26, 2026"}
+                        {isEs ? "Actualizado: 6 de marzo de 2026" : "Last updated: March 6, 2026"}
                     </p>
                 </header>
 
@@ -25,8 +25,8 @@ export default function PrivacyPage() {
                     <ul className="list-disc pl-5 space-y-2 text-sm text-[var(--app-text-dim)]">
                         <li>{isEs ? "Datos de cuenta de Firebase Auth (email, ID de usuario, proveedor)." : "Account data from Firebase Auth (email, user ID, provider)."}</li>
                         <li>{isEs ? "Tus celebraciones (titulo, fecha, tipo y etiqueta personalizada opcional)." : "Your celebration records (title, date, type, and optional custom label)."}</li>
-                        <li>{isEs ? "Preferencias de la app (idioma y notificaciones)." : "Your app preferences (language, notifications setting)."}</li>
-                        <li>{isEs ? "Imagenes opcionales que subes para enviar tarjetas." : "Optional images you upload for greeting cards."}</li>
+                        <li>{isEs ? "Tus preferencias de la app y perfil (idioma, recordatorios, onboarding y datos de perfil opcionales)." : "Your app preferences and profile data (language, reminders, onboarding state, and optional profile data)."}</li>
+                        <li>{isEs ? "Tus envios programados (canal, destinatario, mensaje, tarjeta, enlace y hora programada)." : "Your scheduled deliveries (channel, recipient, message, card, link, and scheduled time)."}</li>
                     </ul>
                 </section>
 
@@ -41,6 +41,14 @@ export default function PrivacyPage() {
                 </section>
 
                 <section className="glass-card premium-border neon-border-cyan p-6 space-y-3">
+                    <h2 className="text-lg font-semibold">{isEs ? "Datos que Se Quedan en Tu Dispositivo" : "Data That Stays on Your Device"}</h2>
+                    <ul className="list-disc pl-5 space-y-2 text-sm text-[var(--app-text-dim)]">
+                        <li>{isEs ? "Las imagenes locales que eliges para compartir en la app permanecen en tu dispositivo a menos que tu mismo las compartas." : "Local images you choose in the share flow stay on your device unless you explicitly share them."}</li>
+                        <li>{isEs ? "El navegador puede guardar idioma, estado de onboarding, cache del service worker y claves locales para evitar recordatorios duplicados." : "Your browser may store language, onboarding state, service worker cache, and local keys used to avoid duplicate reminders."}</li>
+                    </ul>
+                </section>
+
+                <section className="glass-card premium-border neon-border-cyan p-6 space-y-3">
                     <h2 className="text-lg font-semibold">{isEs ? "Seguridad" : "Security"}</h2>
                     <p className="text-sm text-[var(--app-text-dim)]">
                         {isEs
@@ -50,12 +58,35 @@ export default function PrivacyPage() {
                 </section>
 
                 <section className="glass-card premium-border neon-border-cyan p-6 space-y-3">
-                    <h2 className="text-lg font-semibold">{isEs ? "Tu Control" : "Your Control"}</h2>
+                    <h2 className="text-lg font-semibold">{isEs ? "Retencion y Eliminacion" : "Retention and Deletion"}</h2>
                     <p className="text-sm text-[var(--app-text-dim)]">
                         {isEs
-                            ? "Puedes editar o eliminar tus celebraciones dentro de la app en cualquier momento."
-                            : "You can edit or delete your celebrations inside the app at any time."}
+                            ? "Puedes editar o eliminar tus celebraciones dentro de la app en cualquier momento. Si solicitas eliminacion de cuenta, eliminamos la cuenta y los datos asociados que no estemos obligados legalmente a conservar."
+                            : "You can edit or delete your celebrations inside the app at any time. If you request account deletion, we delete the account and associated data that we are not legally required to retain."}
                     </p>
+                </section>
+
+                <section className="glass-card premium-border neon-border-cyan p-6 space-y-3">
+                    <h2 className="text-lg font-semibold">{isEs ? "Soporte y Eliminacion de Cuenta" : "Support and Account Deletion"}</h2>
+                    <p className="text-sm text-[var(--app-text-dim)]">
+                        {isEs
+                            ? "Puedes contactarnos para soporte o para solicitar eliminacion de cuenta usando las paginas siguientes."
+                            : "You can contact us for support or request account deletion using the pages below."}
+                    </p>
+                    <div className="flex flex-wrap gap-3 text-sm">
+                        <Link
+                            href="/support"
+                            className="inline-flex items-center rounded-xl border border-[var(--glass-border)] px-4 py-2 font-semibold text-[var(--app-text-dim)] hover:text-[var(--app-text)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                        >
+                            {isEs ? "Soporte" : "Support"}
+                        </Link>
+                        <Link
+                            href="/delete-account"
+                            className="inline-flex items-center rounded-xl border border-[var(--glass-border)] px-4 py-2 font-semibold text-[var(--app-text-dim)] hover:text-[var(--app-text)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                        >
+                            {isEs ? "Eliminar Cuenta" : "Delete Account"}
+                        </Link>
+                    </div>
                 </section>
 
                 <div className="pt-2">

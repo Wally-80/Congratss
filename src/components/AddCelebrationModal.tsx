@@ -6,7 +6,8 @@ import { X, Activity, Baby, Gift, GraduationCap, Heart, House, PartyPopper, Spar
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { translations } from "@/lib/translations";
-import { type CelebrationType } from "@/hooks/useCelebrations";
+import { type CelebrationReminderTiming, type CelebrationType } from "@/hooks/useCelebrations";
+import { type CelebrationRecurrence } from "@/lib/dateUtils";
 
 type AddCelebrationData = {
     id?: string;
@@ -14,6 +15,8 @@ type AddCelebrationData = {
     rawDate: string;
     type: CelebrationType;
     customTypeLabel?: string;
+    recurrence?: CelebrationRecurrence;
+    reminderTiming?: CelebrationReminderTiming;
 };
 
 type InitialCelebrationData = {
@@ -22,6 +25,8 @@ type InitialCelebrationData = {
     rawDate: string;
     type: CelebrationType;
     customTypeLabel?: string;
+    recurrence?: CelebrationRecurrence;
+    reminderTiming?: CelebrationReminderTiming;
 };
 
 interface AddCelebrationModalProps {
@@ -42,6 +47,8 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
     const [date, setDate] = useState("");
     const [type, setType] = useState<CelebrationType>("birthday");
     const [customTypeLabel, setCustomTypeLabel] = useState("");
+    const [recurrence, setRecurrence] = useState<CelebrationRecurrence>("annual");
+    const [reminderTiming, setReminderTiming] = useState<CelebrationReminderTiming>("default");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const baseFieldClass = isDarkMode
         ? "bg-white/10 border-white/20 text-white placeholder:text-white/55"
@@ -69,6 +76,24 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
         { value: "house_warming", label: t.house_warming, icon: <House className="w-6 h-6" />, activeClass: "bg-amber-500/20 border-amber-400 text-amber-300" },
         { value: "custom", label: t.custom, icon: <Sparkles className="w-6 h-6" />, activeClass: "bg-indigo-500/20 border-indigo-400 text-indigo-300" },
     ];
+    const recurrenceOptions: { value: CelebrationRecurrence; label: string; helper: string }[] = [
+        { value: "annual", label: t.recurrence_annual, helper: t.recurrence_annual_helper },
+        { value: "one_time", label: t.recurrence_one_time, helper: t.recurrence_one_time_helper },
+    ];
+    const reminderOptions: { value: CelebrationReminderTiming; label: string }[] = recurrence === "one_time"
+        ? [
+            { value: "day_of", label: t.reminder_day_of },
+            { value: "none", label: t.reminder_none },
+        ]
+        : [
+            { value: "default", label: t.reminder_default },
+            { value: "none", label: t.reminder_none },
+            { value: "day_of", label: t.reminder_day_of },
+            { value: "day_before", label: t.reminder_day_before },
+            { value: "week_before", label: t.reminder_week_before },
+            { value: "month_before", label: t.reminder_month_before },
+            { value: "year_before", label: t.reminder_year_before },
+        ];
 
     // Populate fields when editing
     React.useEffect(() => {
@@ -77,13 +102,27 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
             setDate(initialData.rawDate);
             setType(initialData.type);
             setCustomTypeLabel(initialData.customTypeLabel || "");
+            const initialRecurrence = initialData.recurrence || "annual";
+            setRecurrence(initialRecurrence);
+            setReminderTiming(initialData.reminderTiming || (initialRecurrence === "one_time" ? "day_of" : "default"));
         } else {
             setTitle("");
             setDate(defaultDate);
             setType("birthday");
             setCustomTypeLabel("");
+            setRecurrence("annual");
+            setReminderTiming("default");
         }
     }, [initialData, isOpen, defaultDate]);
+
+    React.useEffect(() => {
+        if (recurrence === "one_time" && !["day_of", "none"].includes(reminderTiming)) {
+            setReminderTiming("day_of");
+        }
+        if (recurrence === "annual" && reminderTiming === "day_of" && !initialData) {
+            setReminderTiming("default");
+        }
+    }, [initialData, recurrence, reminderTiming]);
 
     if (!isOpen) return null;
 
@@ -103,6 +142,8 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
             rawDate: date,
             type: type,
             customTypeLabel: normalizedCustomTypeLabel,
+            recurrence,
+            reminderTiming,
         });
 
         setIsSubmitting(false);
@@ -170,6 +211,27 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
 
                             <div>
                                 <label className={`block text-sm font-medium mb-4 uppercase tracking-widest ${textMutedClass}`}>
+                                    {t.event_timing}
+                                </label>
+                                <div className="grid grid-cols-2 gap-2.5">
+                                    {recurrenceOptions.map((option) => (
+                                        <button
+                                            key={option.value}
+                                            type="button"
+                                            onClick={() => setRecurrence(option.value)}
+                                            className={`rounded-2xl border p-3 text-left transition-all ${recurrence === option.value
+                                                ? "border-cyan-400 bg-cyan-400/10 text-[var(--app-text)]"
+                                                : baseOptionClass}`}
+                                        >
+                                            <p className="text-[10px] font-bold uppercase tracking-widest">{option.label}</p>
+                                            <p className="mt-2 text-xs normal-case tracking-normal leading-relaxed text-[var(--app-text-dim)]">{option.helper}</p>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className={`block text-sm font-medium mb-4 uppercase tracking-widest ${textMutedClass}`}>
                                     {t.event_type}
                                 </label>
                                 <div className="grid grid-cols-3 gap-2.5">
@@ -206,6 +268,26 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
                                     />
                                 </div>
                             )}
+
+                            <div>
+                                <label className={`block text-sm font-medium mb-2 uppercase tracking-widest ${textMutedClass}`}>
+                                    {t.reminder_timing}
+                                </label>
+                                <select
+                                    value={reminderTiming}
+                                    onChange={(e) => setReminderTiming(e.target.value as CelebrationReminderTiming)}
+                                    className={`w-full h-12 border rounded-2xl px-5 text-sm focus:outline-none focus:border-neon-cyan transition-colors shadow-sm ${baseFieldClass}`}
+                                >
+                                    {reminderOptions.map((option) => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </select>
+                                <p className={`mt-2 text-xs ${textMutedClass}`}>
+                                    {recurrence === "one_time" ? t.reminder_timing_helper_one_time : t.reminder_timing_helper}
+                                </p>
+                            </div>
                         </div>
 
                         <div className="pt-4 mt-2 border-t border-black/10 dark:border-white/10 bg-gradient-to-t from-[var(--pane-bg)] to-transparent">

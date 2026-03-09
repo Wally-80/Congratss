@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
     title: "Congratss",
-    description: "Celebrate every moment with Congratss",
+    description: "Track countdown days and celebrate every moment with Congratss",
     manifest: "/manifest.json",
     appleWebApp: {
         capable: true,

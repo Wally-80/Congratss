@@ -1,11 +1,32 @@
+export type CelebrationRecurrence = "annual" | "one_time";
+
 /**
- * Calculates days until the next yearly occurrence of a date.
- * All events recur annually by month/day until deleted.
+ * Calculates countdown metadata for annual celebrations and one-time events.
  */
-export function calculateCountdown(dateString: string) {
+export function calculateCountdown(dateString: string, recurrence: CelebrationRecurrence = "annual") {
     const targetDate = new Date(dateString);
     const now = new Date();
     const todayUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+
+    if (recurrence === "one_time") {
+        const targetUTC = Date.UTC(targetDate.getUTCFullYear(), targetDate.getUTCMonth(), targetDate.getUTCDate());
+        const diffTime = targetUTC - todayUTC;
+        const daysLeft = Math.round(diffTime / (1000 * 60 * 60 * 24));
+        const isPast = daysLeft < 0;
+
+        return {
+            daysLeft,
+            percentage: isPast ? 100 : 0,
+            formattedDate: targetDate.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+                timeZone: "UTC"
+            }),
+            isPast,
+        };
+    }
+
     let finalTargetUTC = Date.UTC(now.getFullYear(), targetDate.getUTCMonth(), targetDate.getUTCDate());
     if (finalTargetUTC < todayUTC) {
         finalTargetUTC = Date.UTC(now.getFullYear() + 1, targetDate.getUTCMonth(), targetDate.getUTCDate());
@@ -24,10 +45,11 @@ export function calculateCountdown(dateString: string) {
     return {
         daysLeft,
         percentage: Math.max(0, Math.min(100, percentage)),
-        formattedDate: targetDate.toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            timeZone: 'UTC'
-        })
+        formattedDate: targetDate.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            timeZone: "UTC"
+        }),
+        isPast: false,
     };
 }

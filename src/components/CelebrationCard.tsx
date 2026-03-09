@@ -4,7 +4,8 @@ import React from "react";
 import { Activity, Baby, Gift, GraduationCap, Heart, House, PartyPopper, Pencil, Send, Sparkles, Trash2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { translations } from "@/lib/translations";
-import { type CelebrationType } from "@/hooks/useCelebrations";
+import { type CelebrationReminderTiming, type CelebrationType } from "@/hooks/useCelebrations";
+import { type CelebrationRecurrence } from "@/lib/dateUtils";
 
 interface CelebrationCardProps {
     id: string;
@@ -15,13 +16,17 @@ interface CelebrationCardProps {
     percentage: number;
     type: CelebrationType;
     customTypeLabel?: string;
+    recurrence?: CelebrationRecurrence;
+    reminderTiming?: CelebrationReminderTiming;
+    isPast?: boolean;
+    scheduledDeliveryNote?: string;
     onDelete: (id: string) => Promise<void>;
-    onEdit: (celebration: { id: string; title: string; rawDate: string; type: CelebrationType; customTypeLabel?: string }) => void;
-    onSendGreeting: (celebration: { title: string; type: CelebrationType; customTypeLabel?: string }) => void;
+    onEdit: (celebration: { id: string; title: string; rawDate: string; type: CelebrationType; customTypeLabel?: string; recurrence?: CelebrationRecurrence; reminderTiming?: CelebrationReminderTiming }) => void;
+    onSendGreeting: (celebration: { id: string; title: string; type: CelebrationType; customTypeLabel?: string }) => void;
 }
 
 export default function CelebrationCard({
-    id, title, daysLeft, rawDate, type, customTypeLabel,
+    id, title, daysLeft, rawDate, type, customTypeLabel, recurrence = "annual", reminderTiming, isPast, scheduledDeliveryNote,
     onDelete, onEdit, onSendGreeting
 }: CelebrationCardProps) {
     const { language } = useAuth();
@@ -97,7 +102,16 @@ export default function CelebrationCard({
         }
     })();
 
-    const isToday = daysLeft === 0;
+    const isOneTime = recurrence === "one_time";
+    const isToday = daysLeft === 0 && !isPast;
+    const dateLabel = new Date(rawDate).toLocaleDateString(language === "es" ? "es-ES" : "en-US", {
+        month: "long",
+        day: "numeric",
+        ...(isOneTime ? { year: "numeric" as const } : {}),
+        timeZone: "UTC"
+    });
+    const countdownValue = isPast ? t.past_badge : isToday ? t.today_badge : daysLeft;
+    const countdownLabel = isPast ? t.event_passed : isToday ? t.celebrate_badge : t.days_to_go;
 
     return (
         <div className={`glass-card mb-6 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500 premium-border ${borderAccentClass}`}>
@@ -110,14 +124,14 @@ export default function CelebrationCard({
                         <h3 className="text-lg font-bold tracking-tight mb-1 text-[var(--app-text)]">{title}</h3>
                         <p className="text-[10px] uppercase tracking-widest text-[var(--app-text-muted)] mb-1">{getTypeLabel()}</p>
                         <p className="text-xs text-[var(--app-text-dim)] font-medium">
-                            {new Date(rawDate).toLocaleDateString(language === "es" ? "es-ES" : "en-US", { month: "long", day: "numeric", timeZone: "UTC" })}
+                            {dateLabel}
                         </p>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-1">
                     <button
-                        onClick={() => onEdit({ id, title, rawDate, type, customTypeLabel })}
+                        onClick={() => onEdit({ id, title, rawDate, type, customTypeLabel, recurrence, reminderTiming })}
                         className="p-2.5 text-[var(--app-text-dim)] hover:text-[var(--app-text)] hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-all"
                     >
                         <Pencil className="w-4 h-4" />
@@ -134,14 +148,14 @@ export default function CelebrationCard({
             <div className="flex items-end justify-between mb-4">
                 <div className="flex flex-col">
                     <span className="text-4xl font-black italic tracking-tighter">
-                        {isToday ? t.today_badge : daysLeft}
+                        {countdownValue}
                     </span>
                     <span className="text-[10px] font-bold text-[var(--app-text-dim)] uppercase tracking-[0.2em] mt-1">
-                        {isToday ? t.celebrate_badge : t.days_to_go}
+                        {countdownLabel}
                     </span>
                 </div>
                 <button
-                    onClick={() => onSendGreeting({ title, type, customTypeLabel })}
+                    onClick={() => onSendGreeting({ id, title, type, customTypeLabel })}
                     data-tour="pick-send-button"
                     className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${isToday
                         ? "bg-neon-cyan text-black shadow-neon animate-pulse"
@@ -151,6 +165,11 @@ export default function CelebrationCard({
                     {t.pick_and_send}
                 </button>
             </div>
+            {scheduledDeliveryNote && (
+                <p className="text-xs text-cyan-400">
+                    {scheduledDeliveryNote}
+                </p>
+            )}
         </div>
     );
 }

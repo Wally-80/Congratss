@@ -17,8 +17,8 @@ export default function AboutPage() {
                     <h1 className="text-3xl font-bold">{isEs ? "Sobre Esta App" : "About This App"}</h1>
                     <p className="text-sm text-[var(--app-text-dim)]">
                         {isEs
-                            ? "Congratss te ayuda a recordar fechas importantes y enviar felicitaciones rapidamente desde un solo lugar."
-                            : "Congratss helps people remember important dates and send greetings quickly from one place."}
+                            ? "Congratss te ayuda a recordar fechas importantes, ver dias restantes y enviar felicitaciones rapidamente desde un solo lugar."
+                            : "Congratss helps people remember important dates, see countdown days, and send greetings quickly from one place."}
                     </p>
                 </header>
 
@@ -26,6 +26,7 @@ export default function AboutPage() {
                     <h2 className="text-lg font-semibold">{isEs ? "Que Puedes Hacer" : "What You Can Do"}</h2>
                     <ul className="list-disc pl-5 space-y-2 text-sm text-[var(--app-text-dim)]">
                         <li>{isEs ? "Crear y administrar celebraciones en un solo panel." : "Create and manage celebrations in one dashboard."}</li>
+                        <li>{isEs ? "Ver cuantos dias faltan para cada celebracion." : "See how many countdown days are left before each celebration."}</li>
                         <li>{isEs ? "Usar vista de calendario mensual para planificar eventos." : "Use month calendar view to plan upcoming events."}</li>
                         <li>{isEs ? "Enviar tarjetas y mensajes rapidos en pocos toques." : "Send greeting cards and quick messages in a few taps."}</li>
                         <li>{isEs ? "Programar envios automaticos por WhatsApp, Email o SMS para fecha y hora futura." : "Schedule automatic sends via WhatsApp, Email, or SMS for a future date and time."}</li>

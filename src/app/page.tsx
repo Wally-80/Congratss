@@ -5,12 +5,13 @@ import dynamic from "next/dynamic";
 import { Plus, Home as HomeIcon, Calendar as CalendarIcon, Settings, Search, LogOut, Send, ChevronLeft, ChevronRight, Pencil, Trash2, Info, Shield, Download, Clock3 } from "lucide-react";
 import CelebrationCard from "@/components/CelebrationCard";
 import AddCelebrationModal from "@/components/AddCelebrationModal";
+import EditScheduledDeliveryModal from "@/components/EditScheduledDeliveryModal";
 import EditProfileModal from "@/components/EditProfileModal";
 import ConfirmModal from "@/components/ConfirmModal";
 import OnboardingModal from "@/components/OnboardingModal";
 import { useAuth } from "@/context/AuthContext";
-import { type Celebration, useCelebrations } from "@/hooks/useCelebrations";
-import { useScheduledMessages } from "@/hooks/useScheduledMessages";
+import { type Celebration, type CelebrationReminderTiming, useCelebrations } from "@/hooks/useCelebrations";
+import { type ScheduledMessage, useScheduledMessages } from "@/hooks/useScheduledMessages";
 import { translations } from "@/lib/translations";
 import { playCelebrationChime } from "@/lib/sound";
 import { useTheme } from "@/context/ThemeContext";
@@ -26,6 +27,8 @@ type CelebrationFormData = {
     rawDate: string;
     type: Celebration["type"];
     customTypeLabel?: string;
+    recurrence?: Celebration["recurrence"];
+    reminderTiming?: CelebrationReminderTiming;
 };
 
 type EditableCelebration = {
@@ -34,9 +37,12 @@ type EditableCelebration = {
     rawDate: string;
     type: Celebration["type"];
     customTypeLabel?: string;
+    recurrence?: Celebration["recurrence"];
+    reminderTiming?: CelebrationReminderTiming;
 };
 
 type SendGreetingTarget = {
+    id: string;
     title: string;
     type: Celebration["type"];
     customTypeLabel?: string;
@@ -45,7 +51,7 @@ type SendGreetingTarget = {
 export default function Dashboard() {
     const { theme, toggleTheme } = useTheme();
     const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
-    const { user, isAdmin, language, notificationsEnabled, onboardingCompleted, setNotificationsEnabled, setLanguage, loading: authLoading, logout, updateUserProfile, completeOnboarding } = useAuth();
+    const { user, isAdmin, language, notificationsEnabled, onboardingCompleted, setNotificationsEnabled, setLanguage, loading: authLoading, logout, updateUserProfile, completeOnboarding, deleteAccount } = useAuth();
     const t = translations[language];
     const isDarkMode = theme === "dark";
     const scheduleCopy = language === "es"
@@ -53,6 +59,8 @@ export default function Dashboard() {
             panelTitle: "Envios Programados",
             panelEmpty: "No tienes envios programados.",
             panelNote: "Los envios automaticos se procesan mientras la app esta activa.",
+            edit: "Editar",
+            delete: "Eliminar",
             cancel: "Cancelar",
             channelWhatsapp: "WhatsApp",
             channelEmail: "Email",
@@ -62,6 +70,8 @@ export default function Dashboard() {
             panelTitle: "Scheduled Deliveries",
             panelEmpty: "No scheduled deliveries yet.",
             panelNote: "Automatic sends are processed while the app is active.",
+            edit: "Edit",
+            delete: "Delete",
             cancel: "Cancel",
             channelWhatsapp: "WhatsApp",
             channelEmail: "Email",
@@ -69,9 +79,10 @@ export default function Dashboard() {
         };
 
     const { celebrations, loading: dataLoading, error: dataError, addCelebration, updateCelebration, deleteCelebration } = useCelebrations();
-    const { scheduledMessages, updateScheduledMessageStatus, cancelScheduledMessage } = useScheduledMessages();
+    const { scheduledMessages, updateScheduledMessage, updateScheduledMessageStatus, cancelScheduledMessage, deleteScheduledMessage } = useScheduledMessages();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSendGreetingModalOpen, setIsSendGreetingModalOpen] = useState(false);
+    const [editingScheduledMessage, setEditingScheduledMessage] = useState<ScheduledMessage | null>(null);
     const [editingCelebration, setEditingCelebration] = useState<EditableCelebration | null>(null);
     const [sendingCelebration, setSendingCelebration] = useState<SendGreetingTarget | null>(null);
     const [addModalDefaultDate, setAddModalDefaultDate] = useState("");
@@ -91,6 +102,7 @@ export default function Dashboard() {
     const [isAppUpdateAvailable, setIsAppUpdateAvailable] = useState(false);
     const [isApplyingAppUpdate, setIsApplyingAppUpdate] = useState(false);
     const [isReplayTourOpen, setIsReplayTourOpen] = useState(false);
+    const [isDeletingAccount, setIsDeletingAccount] = useState(false);
     const [forceOnboardingOnce, setForceOnboardingOnce] = useState(() => {
         if (typeof window === "undefined") return false;
         return localStorage.getItem("gratzz_force_onboarding_once") === "1";
@@ -160,10 +172,34 @@ export default function Dashboard() {
         const todayKey = new Date().toISOString().slice(0, 10);
 
         celebrations.forEach((item) => {
-            let reminderType: "today" | "tomorrow" | "week" | null = null;
-            if (item.daysLeft === 0) reminderType = "today";
-            if (item.daysLeft === 1) reminderType = "tomorrow";
-            if (item.daysLeft === 7) reminderType = "week";
+            let reminderType: "today" | "tomorrow" | "week" | "month" | "year" | null = null;
+            if (item.isPast) return;
+            const effectiveReminderTiming = item.reminderTiming ?? (item.recurrence === "one_time" ? "day_of" : "default");
+            switch (effectiveReminderTiming) {
+                case "none":
+                    reminderType = null;
+                    break;
+                case "day_of":
+                    reminderType = item.daysLeft === 0 ? "today" : null;
+                    break;
+                case "day_before":
+                    reminderType = item.daysLeft === 1 ? "tomorrow" : null;
+                    break;
+                case "week_before":
+                    reminderType = item.daysLeft === 7 ? "week" : null;
+                    break;
+                case "month_before":
+                    reminderType = item.daysLeft === 30 ? "month" : null;
+                    break;
+                case "year_before":
+                    reminderType = item.daysLeft === 365 || item.daysLeft === 366 ? "year" : null;
+                    break;
+                default:
+                    if (item.daysLeft === 0) reminderType = "today";
+                    if (item.daysLeft === 1) reminderType = "tomorrow";
+                    if (item.daysLeft === 7) reminderType = "week";
+                    break;
+            }
             if (!reminderType) return;
 
             const dedupeKey = `gratzz_notify_${item.id}_${reminderType}_${todayKey}`;
@@ -173,7 +209,11 @@ export default function Dashboard() {
                 ? activeTranslations.notification_body_today
                 : reminderType === "tomorrow"
                     ? activeTranslations.notification_body_tomorrow
-                    : activeTranslations.notification_body_week;
+                    : reminderType === "week"
+                        ? activeTranslations.notification_body_week
+                        : reminderType === "month"
+                            ? activeTranslations.notification_body_month
+                            : activeTranslations.notification_body_year;
             const reminderBody = reminderTemplate.replace("{title}", item.title);
 
             try {
@@ -333,6 +373,40 @@ export default function Dashboard() {
             .slice(0, 5),
         [scheduledMessages]
     );
+    const scheduledMessageNoteByCelebrationId = useMemo(() => {
+        const nextByCelebrationId = new Map<string, string>();
+        const legacyByTitle = new Map<string, string>();
+        const formatter = new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+        });
+
+        scheduledMessages
+            .filter((item) => item.status === "scheduled" && item.scheduledAt.getTime() >= Date.now())
+            .sort((a, b) => a.scheduledAt.getTime() - b.scheduledAt.getTime())
+            .forEach((item) => {
+                const formattedDate = formatter.format(item.scheduledAt);
+                const note = (language === "es"
+                    ? "Ya programado para {date}."
+                    : "Already scheduled for {date}.")
+                    .replace("{date}", formattedDate);
+
+                if (item.celebrationId) {
+                    if (!nextByCelebrationId.has(item.celebrationId)) {
+                        nextByCelebrationId.set(item.celebrationId, note);
+                    }
+                    return;
+                }
+
+                if (!legacyByTitle.has(item.celebrationTitle)) {
+                    legacyByTitle.set(item.celebrationTitle, note);
+                }
+            });
+
+        return { nextByCelebrationId, legacyByTitle };
+    }, [language, scheduledMessages]);
 
     const getScheduledChannelLabel = (channel: string) => {
         if (channel === "whatsapp") return scheduleCopy.channelWhatsapp;
@@ -419,8 +493,31 @@ export default function Dashboard() {
         setActiveTab("home");
     };
 
-    const openInfoPage = (path: "/about" | "/privacy") => {
+    const openInfoPage = (path: "/about" | "/privacy" | "/support" | "/delete-account") => {
         window.location.assign(path);
+    };
+
+    const handleDeleteAccount = async () => {
+        if (typeof window === "undefined" || !user) return;
+
+        const isConfirmed = window.confirm(t.delete_account_confirm);
+        if (!isConfirmed) return;
+
+        const requiresPassword = user.providerData.some((provider) => provider.providerId === "password");
+        const password = requiresPassword ? window.prompt(t.delete_account_password_prompt) : "";
+
+        if (requiresPassword && password === null) return;
+
+        try {
+            setIsDeletingAccount(true);
+            await deleteAccount(password ?? "");
+            window.alert(t.delete_account_success);
+        } catch (error) {
+            const message = error instanceof Error ? error.message : t.delete_account_failed;
+            window.alert(message || t.delete_account_failed);
+        } finally {
+            setIsDeletingAccount(false);
+        }
     };
 
     const toInputDateUTC = (date: Date) => {
@@ -447,14 +544,18 @@ export default function Dashboard() {
                 title: data.title,
                 rawDate: data.rawDate,
                 type: data.type,
-                customTypeLabel: data.customTypeLabel
+                customTypeLabel: data.customTypeLabel,
+                recurrence: data.recurrence,
+                reminderTiming: data.reminderTiming
             });
         } else {
             await addCelebration({
                 title: data.title,
                 rawDate: data.rawDate,
                 type: data.type,
-                customTypeLabel: data.customTypeLabel
+                customTypeLabel: data.customTypeLabel,
+                recurrence: data.recurrence,
+                reminderTiming: data.reminderTiming
             });
             await playCelebrationChime();
         }
@@ -482,6 +583,25 @@ export default function Dashboard() {
     const openSendGreetingModal = (celebration: SendGreetingTarget) => {
         setSendingCelebration(celebration);
         setIsSendGreetingModalOpen(true);
+    };
+
+    const handleSaveScheduledMessage = async (input: {
+        id: string;
+        channel: ScheduledMessage["channel"];
+        recipient: string;
+        scheduledAt: Date;
+        shareUrl: string;
+    }) => {
+        await updateScheduledMessage(input.id, {
+            channel: input.channel,
+            recipient: input.recipient,
+            shareUrl: input.shareUrl,
+            scheduledAt: input.scheduledAt,
+        });
+    };
+
+    const handleDeleteScheduledMessage = async (id: string) => {
+        await deleteScheduledMessage(id);
     };
 
     const getCalendarEventDotColor = (type: Celebration["type"]) => {
@@ -523,6 +643,7 @@ export default function Dashboard() {
                 if (Number.isNaN(date.getTime())) return false;
                 if (date.getUTCMonth() !== month) return false;
                 const itemYear = date.getUTCFullYear();
+                if (item.recurrence === "one_time") return itemYear === year;
                 return itemYear <= year;
             })
             .map((item) => new Date(item.rawDate).getUTCDate())
@@ -630,6 +751,13 @@ export default function Dashboard() {
                                             percentage={item.percentage}
                                             type={item.type}
                                             customTypeLabel={item.customTypeLabel}
+                                            recurrence={item.recurrence}
+                                            reminderTiming={item.reminderTiming}
+                                            isPast={item.isPast}
+                                            scheduledDeliveryNote={
+                                                scheduledMessageNoteByCelebrationId.nextByCelebrationId.get(item.id)
+                                                ?? scheduledMessageNoteByCelebrationId.legacyByTitle.get(item.title)
+                                            }
                                             onDelete={handleDeleteClick}
                                             onEdit={openEditModal}
                                             onSendGreeting={openSendGreetingModal}
@@ -671,8 +799,12 @@ export default function Dashboard() {
                     if (itemDate.getUTCMonth() !== month) return acc;
 
                     const itemYear = itemDate.getUTCFullYear();
-                    const isRecurring = itemYear <= year;
-                    if (!isRecurring && itemYear !== year) return acc;
+                    if (item.recurrence === "one_time") {
+                        if (itemYear !== year) return acc;
+                    } else {
+                        const isRecurring = itemYear <= year;
+                        if (!isRecurring && itemYear !== year) return acc;
+                    }
 
                     const day = itemDate.getUTCDate();
                     if (!acc[day]) acc[day] = [];
@@ -843,7 +975,7 @@ export default function Dashboard() {
                                                 </div>
                                                 <div className="shrink-0 flex items-center gap-1">
                                                     <button
-                                                        onClick={() => openEditModal({ id: item.id, title: item.title, rawDate: item.rawDate, type: item.type, customTypeLabel: item.customTypeLabel })}
+                                                        onClick={() => openEditModal({ id: item.id, title: item.title, rawDate: item.rawDate, type: item.type, customTypeLabel: item.customTypeLabel, recurrence: item.recurrence, reminderTiming: item.reminderTiming })}
                                                         className={`p-2 rounded-lg border transition-colors ${isLightMode
                                                             ? "border-slate-300 text-slate-600 hover:bg-slate-100"
                                                             : "border-slate-600 text-slate-200 hover:bg-slate-700"
@@ -988,13 +1120,29 @@ export default function Dashboard() {
                                                     {new Date(item.scheduledAt).toLocaleString()} - {getScheduledChannelLabel(item.channel)}
                                                 </p>
                                                 <p className="text-[10px] text-[var(--app-text-muted)] truncate mt-1">{item.recipient}</p>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => void cancelScheduledMessage(item.id)}
-                                                    className="mt-2 text-[10px] uppercase tracking-widest text-red-400 hover:text-red-300 transition-colors"
-                                                >
-                                                    {scheduleCopy.cancel}
-                                                </button>
+                                                <div className="mt-3 flex items-center gap-3">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setEditingScheduledMessage(item)}
+                                                        className="text-[10px] uppercase tracking-widest text-cyan-400 hover:text-cyan-300 transition-colors"
+                                                    >
+                                                        {scheduleCopy.edit}
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => void deleteScheduledMessage(item.id)}
+                                                        className="text-[10px] uppercase tracking-widest text-red-400 hover:text-red-300 transition-colors"
+                                                    >
+                                                        {scheduleCopy.delete}
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => void cancelScheduledMessage(item.id)}
+                                                        className="text-[10px] uppercase tracking-widest text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors"
+                                                    >
+                                                        {scheduleCopy.cancel}
+                                                    </button>
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
@@ -1019,6 +1167,22 @@ export default function Dashboard() {
                                 >
                                     <span className="text-sm font-medium">{t.privacy_policy}</span>
                                     <Shield className="w-4 h-4 opacity-70" />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => openInfoPage("/support")}
+                                    className="w-full flex items-center justify-between text-[var(--app-text-dim)] hover:text-[var(--app-text)] transition-colors"
+                                >
+                                    <span className="text-sm font-medium">{t.support}</span>
+                                    <Info className="w-4 h-4 opacity-70" />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => openInfoPage("/delete-account")}
+                                    className="w-full flex items-center justify-between text-red-400 hover:text-red-300 transition-colors"
+                                >
+                                    <span className="text-sm font-medium">{t.delete_account}</span>
+                                    <Trash2 className="w-4 h-4 opacity-70" />
                                 </button>
                             </div>
 
@@ -1048,6 +1212,16 @@ export default function Dashboard() {
 
                         <div className="pt-4">
                             <button
+                                type="button"
+                                onClick={handleDeleteAccount}
+                                disabled={isDeletingAccount}
+                                className="w-full py-4 mb-3 rounded-2xl bg-red-500/8 dark:bg-red-500/10 border border-red-500/20 dark:border-red-500/20 text-red-500 font-bold text-sm flex items-center justify-center gap-2 hover:bg-red-500/16 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                                {isDeletingAccount ? t.processing : t.delete_account}
+                            </button>
+                            <button
+                                type="button"
                                 onClick={logout}
                                 className="w-full py-4 rounded-2xl bg-red-500/10 dark:bg-red-500/10 border border-red-500/20 dark:border-red-500/20 text-red-500 font-bold text-sm flex items-center justify-center gap-2 hover:bg-red-500/20 transition-all"
                             >
@@ -1179,6 +1353,14 @@ export default function Dashboard() {
                     celebration={sendingCelebration}
                 />
             )}
+
+            <EditScheduledDeliveryModal
+                isOpen={Boolean(editingScheduledMessage)}
+                scheduledMessage={editingScheduledMessage}
+                onClose={() => setEditingScheduledMessage(null)}
+                onSave={handleSaveScheduledMessage}
+                onDelete={handleDeleteScheduledMessage}
+            />
 
             <ConfirmModal
                 isOpen={isConfirmDeleteOpen}

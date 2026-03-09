@@ -20,6 +20,7 @@ export type ScheduledMessageStatus = "scheduled" | "sent" | "failed" | "cancelle
 export interface ScheduledMessage {
     id: string;
     userId: string;
+    celebrationId?: string;
     celebrationTitle: string;
     channel: ScheduledChannel;
     recipient: string;
@@ -36,6 +37,7 @@ export interface ScheduledMessage {
 }
 
 type ScheduleMessageInput = {
+    celebrationId?: string;
     celebrationTitle: string;
     channel: ScheduledChannel;
     recipient: string;
@@ -43,6 +45,13 @@ type ScheduleMessageInput = {
     shareUrl: string;
     cardLabel: string;
     cardUrl: string;
+    scheduledAt: Date;
+};
+
+type UpdateScheduledMessageInput = {
+    channel: ScheduledChannel;
+    recipient: string;
+    shareUrl: string;
     scheduledAt: Date;
 };
 
@@ -73,6 +82,7 @@ export const useScheduledMessages = () => {
                 return {
                     id: item.id,
                     userId: raw.userId as string,
+                    celebrationId: raw.celebrationId as string | undefined,
                     celebrationTitle: raw.celebrationTitle as string,
                     channel: raw.channel as ScheduledChannel,
                     recipient: (raw.recipient as string) ?? "",
@@ -105,6 +115,7 @@ export const useScheduledMessages = () => {
         if (!userId) throw new Error("Missing user.");
         await addDoc(collection(db, COLLECTION_NAME), {
             userId,
+            ...(input.celebrationId ? { celebrationId: input.celebrationId } : {}),
             celebrationTitle: input.celebrationTitle,
             channel: input.channel,
             recipient: input.recipient,
@@ -137,6 +148,18 @@ export const useScheduledMessages = () => {
         await updateDoc(doc(db, COLLECTION_NAME, id), payload);
     };
 
+    const updateScheduledMessage = async (id: string, input: UpdateScheduledMessageInput) => {
+        await updateDoc(doc(db, COLLECTION_NAME, id), {
+            channel: input.channel,
+            recipient: input.recipient,
+            shareUrl: input.shareUrl,
+            scheduledAt: Timestamp.fromDate(input.scheduledAt),
+            status: "scheduled",
+            lastError: "",
+            updatedAt: serverTimestamp(),
+        });
+    };
+
     const cancelScheduledMessage = async (id: string) => {
         await updateScheduledMessageStatus(id, "cancelled");
     };
@@ -150,6 +173,7 @@ export const useScheduledMessages = () => {
         loading: userId ? loading : false,
         error: userId ? error : null,
         createScheduledMessage,
+        updateScheduledMessage,
         updateScheduledMessageStatus,
         cancelScheduledMessage,
         deleteScheduledMessage,
