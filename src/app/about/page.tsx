@@ -9,7 +9,7 @@ export default function AboutPage() {
     const isEs = language === "es";
 
     return (
-        <main className="relative min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] px-6 py-8 sm:px-10">
+        <main className="relative min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] px-6 pt-20 sm:pt-8 pb-8 sm:px-10">
             <PageCloseButton className="fixed top-[max(1rem,env(safe-area-inset-top))] right-6 sm:right-10 z-30" />
             <div className="max-w-3xl mx-auto space-y-6">
                 <header className="space-y-2">

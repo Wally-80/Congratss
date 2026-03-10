@@ -72,13 +72,6 @@ export default function OnboardingModal({
             focusTab: "settings" as const,
         },
         {
-            id: "scheduled-deliveries",
-            selector: "[data-tour='scheduled-deliveries-panel']",
-            title: t.onboarding_tour_scheduled_title,
-            description: t.onboarding_tour_scheduled_desc,
-            focusTab: "settings" as const,
-        },
-        {
             id: "notifications",
             selector: "[data-tour='notifications-toggle']",
             title: t.onboarding_tour_notifications_title,

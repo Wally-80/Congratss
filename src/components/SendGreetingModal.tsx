@@ -11,7 +11,6 @@ import { type CelebrationType } from "@/hooks/useCelebrations";
 import { type ScheduledChannel, useScheduledMessages } from "@/hooks/useScheduledMessages";
 
 interface SendGreetingModalProps {
-
     isOpen: boolean;
     onClose: () => void;
     celebration: {
@@ -20,8 +19,8 @@ interface SendGreetingModalProps {
         type: CelebrationType;
         customTypeLabel?: string;
     } | null;
+    startInScheduleMode?: boolean;
 }
-
 
 const MESSAGE_TEMPLATES = {
     en: [
@@ -118,7 +117,7 @@ const CARD_LABEL_ALIASES: Record<string, string> = {
     "Party Puppy": "Party Puppy",
     "Perrito de Fiesta": "Party Puppy",
     "Gamer Cat": "Gamer Cat",
-    "Gato Gamer": "Gamer Cat",
+    "Gato Gamer": "Gato Gamer",
     "Beer Signal": "Beer Signal",
     "Senal de Cerveza": "Beer Signal",
     "Upload Your Own": "Upload Your Own",
@@ -184,7 +183,7 @@ const getAppShareBaseUrl = () => {
     return "https://congratss.com";
 };
 
-export default function SendGreetingModal({ isOpen, onClose, celebration }: SendGreetingModalProps) {
+export default function SendGreetingModal({ isOpen, onClose, celebration, startInScheduleMode = false }: SendGreetingModalProps) {
     const { language } = useAuth();
     const { theme } = useTheme();
     const { createScheduledMessage } = useScheduledMessages();
@@ -197,7 +196,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
     const [activeCategory, setActiveCategory] = useState(ALL_CATEGORY_KEY);
     const [message, setMessage] = useState("");
     const [sharing, setSharing] = useState(false);
-    const [isScheduleMode, setIsScheduleMode] = useState(false);
+    const [isScheduleMode, setIsScheduleMode] = useState(startInScheduleMode);
     const [scheduleChannel, setScheduleChannel] = useState<ScheduledChannel>("whatsapp");
     const [scheduleRecipient, setScheduleRecipient] = useState("");
     const [scheduleDate, setScheduleDate] = useState(() => toDateInputValue(new Date(Date.now() + 60 * 60 * 1000)));
@@ -389,9 +388,9 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
         setScheduleTime(toTimeInputValue(nextHour));
         setScheduleRecipient("");
         setScheduleChannel("whatsapp");
-        setIsScheduleMode(false);
+        setIsScheduleMode(startInScheduleMode);
         setInfo(null);
-    }, [isOpen]);
+    }, [isOpen, startInScheduleMode]);
 
     const localeFilteredCards = useMemo(
         () => greetingCards.filter((card) => isCardVisibleForLanguage(card, language)),
@@ -947,4 +946,3 @@ export default function SendGreetingModal({ isOpen, onClose, celebration }: Send
         </div>
     );
 }
-

@@ -9,7 +9,7 @@ export default function PrivacyPage() {
     const isEs = language === "es";
 
     return (
-        <main className="relative min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] px-6 py-8 sm:px-10">
+        <main className="relative min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] px-6 pt-20 sm:pt-8 pb-8 sm:px-10">
             <PageCloseButton className="fixed top-[max(1rem,env(safe-area-inset-top))] right-6 sm:right-10 z-30" />
             <div className="max-w-3xl mx-auto space-y-6">
                 <header className="space-y-2">
@@ -64,29 +64,6 @@ export default function PrivacyPage() {
                             ? "Puedes editar o eliminar tus celebraciones dentro de la app en cualquier momento. Si solicitas eliminacion de cuenta, eliminamos la cuenta y los datos asociados que no estemos obligados legalmente a conservar."
                             : "You can edit or delete your celebrations inside the app at any time. If you request account deletion, we delete the account and associated data that we are not legally required to retain."}
                     </p>
-                </section>
-
-                <section className="glass-card premium-border neon-border-cyan p-6 space-y-3">
-                    <h2 className="text-lg font-semibold">{isEs ? "Soporte y Eliminacion de Cuenta" : "Support and Account Deletion"}</h2>
-                    <p className="text-sm text-[var(--app-text-dim)]">
-                        {isEs
-                            ? "Puedes contactarnos para soporte o para solicitar eliminacion de cuenta usando las paginas siguientes."
-                            : "You can contact us for support or request account deletion using the pages below."}
-                    </p>
-                    <div className="flex flex-wrap gap-3 text-sm">
-                        <Link
-                            href="/support"
-                            className="inline-flex items-center rounded-xl border border-[var(--glass-border)] px-4 py-2 font-semibold text-[var(--app-text-dim)] hover:text-[var(--app-text)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-                        >
-                            {isEs ? "Soporte" : "Support"}
-                        </Link>
-                        <Link
-                            href="/delete-account"
-                            className="inline-flex items-center rounded-xl border border-[var(--glass-border)] px-4 py-2 font-semibold text-[var(--app-text-dim)] hover:text-[var(--app-text)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-                        >
-                            {isEs ? "Eliminar Cuenta" : "Delete Account"}
-                        </Link>
-                    </div>
                 </section>
 
                 <div className="pt-2">

@@ -309,14 +309,6 @@ export default function AuthPage() {
                         <Link href="/privacy" className="text-[var(--app-text-dim)]/60 hover:text-[var(--app-text)] transition-colors">
                             {t.privacy_policy}
                         </Link>
-                        <span className="text-[var(--app-text-dim)]/20">|</span>
-                        <Link href="/support" className="text-[var(--app-text-dim)]/60 hover:text-[var(--app-text)] transition-colors">
-                            {t.support}
-                        </Link>
-                        <span className="text-[var(--app-text-dim)]/20">|</span>
-                        <Link href="/delete-account" className="text-[var(--app-text-dim)]/60 hover:text-[var(--app-text)] transition-colors">
-                            {t.delete_account}
-                        </Link>
                     </div>
                 </div>
             </div>

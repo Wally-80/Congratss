@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { translations } from "@/lib/translations";
 import { type CelebrationReminderTiming, type CelebrationType } from "@/hooks/useCelebrations";
+import { type ScheduledMessage } from "@/hooks/useScheduledMessages";
 import { type CelebrationRecurrence } from "@/lib/dateUtils";
 
 type AddCelebrationData = {
@@ -35,9 +36,23 @@ interface AddCelebrationModalProps {
     onAdd: (data: AddCelebrationData) => Promise<void>;
     initialData?: InitialCelebrationData | null;
     defaultDate?: string;
+    scheduledDelivery?: ScheduledMessage | null;
+    onEditScheduledDelivery?: (message: ScheduledMessage) => void;
+    onDeleteScheduledDelivery?: (message: ScheduledMessage) => void;
+    onScheduleDelivery?: (celebration: InitialCelebrationData) => void;
 }
 
-export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialData, defaultDate = "" }: AddCelebrationModalProps) {
+export default function AddCelebrationModal({
+    isOpen,
+    onClose,
+    onAdd,
+    initialData,
+    defaultDate = "",
+    scheduledDelivery = null,
+    onEditScheduledDelivery,
+    onDeleteScheduledDelivery,
+    onScheduleDelivery,
+}: AddCelebrationModalProps) {
     const { language } = useAuth();
     const { theme } = useTheme();
     const t = translations[language];
@@ -288,6 +303,50 @@ export default function AddCelebrationModal({ isOpen, onClose, onAdd, initialDat
                                     {recurrence === "one_time" ? t.reminder_timing_helper_one_time : t.reminder_timing_helper}
                                 </p>
                             </div>
+
+                            {initialData && scheduledDelivery && (
+                                <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/5 p-4">
+                                    <p className={`text-[10px] font-bold uppercase tracking-widest ${textMutedClass}`}>{t.scheduled_delivery_title}</p>
+                                    <p className="mt-2 text-xs text-[var(--app-text)]">
+                                        {new Date(scheduledDelivery.scheduledAt).toLocaleString()} · {scheduledDelivery.channel}
+                                    </p>
+                                    <p className="text-[10px] text-[var(--app-text-muted)] mt-1">{scheduledDelivery.recipient}</p>
+                                    <div className="mt-3 flex items-center gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => onEditScheduledDelivery?.(scheduledDelivery)}
+                                            className="text-[10px] uppercase tracking-widest text-cyan-400 hover:text-cyan-300 transition-colors"
+                                        >
+                                            {t.scheduled_delivery_edit}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => onDeleteScheduledDelivery?.(scheduledDelivery)}
+                                            className="text-[10px] uppercase tracking-widest text-red-400 hover:text-red-300 transition-colors"
+                                        >
+                                            {t.scheduled_delivery_delete}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {initialData && !scheduledDelivery && (
+                                <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/5 p-4">
+                                    <p className={`text-[10px] font-bold uppercase tracking-widest ${textMutedClass}`}>{t.scheduled_delivery_title}</p>
+                                    <p className="mt-2 text-xs text-[var(--app-text)]">
+                                        {t.no_scheduled_delivery}
+                                    </p>
+                                    <div className="mt-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => onScheduleDelivery?.(initialData)}
+                                            className="text-[10px] uppercase tracking-widest text-cyan-400 hover:text-cyan-300 transition-colors"
+                                        >
+                                            {t.scheduled_delivery_add}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div className="pt-4 mt-2 border-t border-black/10 dark:border-white/10 bg-gradient-to-t from-[var(--pane-bg)] to-transparent">

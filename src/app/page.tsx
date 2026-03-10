@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { Plus, Home as HomeIcon, Calendar as CalendarIcon, Settings, Search, LogOut, Send, ChevronLeft, ChevronRight, Pencil, Trash2, Info, Shield, Download, Clock3 } from "lucide-react";
+import { Plus, Home as HomeIcon, Calendar as CalendarIcon, Settings, Search, LogOut, Send, ChevronLeft, ChevronRight, Pencil, Trash2, Info, Shield, Download } from "lucide-react";
 import CelebrationCard from "@/components/CelebrationCard";
 import AddCelebrationModal from "@/components/AddCelebrationModal";
 import EditScheduledDeliveryModal from "@/components/EditScheduledDeliveryModal";
@@ -54,37 +54,14 @@ export default function Dashboard() {
     const { user, isAdmin, language, notificationsEnabled, onboardingCompleted, setNotificationsEnabled, setLanguage, loading: authLoading, logout, updateUserProfile, completeOnboarding, deleteAccount } = useAuth();
     const t = translations[language];
     const isDarkMode = theme === "dark";
-    const scheduleCopy = language === "es"
-        ? {
-            panelTitle: "Envios Programados",
-            panelEmpty: "No tienes envios programados.",
-            panelNote: "Los envios automaticos se procesan mientras la app esta activa.",
-            edit: "Editar",
-            delete: "Eliminar",
-            cancel: "Cancelar",
-            channelWhatsapp: "WhatsApp",
-            channelEmail: "Email",
-            channelSms: "SMS",
-        }
-        : {
-            panelTitle: "Scheduled Deliveries",
-            panelEmpty: "No scheduled deliveries yet.",
-            panelNote: "Automatic sends are processed while the app is active.",
-            edit: "Edit",
-            delete: "Delete",
-            cancel: "Cancel",
-            channelWhatsapp: "WhatsApp",
-            channelEmail: "Email",
-            channelSms: "SMS",
-        };
-
     const { celebrations, loading: dataLoading, error: dataError, addCelebration, updateCelebration, deleteCelebration } = useCelebrations();
-    const { scheduledMessages, updateScheduledMessage, updateScheduledMessageStatus, cancelScheduledMessage, deleteScheduledMessage } = useScheduledMessages();
+    const { scheduledMessages, updateScheduledMessage, updateScheduledMessageStatus, deleteScheduledMessage } = useScheduledMessages();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSendGreetingModalOpen, setIsSendGreetingModalOpen] = useState(false);
     const [editingScheduledMessage, setEditingScheduledMessage] = useState<ScheduledMessage | null>(null);
     const [editingCelebration, setEditingCelebration] = useState<EditableCelebration | null>(null);
     const [sendingCelebration, setSendingCelebration] = useState<SendGreetingTarget | null>(null);
+    const [schedulingCelebration, setSchedulingCelebration] = useState(false);
     const [addModalDefaultDate, setAddModalDefaultDate] = useState("");
     const [activeTab, setActiveTab] = useState("home");
     const [searchQuery, setSearchQuery] = useState("");
@@ -366,53 +343,42 @@ export default function Dashboard() {
         () => celebrations.some((item) => item.daysLeft === 0),
         [celebrations]
     );
-    const upcomingScheduledMessages = useMemo(
-        () => scheduledMessages
-            .filter((item) => item.status === "scheduled")
+    const scheduledMessageIndex = useMemo(() => {
+        const nextByCelebrationId = new Map<string, ScheduledMessage>();
+        const legacyByTitle = new Map<string, ScheduledMessage>();
+
+        scheduledMessages
+            .filter((item) => item.status === "scheduled" && item.scheduledAt.getTime() >= Date.now())
             .sort((a, b) => a.scheduledAt.getTime() - b.scheduledAt.getTime())
-            .slice(0, 5),
-        [scheduledMessages]
-    );
-    const scheduledMessageNoteByCelebrationId = useMemo(() => {
-        const nextByCelebrationId = new Map<string, string>();
-        const legacyByTitle = new Map<string, string>();
+            .forEach((item) => {
+                if (item.celebrationId) {
+                    if (!nextByCelebrationId.has(item.celebrationId)) {
+                        nextByCelebrationId.set(item.celebrationId, item);
+                    }
+                    return;
+                }
+
+                if (!legacyByTitle.has(item.celebrationTitle)) {
+                    legacyByTitle.set(item.celebrationTitle, item);
+                }
+            });
+
+        return { nextByCelebrationId, legacyByTitle };
+    }, [scheduledMessages]);
+
+    const formatScheduledNote = useCallback((message: ScheduledMessage) => {
         const formatter = new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
             month: "short",
             day: "numeric",
             hour: "numeric",
             minute: "2-digit",
         });
-
-        scheduledMessages
-            .filter((item) => item.status === "scheduled" && item.scheduledAt.getTime() >= Date.now())
-            .sort((a, b) => a.scheduledAt.getTime() - b.scheduledAt.getTime())
-            .forEach((item) => {
-                const formattedDate = formatter.format(item.scheduledAt);
-                const note = (language === "es"
-                    ? "Ya programado para {date}."
-                    : "Already scheduled for {date}.")
-                    .replace("{date}", formattedDate);
-
-                if (item.celebrationId) {
-                    if (!nextByCelebrationId.has(item.celebrationId)) {
-                        nextByCelebrationId.set(item.celebrationId, note);
-                    }
-                    return;
-                }
-
-                if (!legacyByTitle.has(item.celebrationTitle)) {
-                    legacyByTitle.set(item.celebrationTitle, note);
-                }
-            });
-
-        return { nextByCelebrationId, legacyByTitle };
-    }, [language, scheduledMessages]);
-
-    const getScheduledChannelLabel = (channel: string) => {
-        if (channel === "whatsapp") return scheduleCopy.channelWhatsapp;
-        if (channel === "email") return scheduleCopy.channelEmail;
-        return scheduleCopy.channelSms;
-    };
+        const formattedDate = formatter.format(message.scheduledAt);
+        return (language === "es"
+            ? "Ya programado para {date}."
+            : "Already scheduled for {date}.")
+            .replace("{date}", formattedDate);
+    }, [language]);
 
     const handleUpdateProfile = async (displayName: string, photoURL: string) => {
         await updateUserProfile(displayName, photoURL);
@@ -585,6 +551,13 @@ export default function Dashboard() {
         setIsSendGreetingModalOpen(true);
     };
 
+    const openScheduleNewModal = (celebration: EditableCelebration) => {
+        setIsModalOpen(false);
+        setSendingCelebration(celebration);
+        setSchedulingCelebration(true);
+        setIsSendGreetingModalOpen(true);
+    };
+
     const handleSaveScheduledMessage = async (input: {
         id: string;
         channel: ScheduledMessage["channel"];
@@ -740,29 +713,30 @@ export default function Dashboard() {
                                         </p>
                                     </div>
                                 ) : (
-                                    filteredCelebrations.map((item) => (
-                                        <CelebrationCard
-                                            key={item.id}
-                                            id={item.id}
-                                            title={item.title}
-                                            daysLeft={item.daysLeft}
-                                            date={item.date}
-                                            rawDate={item.rawDate}
-                                            percentage={item.percentage}
-                                            type={item.type}
-                                            customTypeLabel={item.customTypeLabel}
-                                            recurrence={item.recurrence}
-                                            reminderTiming={item.reminderTiming}
-                                            isPast={item.isPast}
-                                            scheduledDeliveryNote={
-                                                scheduledMessageNoteByCelebrationId.nextByCelebrationId.get(item.id)
-                                                ?? scheduledMessageNoteByCelebrationId.legacyByTitle.get(item.title)
-                                            }
-                                            onDelete={handleDeleteClick}
-                                            onEdit={openEditModal}
-                                            onSendGreeting={openSendGreetingModal}
-                                        />
-                                    ))
+                                    filteredCelebrations.map((item) => {
+                                        const scheduledMessage = scheduledMessageIndex.nextByCelebrationId.get(item.id)
+                                            ?? scheduledMessageIndex.legacyByTitle.get(item.title);
+                                        return (
+                                            <CelebrationCard
+                                                key={item.id}
+                                                id={item.id}
+                                                title={item.title}
+                                                daysLeft={item.daysLeft}
+                                                date={item.date}
+                                                rawDate={item.rawDate}
+                                                percentage={item.percentage}
+                                                type={item.type}
+                                                customTypeLabel={item.customTypeLabel}
+                                                recurrence={item.recurrence}
+                                                reminderTiming={item.reminderTiming}
+                                                isPast={item.isPast}
+                                                scheduledDeliveryNote={scheduledMessage ? formatScheduledNote(scheduledMessage) : undefined}
+                                                onDelete={handleDeleteClick}
+                                                onEdit={openEditModal}
+                                                onSendGreeting={openSendGreetingModal}
+                                            />
+                                        );
+                                    })
                                 )}
 
 
@@ -1104,52 +1078,6 @@ export default function Dashboard() {
                                 <Info className="w-4 h-4 opacity-70" />
                             </button>
 
-                            <div data-tour="scheduled-deliveries-panel" className="glass-card p-4 flex flex-col gap-3 premium-border neon-border-cyan">
-                                <div className="flex items-center justify-between">
-                                    <h4 className="text-[10px] font-bold text-[var(--app-text-muted)] uppercase tracking-[0.2em]">{scheduleCopy.panelTitle}</h4>
-                                    <Clock3 className="w-4 h-4 text-cyan-400" />
-                                </div>
-                                {upcomingScheduledMessages.length === 0 ? (
-                                    <p className="text-xs text-[var(--app-text-dim)]">{scheduleCopy.panelEmpty}</p>
-                                ) : (
-                                    <div className="space-y-2">
-                                        {upcomingScheduledMessages.map((item) => (
-                                            <div key={item.id} className="rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 p-3">
-                                                <p className="text-xs font-semibold text-[var(--app-text)]">{item.celebrationTitle}</p>
-                                                <p className="text-[10px] text-[var(--app-text-dim)] mt-1">
-                                                    {new Date(item.scheduledAt).toLocaleString()} - {getScheduledChannelLabel(item.channel)}
-                                                </p>
-                                                <p className="text-[10px] text-[var(--app-text-muted)] truncate mt-1">{item.recipient}</p>
-                                                <div className="mt-3 flex items-center gap-3">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setEditingScheduledMessage(item)}
-                                                        className="text-[10px] uppercase tracking-widest text-cyan-400 hover:text-cyan-300 transition-colors"
-                                                    >
-                                                        {scheduleCopy.edit}
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => void deleteScheduledMessage(item.id)}
-                                                        className="text-[10px] uppercase tracking-widest text-red-400 hover:text-red-300 transition-colors"
-                                                    >
-                                                        {scheduleCopy.delete}
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => void cancelScheduledMessage(item.id)}
-                                                        className="text-[10px] uppercase tracking-widest text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors"
-                                                    >
-                                                        {scheduleCopy.cancel}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                                <p className="text-[10px] text-[var(--app-text-muted)]">{scheduleCopy.panelNote}</p>
-                            </div>
-
                             <div className="glass-card p-4 flex flex-col gap-3 premium-border neon-border-cyan">
                                 <h4 className="text-[10px] font-bold text-[var(--app-text-muted)] uppercase tracking-[0.2em]">{t.legal_info}</h4>
                                 <button
@@ -1167,22 +1095,6 @@ export default function Dashboard() {
                                 >
                                     <span className="text-sm font-medium">{t.privacy_policy}</span>
                                     <Shield className="w-4 h-4 opacity-70" />
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => openInfoPage("/support")}
-                                    className="w-full flex items-center justify-between text-[var(--app-text-dim)] hover:text-[var(--app-text)] transition-colors"
-                                >
-                                    <span className="text-sm font-medium">{t.support}</span>
-                                    <Info className="w-4 h-4 opacity-70" />
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => openInfoPage("/delete-account")}
-                                    className="w-full flex items-center justify-between text-red-400 hover:text-red-300 transition-colors"
-                                >
-                                    <span className="text-sm font-medium">{t.delete_account}</span>
-                                    <Trash2 className="w-4 h-4 opacity-70" />
                                 </button>
                             </div>
 
@@ -1334,6 +1246,14 @@ export default function Dashboard() {
                 onAdd={handleAddOrEdit}
                 initialData={editingCelebration}
                 defaultDate={addModalDefaultDate}
+                scheduledDelivery={editingCelebration
+                    ? (scheduledMessageIndex.nextByCelebrationId.get(editingCelebration.id)
+                        ?? scheduledMessageIndex.legacyByTitle.get(editingCelebration.title)
+                        ?? null)
+                    : null}
+                onEditScheduledDelivery={(message) => setEditingScheduledMessage(message)}
+                onDeleteScheduledDelivery={(message) => void handleDeleteScheduledMessage(message.id)}
+                onScheduleDelivery={openScheduleNewModal}
             />
 
             <EditProfileModal
@@ -1349,8 +1269,12 @@ export default function Dashboard() {
             {isSendGreetingModalOpen && (
                 <SendGreetingModal
                     isOpen={isSendGreetingModalOpen}
-                    onClose={() => setIsSendGreetingModalOpen(false)}
+                    onClose={() => {
+                        setIsSendGreetingModalOpen(false);
+                        setSchedulingCelebration(false);
+                    }}
                     celebration={sendingCelebration}
+                    startInScheduleMode={schedulingCelebration}
                 />
             )}
 

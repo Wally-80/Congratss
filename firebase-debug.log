@@ -1,0 +1,533 @@
+[debug] [2026-03-09T17:35:07.058Z] ----------------------------------------------------------------------
+[debug] [2026-03-09T17:35:07.067Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\walte\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting
+[debug] [2026-03-09T17:35:07.067Z] CLI Version:   15.7.0
+[debug] [2026-03-09T17:35:07.068Z] Platform:      win32
+[debug] [2026-03-09T17:35:07.068Z] Node Version:  v24.13.0
+[debug] [2026-03-09T17:35:07.068Z] Time:          Mon Mar 09 2026 13:35:07 GMT-0400 (Eastern Daylight Time)
+[debug] [2026-03-09T17:35:07.068Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-03-09T17:35:07.074Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2026-03-09T17:35:16.337Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-03-09T17:35:16.338Z] > authorizing via signed-in user (walterciitop@gmail.com)
+[debug] [2026-03-09T17:35:16.339Z] [iam] checking project gratzz for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-03-09T17:35:16.341Z] Checked if tokens are valid: false, expires at: 1772716174668
+[debug] [2026-03-09T17:35:16.341Z] Checked if tokens are valid: false, expires at: 1772716174668
+[debug] [2026-03-09T17:35:16.342Z] > refreshing access token with scopes: []
+[debug] [2026-03-09T17:35:16.345Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-03-09T17:35:16.345Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-03-09T17:35:19.799Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-03-09T17:35:19.799Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-03-09T17:35:19.815Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/gratzz:testIamPermissions [none]
+[debug] [2026-03-09T17:35:19.815Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/gratzz:testIamPermissions  x-goog-user-project=gratzz
+[debug] [2026-03-09T17:35:19.815Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/gratzz:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-03-09T17:35:19.905Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-03-09T17:35:19.906Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2026-03-09T17:35:23.433Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/gratzz:testIamPermissions 200
+[debug] [2026-03-09T17:35:23.433Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/gratzz:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-03-09T17:35:23.435Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:23.435Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:23.436Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/gratzz [none]
+[debug] [2026-03-09T17:35:27.245Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/gratzz 200
+[debug] [2026-03-09T17:35:27.245Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/gratzz {"projectId":"gratzz","projectNumber":"1051507062109","displayName":"Congratss","name":"projects/gratzz","resources":{"hostingSite":"gratzz"},"state":"ACTIVE","etag":"1_bf2d03a6-172c-4252-9d1f-65e07c153e59"}
+[info] 
+[info] === Deploying to 'gratzz'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2026-03-09T17:35:27.256Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:27.256Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:27.257Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/gratzz/versions [none]
+[debug] [2026-03-09T17:35:27.257Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/gratzz/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2026-03-09T17:35:31.553Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/gratzz/versions 200
+[debug] [2026-03-09T17:35:31.553Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/gratzz/versions {"name":"projects/1051507062109/sites/gratzz/versions/983343e836adec58","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase"}}
+[info] i  hosting[gratzz]: beginning deploy... 
+[info] i  hosting[gratzz]: found 144 files in out 
+[debug] [2026-03-09T17:35:31.604Z] [hosting] uploading with 200 concurrency
+[debug] [2026-03-09T17:35:31.813Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:31.813Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:31.816Z] [hosting] hash cache [b3V0] stored for 144 files
+[debug] [2026-03-09T17:35:31.817Z] [hosting][hash queue][FINAL] {"max":160,"min":4,"avg":54.90972222222223,"active":0,"complete":144,"success":144,"errored":0,"retried":0,"total":144,"elapsed":205}
+[debug] [2026-03-09T17:35:31.818Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/1051507062109/sites/gratzz/versions/983343e836adec58:populateFiles [none]
+[debug] [2026-03-09T17:35:31.818Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/1051507062109/sites/gratzz/versions/983343e836adec58:populateFiles {"files":{"/window.svg":"6bd2003bd35bb32c1c0d99ab3aeac0cc1edaefd79f27df1d954bc87184048d74","/sw.js":"492d9db4a5519375593e48099c749a1b89f064637ad7325fe4340818489b3437","/pwa-512.png":"0a367cbe624c9e2d53d4ee5cabedaed2c61438ab44614145b52286c5a4294549","/pwa-192.png":"1a1a83c7799df051f2a85b54406a73fefdabf7d8ddb6bb9874af29443ea9308a","/logo.png":"142be36f43283d4c40bfd264ad8232afd8592212c7b922d64fc437ddb86e6159","/logo-256.png":"92400984286ad54439daa90b5d8c8ade8391bc884416b54935c55b86ca724950","/greeting_retirement.png":"ec3b6f0b7c7bfdd9edd961603cf914b8f798ac7959a083b18abbb7cd7156f1d0","/greeting_party.png":"abb9f0eafb1ab921e6bac0324311f61459e69f3bbc6bec8d2e989981f8d23a01","/greeting_gratzz.png":"b1eabe0288a15fd4ef01eb452aa54fa7bd56423c540346d7e35af77f2a9f0fc9","/greeting_funny_grandpa.png":"b98efc1be4e2dad41bc55f496281b58fb7abc3a206b51f7db4da89c4d7ea04e1","/greeting_funny_dog.png":"f36c6fc3ee09b8876e52af18a9d4f063d20d682d97d8645151d4b784cd971716","/greeting_funny_cat_pizza.png":"5da6bf1025981733f4a1d269a7b086e90a46c422552cc5fa0877d9d665460ca2","/greeting_funny_beer_signal.png":"c08c33513af4cd3027e3616f27378d83fbc0e2a02b2a2dcdf4ea33abf59e746d","/greeting_flowers.png":"5d76fd4a58bcd27c8a2c774192fbd4c6c04d761f9463335b682dba0acd199c17","/greeting_congrats_modern.png":"81f8d21923971fad963a4e5bacfe0b94711ad7fc711c678ad4ceaeba703dd634","/greeting_cake.png":"c4d82c289180521b6f8961329a170c1c04edd9616d231c2b3f9a6b647d04ea8a","/greeting_balloons.png":"70564b539f4ea5d3a6a6dc0c984378664621325e70135926936cc153e17dc8dc","/greeting_anniversary_gold.png":"511e8e8de6befff6036c813afb543f3ce6d2d72369d1209dbd7664c94061f99c","/globe.svg":"6502a3e6120bf2d6e8417e7c40bb57fb8a6954de9c86d3f43076a75b60cd23a2","/file.svg":"5a09df6187e21aa9a7d05094389385876ac93c818e1dcbb77a26a8fe408bf79c","/favicon.ico":"087da371d3bec6a114e6b6348cc710a08bd60cfb64d86a70d79b49bc619abd4a","/favicon-32x32.png":"9fccfabe78da9e9a9d297e05117ea0cf727ade332df3fff6ce263f823e9670c4","/favicon-16x16.png":"95bac4a5a93891526264d26531d8f67a612d03f50e1ac26d01b6d28a354a87a4","/celebration_bg.png":"1d8b45a4231f56567845a43753e0a617263cba297e9a7ea65d044da86d2bfc20","/apple-touch-icon.png":"74725b1ccaaf568e17c721668aaa3f203d666399f5b546ece216b4b727f204b6","/__next._tree.txt":"52e5cec84dcbed0e3dc7d25a48037ccd7268f64ed9a37e79f4197040fe7f031b","/__next.__PAGE__.txt":"9ce9f91232769f4499eef590bb239c13949ffb9d5399ab9f43f9a6000b44bcfa","/__next._head.txt":"9392de302b2e82683afb1603530a81a16a70b3e145e838adb34cb24fca1adfd5","/__next._index.txt":"a388a853c843846c1231d12f076c645ea95f36f782bcccc24abccc54b10b6dd8","/__next._full.txt":"db5453d40175a861856ab840e699a74a03c6f415431e615b2d4e7749ff0122b5","/_not-found.html":"7b943d1a8a23e52d37fadc9e88418732fc31e7a14b48195366a6f671096d4e81","/support.txt":"e7e3b9f1935cb7ca61bc4f25c7b7972b6a72a3ca914910fc9bc887d6e48c9cf0","/_not-found.txt":"aba07ee5946771d7a3d09c834a7ef609cb0812cbb59af07aca4cf6eee730581a","/support.html":"86206b0459de16e24bd093e1c236c059da87138bc2ff54b8f86fe47224de52a0","/privacy.txt":"41367eb2597c321bf98cfa46755f131ec5367b3bccc6bdab5067837e97f0fded","/manifest.json":"ebd3f3e980cd9aba3eddea4fb42c5ac8a5fd93d485c816faa2706e5ca4daa3d2","/login.txt":"490335e5eba794bcc28297f58b9af4fccf9efe65ed9e23ea826583813b012b20","/privacy.html":"c3e57206fea69640768390f035445e5a284cbf8bfd6d020a1c7a7ef1087e3560","/login.html":"b8769386a58d8a7840165063caa7f4fab8e24e3dd5ae29e410ac126e41b17c3a","/index.txt":"db5453d40175a861856ab840e699a74a03c6f415431e615b2d4e7749ff0122b5","/delete-account.txt":"0942ffa7ce91bc34ab1d8c7cf1902cddbc79b46e44426f143e9bf399f91744d9","/card.txt":"a7aa16c2b0706c181d8b06be783dd04c5715ce15b8edd255fbebb6e7edbf2813","/index.html":"a2c5b6f7cb9d8f9e68133af4cd288ca5b5ce2d257da8724c9c3ae34c359fdd8d","/delete-account.html":"044cfa3996bb8cc1ede93dcf7e11dc8e0ea25a7db66d433c37e6819b48fe8093","/card.html":"7de31eaa687df8fd38e88f4870eb87915ebfc4dc39b2f496e58b7b24f93edcee","/calendar-styles.txt":"2eb067782e126a2a83f6b4c05804486698fa9a0df42e54a8d53f279260610377","/background-preview.txt":"38c9282269cb52e2cc6a95a27e58da6a7ebc897d9a07e937d9de0bbf03c5307c","/auth.txt":"ac2bdaa5f76c049cee2ef7cbceb1789d8fca8a1a5fc36d97baf57765bd33a7a9","/about.txt":"56df919cc66528f39853cc94fa540a43c70db41cfea39b44fb8f1b941f921c5a","/background-preview.html":"add43ddde1c0eb0415be5e5876b71744f21cf6767a57de269f56669584c90e65","/auth.html":"2baf990832c2ba524cdb66d8831f3d6871ba59c5b16be31d6b05386447a2ac0f","/_not-found/__next._tree.txt":"f654fe41c12c0f9d6adc952f75d53ac86645d6f30d54f49372d6dce3c4d65e45","/404.html":"7b943d1a8a23e52d37fadc9e88418732fc31e7a14b48195366a6f671096d4e81","/about.html":"b163e2f44fe0c544da7e6f207121c8a62e4c70398c1f112ea300d1e44a85cc43","/_not-found/__next._not-found.txt":"41fbf4907f900e1e8655cf5485d001ad887f91cb74d3a871dd8b77dd9deb861a","/_not-found/__next._index.txt":"d7c46abe3cbb9dbff7f32abb3b6876c19f59e671579e93d0139160f7ca523eed","/_not-found/__next._head.txt":"c07c127a7ca6208cba97a634dd52ab44f56d67286f6f723043ee7001679aa3ea","/_not-found/__next._not-found/__PAGE__.txt":"689525c406d54db34032130ece9b6c848946c613d85887f1d1e6e810460ddc80","/_not-found/__next._full.txt":"aba07ee5946771d7a3d09c834a7ef609cb0812cbb59af07aca4cf6eee730581a","/_next/static/chunks/ff1a16fafef87110.js":"1c5ce9de9f2087594a99c79ed2344979288c2efaeb57adf3aecb7d6c8dfa5bcf","/_next/static/chunks/turbopack-bbdbfdeb8b65619f.js":"259982a725b05df1faf107a07c24c9560a7e7d80a67f493370d027cccddf3c2e","/_next/static/chunks/e7a4e5dc04bd0444.js":"1a57e4ee25de398e8a8789faef7b4a1dc70760de75a6136b3fd3c537ec0ba4ea","/_next/static/chunks/f091501564eb2ea3.js":"6f3b0c8b8ddd599c7f117848b5b8ce3b7eebc1beea111a55bff9f509041f33fb","/_next/static/chunks/e21fb0df303bd001.js":"ad2fee4057c815ce66749851a19b3363e40025bdd1940864d1db221a59c957df","/_next/static/chunks/c9b3087bd2bcc73e.js":"2e9d1d41f9c417f4792a1fcd6e6b3ce8c585bd1fe98683ae9930a954baf96a7d","/_next/static/chunks/c38f82cea8766350.js":"61ada8223aa5e7aac9144620588c97f8f23dfeeadec995b46038184d51bc505a","/_next/static/chunks/e6fd7907757836ae.js":"112fc6a39eae90f7ba65cf67ddb1bb3a4fc62689a69e6b563bcef6e00e88540b","/_next/static/chunks/d2be314c3ece3fbe.js":"57e59eea60280d8b4821797483ce89dddb4eb8fbf27f60dd186ec8f7d8d055fd","/_next/static/chunks/b73d3cf63bc150a4.js":"4bfb11b469336cf205e809987018a3ba74c588bd91bb1a6e3c751731635da481","/_next/static/chunks/c8101d24d5476ed0.js":"245223c6eaed89944d4f3a3eba084194711633ff2fbfab1a33b81b23e11821c3","/calendar-styles.html":"09d356892ce5741972ea9823cdd80d43d28bf6fbf9cffaa61709fdde7a5f7705","/_next/static/chunks/86f5f8e2c5c28f08.js":"d009d99db3c08f02bcff5ec1a092c4226a4e80d7c520d2069ae913ee460903cd","/_next/static/chunks/79ebd304cdb67484.js":"ebfd2c1328dfa73f5bfe55076b6d180fb5b7210df36371072c41b4950802acd6","/_next/static/chunks/a5190b4fb3d6e3f6.js":"ebdf524be0a5a691356f5bbfc2801be10797a6e84051aea33f24ff43edd6db48","/_next/static/chunks/67eff32f310bb70f.js":"3fd5263b2bc9b8954a40f72338a03519772368838690ea9bbfad7f08dea08f81","/_next/static/chunks/5f9b2f9528abb663.js":"196cff96f9da71c399cb927554fae7479af95ac4739abfa7486c11019441c615","/_next/static/chunks/4a749b44b2c28e67.js":"0aa61a42737d3891d5ee625b5951c214fac10f0dec6234ad14c03b83fe376392","/_next/static/chunks/1d7c138071f9495b.js":"129992ebd89df68764148fa898fed93b703c8c64da04945bc5624163647f50d9","/_next/static/chunks/5bc0b9135be44a9a.js":"710dfb9ca138aef486af21331020cb22dccf62d62ef2e45556fbea7b490fd25b","/_next/static/chunks/0d4daaef8d0326d0.js":"26c10f6be33ed4f85e16457dd876119be67674e4695e57199201d66628ad0796","/_next/static/8e3sAs-G3Jf8RWyi_JQx9/_ssgManifest.js":"dc28a4dc92fe352ed5d2201bd3972ce47691bc8e89e0400a68d1541d0567c6d5","/_next/static/8e3sAs-G3Jf8RWyi_JQx9/_clientMiddlewareManifest.json":"61663fde99b3394d71653f41c19fe91269442622a4a6695f8352a70fbf5ca4c1","/_next/static/8e3sAs-G3Jf8RWyi_JQx9/_buildManifest.js":"dcbe1c9b9159ca21caea98e1bad364012ae284e9551375ca62b83d2811efac91","/support/__next._tree.txt":"d3532cddf3ee0ac644f906e942a364dacd7437a384ee7fca3cb760ad99974206","/support/__next._index.txt":"a388a853c843846c1231d12f076c645ea95f36f782bcccc24abccc54b10b6dd8","/_next/static/chunks/00db4f030a845cc7.js":"f00ac4f23a99bf05d15a5368eead53f4dff68fed4ce30f3605a161642e1c195e","/support/__next._head.txt":"9392de302b2e82683afb1603530a81a16a70b3e145e838adb34cb24fca1adfd5","/support/__next.support.txt":"d04510771f19176109e7fa1ed117bb9cd02a3d35803a0390f61e4436d4edcab8","/support/__next._full.txt":"e7e3b9f1935cb7ca61bc4f25c7b7972b6a72a3ca914910fc9bc887d6e48c9cf0","/support/__next.support/__PAGE__.txt":"0d5e62dedd22946812cafc4a2886d3aac39cbe259871af1bbcd322f0c626d4a2","/privacy/__next._tree.txt":"b6ecdc2d8db2c6bfe089dbee0559c614af11be4a2e11d62266d2a083197d4504","/privacy/__next._index.txt":"a388a853c843846c1231d12f076c645ea95f36f782bcccc24abccc54b10b6dd8","/privacy/__next._head.txt":"9392de302b2e82683afb1603530a81a16a70b3e145e838adb34cb24fca1adfd5","/privacy/__next.privacy.txt":"d04510771f19176109e7fa1ed117bb9cd02a3d35803a0390f61e4436d4edcab8","/privacy/__next._full.txt":"41367eb2597c321bf98cfa46755f131ec5367b3bccc6bdab5067837e97f0fded","/privacy/__next.privacy/__PAGE__.txt":"070a3c7ced95f5e2c4df6a7be5ca1242916db80025f4148ace4602c631aab939","/login/__next._tree.txt":"b0db92e46811d1d95f595aab770f3bc8b1e20d4d334c5797f06518081be2ddc5","/login/__next._index.txt":"a388a853c843846c1231d12f076c645ea95f36f782bcccc24abccc54b10b6dd8","/login/__next._head.txt":"9392de302b2e82683afb1603530a81a16a70b3e145e838adb34cb24fca1adfd5","/login/__next.login.txt":"d04510771f19176109e7fa1ed117bb9cd02a3d35803a0390f61e4436d4edcab8","/login/__next._full.txt":"490335e5eba794bcc28297f58b9af4fccf9efe65ed9e23ea826583813b012b20","/delete-account/__next._tree.txt":"1275c3f0441f41d7aab76385128e4d84d29f8f112d14ffb907886a825ae697b1","/login/__next.login/__PAGE__.txt":"2ba461bf9bbe2c53cd74994ece4db7a2f931d594cf5e19d1b08c022f8b4a3a40","/delete-account/__next._index.txt":"a388a853c843846c1231d12f076c645ea95f36f782bcccc24abccc54b10b6dd8","/delete-account/__next._head.txt":"9392de302b2e82683afb1603530a81a16a70b3e145e838adb34cb24fca1adfd5","/delete-account/__next.delete-account.txt":"d04510771f19176109e7fa1ed117bb9cd02a3d35803a0390f61e4436d4edcab8","/card/__next._tree.txt":"99bb59672b8005bbf1475331165fb47e8467150e2d4ccadf491eaebb31a19677","/delete-account/__next.delete-account/__PAGE__.txt":"376771b07ba59ecf4ae6510158fa0affccaf49df976b07abee599b8e12d44328","/delete-account/__next._full.txt":"0942ffa7ce91bc34ab1d8c7cf1902cddbc79b46e44426f143e9bf399f91744d9","/_next/static/chunks/a6dad97d9634a72d.js":"18e28d3214eda45048d80d3925ea7627b809e69ad2e95f7f98459e9146a61c3d","/card/__next._index.txt":"a388a853c843846c1231d12f076c645ea95f36f782bcccc24abccc54b10b6dd8","/_next/static/chunks/a6dad97d9634a72d.js.map":"25ae05f2ece4bc46d2351a2660b3f4347f1adc4181c38f3f596f60ccd615db6f","/card/__next.card.txt":"d04510771f19176109e7fa1ed117bb9cd02a3d35803a0390f61e4436d4edcab8","/card/__next._full.txt":"a7aa16c2b0706c181d8b06be783dd04c5715ce15b8edd255fbebb6e7edbf2813","/card/__next._head.txt":"9392de302b2e82683afb1603530a81a16a70b3e145e838adb34cb24fca1adfd5","/card/__next.card/__PAGE__.txt":"c2de3994e26dd168f7c8efcad9aec8ec9734c58a49d21da75860554013eda14f","/calendar-styles/__next._tree.txt":"3bcf0f3f2127f0ed08c3e09f94784ca61635ff50a51030ea88725a4b831b9f70","/_next/static/chunks/9d43bfe4d98b41c7.css":"61533c68a4f72354fa4e66625fc832bf4c698e337c0ae7f59921c150828ab595","/_next/static/chunks/7f4411ab5f029e54.js":"d79646494a8b241b1168c9aad48cacdac09c43047f503d1516c9438e99899e2b","/calendar-styles/__next._index.txt":"a388a853c843846c1231d12f076c645ea95f36f782bcccc24abccc54b10b6dd8","/calendar-styles/__next._head.txt":"9392de302b2e82683afb1603530a81a16a70b3e145e838adb34cb24fca1adfd5","/calendar-styles/__next._full.txt":"2eb067782e126a2a83f6b4c05804486698fa9a0df42e54a8d53f279260610377","/calendar-styles/__next.calendar-styles.txt":"d04510771f19176109e7fa1ed117bb9cd02a3d35803a0390f61e4436d4edcab8","/calendar-styles/__next.calendar-styles/__PAGE__.txt":"6d7c68719c96922fb5f05b412de94f4e38bbb9dcd72cf266d5ff1281680535f5","/background-preview/__next._index.txt":"a388a853c843846c1231d12f076c645ea95f36f782bcccc24abccc54b10b6dd8","/background-preview/__next._tree.txt":"29a191d93ef20725764eab0d2426e6f99ecdca15827f3664ff1babadbf28cb3f","/background-preview/__next._head.txt":"9392de302b2e82683afb1603530a81a16a70b3e145e838adb34cb24fca1adfd5","/background-preview/__next._full.txt":"38c9282269cb52e2cc6a95a27e58da6a7ebc897d9a07e937d9de0bbf03c5307c","/background-preview/__next.background-preview.txt":"d04510771f19176109e7fa1ed117bb9cd02a3d35803a0390f61e4436d4edcab8","/background-preview/__next.background-preview/__PAGE__.txt":"81bb2cfd97ca8964066ee5c1e74494cd00db10c93db174d9c3621de0ff10650d","/auth/__next._tree.txt":"de4eea79bca86f875594f57ecebc77189f28804ea69480982885a36bf7d4342b","/auth/__next._head.txt":"9392de302b2e82683afb1603530a81a16a70b3e145e838adb34cb24fca1adfd5","/auth/__next._index.txt":"a388a853c843846c1231d12f076c645ea95f36f782bcccc24abccc54b10b6dd8","/auth/__next.auth.txt":"d04510771f19176109e7fa1ed117bb9cd02a3d35803a0390f61e4436d4edcab8","/auth/__next._full.txt":"ac2bdaa5f76c049cee2ef7cbceb1789d8fca8a1a5fc36d97baf57765bd33a7a9","/auth/__next.auth/__PAGE__.txt":"2dc711d2ddf586112acc244dd4272a1c0aa21640a7547e7d62da79fd8d107ffa","/about/__next._tree.txt":"cd05d7c5bf01947a6115657f679954032d24b6ee6dd82ea661a49569fcbc52ce","/about/__next._head.txt":"9392de302b2e82683afb1603530a81a16a70b3e145e838adb34cb24fca1adfd5","/about/__next._index.txt":"a388a853c843846c1231d12f076c645ea95f36f782bcccc24abccc54b10b6dd8","/about/__next.about.txt":"d04510771f19176109e7fa1ed117bb9cd02a3d35803a0390f61e4436d4edcab8","/about/__next._full.txt":"56df919cc66528f39853cc94fa540a43c70db41cfea39b44fb8f1b941f921c5a","/about/__next.about/__PAGE__.txt":"e8576966ceea1fc948ba51a4350218efe3dbc9ef4c9d89513e541840e91573f4","/_next/static/chunks/f2f58a7e93290fbb.js":"e3c14f7b6fee3fcde8a41517b3a7eb4612c34758611720a4174ba851e43c2a12","/_next/static/chunks/17ffa75ae156471e.js":"e57a6c45478ac5593d3980f758c9f42cdef9dc4aa1fe19d7217ff5f7bca64686"}}
+[debug] [2026-03-09T17:35:32.229Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/1051507062109/sites/gratzz/versions/983343e836adec58:populateFiles 200
+[debug] [2026-03-09T17:35:32.229Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/1051507062109/sites/gratzz/versions/983343e836adec58:populateFiles {"uploadRequiredHashes":["c2de3994e26dd168f7c8efcad9aec8ec9734c58a49d21da75860554013eda14f","ac2bdaa5f76c049cee2ef7cbceb1789d8fca8a1a5fc36d97baf57765bd33a7a9","29a191d93ef20725764eab0d2426e6f99ecdca15827f3664ff1babadbf28cb3f","9392de302b2e82683afb1603530a81a16a70b3e145e838adb34cb24fca1adfd5","2baf990832c2ba524cdb66d8831f3d6871ba59c5b16be31d6b05386447a2ac0f","61533c68a4f72354fa4e66625fc832bf4c698e337c0ae7f59921c150828ab595","f654fe41c12c0f9d6adc952f75d53ac86645d6f30d54f49372d6dce3c4d65e45","d79646494a8b241b1168c9aad48cacdac09c43047f503d1516c9438e99899e2b","99bb59672b8005bbf1475331165fb47e8467150e2d4ccadf491eaebb31a19677","e57a6c45478ac5593d3980f758c9f42cdef9dc4aa1fe19d7217ff5f7bca64686","52e5cec84dcbed0e3dc7d25a48037ccd7268f64ed9a37e79f4197040fe7f031b","41367eb2597c321bf98cfa46755f131ec5367b3bccc6bdab5067837e97f0fded","38c9282269cb52e2cc6a95a27e58da6a7ebc897d9a07e937d9de0bbf03c5307c","9ce9f91232769f4499eef590bb239c13949ffb9d5399ab9f43f9a6000b44bcfa","0aa61a42737d3891d5ee625b5951c214fac10f0dec6234ad14c03b83fe376392","b0db92e46811d1d95f595aab770f3bc8b1e20d4d334c5797f06518081be2ddc5","c3e57206fea69640768390f035445e5a284cbf8bfd6d020a1c7a7ef1087e3560","26c10f6be33ed4f85e16457dd876119be67674e4695e57199201d66628ad0796","2eb067782e126a2a83f6b4c05804486698fa9a0df42e54a8d53f279260610377","ebd3f3e980cd9aba3eddea4fb42c5ac8a5fd93d485c816faa2706e5ca4daa3d2","09d356892ce5741972ea9823cdd80d43d28bf6fbf9cffaa61709fdde7a5f7705","1a57e4ee25de398e8a8789faef7b4a1dc70760de75a6136b3fd3c537ec0ba4ea","b8769386a58d8a7840165063caa7f4fab8e24e3dd5ae29e410ac126e41b17c3a","0d5e62dedd22946812cafc4a2886d3aac39cbe259871af1bbcd322f0c626d4a2","db5453d40175a861856ab840e699a74a03c6f415431e615b2d4e7749ff0122b5","044cfa3996bb8cc1ede93dcf7e11dc8e0ea25a7db66d433c37e6819b48fe8093","0942ffa7ce91bc34ab1d8c7cf1902cddbc79b46e44426f143e9bf399f91744d9","3bcf0f3f2127f0ed08c3e09f94784ca61635ff50a51030ea88725a4b831b9f70","cd05d7c5bf01947a6115657f679954032d24b6ee6dd82ea661a49569fcbc52ce","070a3c7ced95f5e2c4df6a7be5ca1242916db80025f4148ace4602c631aab939","d04510771f19176109e7fa1ed117bb9cd02a3d35803a0390f61e4436d4edcab8","41fbf4907f900e1e8655cf5485d001ad887f91cb74d3a871dd8b77dd9deb861a","6d7c68719c96922fb5f05b412de94f4e38bbb9dcd72cf266d5ff1281680535f5","245223c6eaed89944d4f3a3eba084194711633ff2fbfab1a33b81b23e11821c3","de4eea79bca86f875594f57ecebc77189f28804ea69480982885a36bf7d4342b","d009d99db3c08f02bcff5ec1a092c4226a4e80d7c520d2069ae913ee460903cd","a7aa16c2b0706c181d8b06be783dd04c5715ce15b8edd255fbebb6e7edbf2813","d3532cddf3ee0ac644f906e942a364dacd7437a384ee7fca3cb760ad99974206","689525c406d54db34032130ece9b6c848946c613d85887f1d1e6e810460ddc80","4bfb11b469336cf205e809987018a3ba74c588bd91bb1a6e3c751731635da481","e7e3b9f1935cb7ca61bc4f25c7b7972b6a72a3ca914910fc9bc887d6e48c9cf0","add43ddde1c0eb0415be5e5876b71744f21cf6767a57de269f56669584c90e65","61ada8223aa5e7aac9144620588c97f8f23dfeeadec995b46038184d51bc505a","b6ecdc2d8db2c6bfe089dbee0559c614af11be4a2e11d62266d2a083197d4504","d7c46abe3cbb9dbff7f32abb3b6876c19f59e671579e93d0139160f7ca523eed","a2c5b6f7cb9d8f9e68133af4cd288ca5b5ce2d257da8724c9c3ae34c359fdd8d","c07c127a7ca6208cba97a634dd52ab44f56d67286f6f723043ee7001679aa3ea","1275c3f0441f41d7aab76385128e4d84d29f8f112d14ffb907886a825ae697b1","e8576966ceea1fc948ba51a4350218efe3dbc9ef4c9d89513e541840e91573f4","56df919cc66528f39853cc94fa540a43c70db41cfea39b44fb8f1b941f921c5a","2ba461bf9bbe2c53cd74994ece4db7a2f931d594cf5e19d1b08c022f8b4a3a40","7de31eaa687df8fd38e88f4870eb87915ebfc4dc39b2f496e58b7b24f93edcee","7b943d1a8a23e52d37fadc9e88418732fc31e7a14b48195366a6f671096d4e81","112fc6a39eae90f7ba65cf67ddb1bb3a4fc62689a69e6b563bcef6e00e88540b","490335e5eba794bcc28297f58b9af4fccf9efe65ed9e23ea826583813b012b20","376771b07ba59ecf4ae6510158fa0affccaf49df976b07abee599b8e12d44328","86206b0459de16e24bd093e1c236c059da87138bc2ff54b8f86fe47224de52a0","ad2fee4057c815ce66749851a19b3363e40025bdd1940864d1db221a59c957df","2dc711d2ddf586112acc244dd4272a1c0aa21640a7547e7d62da79fd8d107ffa","81bb2cfd97ca8964066ee5c1e74494cd00db10c93db174d9c3621de0ff10650d","710dfb9ca138aef486af21331020cb22dccf62d62ef2e45556fbea7b490fd25b","a388a853c843846c1231d12f076c645ea95f36f782bcccc24abccc54b10b6dd8","aba07ee5946771d7a3d09c834a7ef609cb0812cbb59af07aca4cf6eee730581a","b163e2f44fe0c544da7e6f207121c8a62e4c70398c1f112ea300d1e44a85cc43"],"uploadUrl":"https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files"}
+[debug] [2026-03-09T17:35:32.230Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.231Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.231Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.231Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.232Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.232Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.233Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.233Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.233Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.234Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.234Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.234Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.235Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.235Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.236Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.236Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.237Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.237Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.238Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.238Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.238Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.239Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.239Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.239Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.240Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.240Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.241Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.241Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.241Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.242Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.242Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.243Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.243Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.243Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.244Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.244Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.245Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.245Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.245Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.246Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.246Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.246Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.247Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.247Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.247Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.247Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.248Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.248Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.249Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.249Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.249Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.250Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.250Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.250Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.251Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.251Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.251Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.252Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.252Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.252Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.253Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.253Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.253Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.254Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.254Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.254Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.255Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.255Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.256Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.256Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.256Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.256Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.257Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.257Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.258Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.258Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.259Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.259Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.260Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.260Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.260Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.261Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.261Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.261Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.262Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.262Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.263Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.263Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.263Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.263Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.264Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.264Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.265Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.265Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.265Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.266Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.266Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.267Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.267Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.267Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.268Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.268Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.269Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.270Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.271Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.271Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.272Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.272Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.272Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.273Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.273Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.274Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.274Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.274Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.275Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.275Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.276Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.276Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.277Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.277Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.278Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.279Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.280Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.280Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.281Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.281Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.282Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.282Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:32.283Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/c2de3994e26dd168f7c8efcad9aec8ec9734c58a49d21da75860554013eda14f [none]
+[debug] [2026-03-09T17:35:32.284Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/c2de3994e26dd168f7c8efcad9aec8ec9734c58a49d21da75860554013eda14f [stream]
+[debug] [2026-03-09T17:35:32.289Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/ac2bdaa5f76c049cee2ef7cbceb1789d8fca8a1a5fc36d97baf57765bd33a7a9 [none]
+[debug] [2026-03-09T17:35:32.290Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/ac2bdaa5f76c049cee2ef7cbceb1789d8fca8a1a5fc36d97baf57765bd33a7a9 [stream]
+[debug] [2026-03-09T17:35:32.293Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/29a191d93ef20725764eab0d2426e6f99ecdca15827f3664ff1babadbf28cb3f [none]
+[debug] [2026-03-09T17:35:32.293Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/29a191d93ef20725764eab0d2426e6f99ecdca15827f3664ff1babadbf28cb3f [stream]
+[debug] [2026-03-09T17:35:32.298Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/9392de302b2e82683afb1603530a81a16a70b3e145e838adb34cb24fca1adfd5 [none]
+[debug] [2026-03-09T17:35:32.299Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/9392de302b2e82683afb1603530a81a16a70b3e145e838adb34cb24fca1adfd5 [stream]
+[debug] [2026-03-09T17:35:32.303Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/2baf990832c2ba524cdb66d8831f3d6871ba59c5b16be31d6b05386447a2ac0f [none]
+[debug] [2026-03-09T17:35:32.304Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/2baf990832c2ba524cdb66d8831f3d6871ba59c5b16be31d6b05386447a2ac0f [stream]
+[debug] [2026-03-09T17:35:32.306Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/61533c68a4f72354fa4e66625fc832bf4c698e337c0ae7f59921c150828ab595 [none]
+[debug] [2026-03-09T17:35:32.307Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/61533c68a4f72354fa4e66625fc832bf4c698e337c0ae7f59921c150828ab595 [stream]
+[debug] [2026-03-09T17:35:32.310Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/f654fe41c12c0f9d6adc952f75d53ac86645d6f30d54f49372d6dce3c4d65e45 [none]
+[debug] [2026-03-09T17:35:32.310Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/f654fe41c12c0f9d6adc952f75d53ac86645d6f30d54f49372d6dce3c4d65e45 [stream]
+[debug] [2026-03-09T17:35:32.312Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d79646494a8b241b1168c9aad48cacdac09c43047f503d1516c9438e99899e2b [none]
+[debug] [2026-03-09T17:35:32.313Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d79646494a8b241b1168c9aad48cacdac09c43047f503d1516c9438e99899e2b [stream]
+[debug] [2026-03-09T17:35:32.316Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/99bb59672b8005bbf1475331165fb47e8467150e2d4ccadf491eaebb31a19677 [none]
+[debug] [2026-03-09T17:35:32.316Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/99bb59672b8005bbf1475331165fb47e8467150e2d4ccadf491eaebb31a19677 [stream]
+[debug] [2026-03-09T17:35:32.320Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/e57a6c45478ac5593d3980f758c9f42cdef9dc4aa1fe19d7217ff5f7bca64686 [none]
+[debug] [2026-03-09T17:35:32.320Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/e57a6c45478ac5593d3980f758c9f42cdef9dc4aa1fe19d7217ff5f7bca64686 [stream]
+[debug] [2026-03-09T17:35:32.327Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/52e5cec84dcbed0e3dc7d25a48037ccd7268f64ed9a37e79f4197040fe7f031b [none]
+[debug] [2026-03-09T17:35:32.328Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/52e5cec84dcbed0e3dc7d25a48037ccd7268f64ed9a37e79f4197040fe7f031b [stream]
+[debug] [2026-03-09T17:35:32.331Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/41367eb2597c321bf98cfa46755f131ec5367b3bccc6bdab5067837e97f0fded [none]
+[debug] [2026-03-09T17:35:32.332Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/41367eb2597c321bf98cfa46755f131ec5367b3bccc6bdab5067837e97f0fded [stream]
+[debug] [2026-03-09T17:35:32.334Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/38c9282269cb52e2cc6a95a27e58da6a7ebc897d9a07e937d9de0bbf03c5307c [none]
+[debug] [2026-03-09T17:35:32.334Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/38c9282269cb52e2cc6a95a27e58da6a7ebc897d9a07e937d9de0bbf03c5307c [stream]
+[debug] [2026-03-09T17:35:32.337Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/9ce9f91232769f4499eef590bb239c13949ffb9d5399ab9f43f9a6000b44bcfa [none]
+[debug] [2026-03-09T17:35:32.338Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/9ce9f91232769f4499eef590bb239c13949ffb9d5399ab9f43f9a6000b44bcfa [stream]
+[debug] [2026-03-09T17:35:32.340Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/0aa61a42737d3891d5ee625b5951c214fac10f0dec6234ad14c03b83fe376392 [none]
+[debug] [2026-03-09T17:35:32.341Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/0aa61a42737d3891d5ee625b5951c214fac10f0dec6234ad14c03b83fe376392 [stream]
+[debug] [2026-03-09T17:35:32.343Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/b0db92e46811d1d95f595aab770f3bc8b1e20d4d334c5797f06518081be2ddc5 [none]
+[debug] [2026-03-09T17:35:32.344Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/b0db92e46811d1d95f595aab770f3bc8b1e20d4d334c5797f06518081be2ddc5 [stream]
+[debug] [2026-03-09T17:35:32.347Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/c3e57206fea69640768390f035445e5a284cbf8bfd6d020a1c7a7ef1087e3560 [none]
+[debug] [2026-03-09T17:35:32.347Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/c3e57206fea69640768390f035445e5a284cbf8bfd6d020a1c7a7ef1087e3560 [stream]
+[debug] [2026-03-09T17:35:32.352Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/26c10f6be33ed4f85e16457dd876119be67674e4695e57199201d66628ad0796 [none]
+[debug] [2026-03-09T17:35:32.352Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/26c10f6be33ed4f85e16457dd876119be67674e4695e57199201d66628ad0796 [stream]
+[debug] [2026-03-09T17:35:32.355Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/2eb067782e126a2a83f6b4c05804486698fa9a0df42e54a8d53f279260610377 [none]
+[debug] [2026-03-09T17:35:32.356Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/2eb067782e126a2a83f6b4c05804486698fa9a0df42e54a8d53f279260610377 [stream]
+[debug] [2026-03-09T17:35:32.359Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/ebd3f3e980cd9aba3eddea4fb42c5ac8a5fd93d485c816faa2706e5ca4daa3d2 [none]
+[debug] [2026-03-09T17:35:32.359Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/ebd3f3e980cd9aba3eddea4fb42c5ac8a5fd93d485c816faa2706e5ca4daa3d2 [stream]
+[debug] [2026-03-09T17:35:32.361Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/09d356892ce5741972ea9823cdd80d43d28bf6fbf9cffaa61709fdde7a5f7705 [none]
+[debug] [2026-03-09T17:35:32.362Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/09d356892ce5741972ea9823cdd80d43d28bf6fbf9cffaa61709fdde7a5f7705 [stream]
+[debug] [2026-03-09T17:35:32.365Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/1a57e4ee25de398e8a8789faef7b4a1dc70760de75a6136b3fd3c537ec0ba4ea [none]
+[debug] [2026-03-09T17:35:32.366Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/1a57e4ee25de398e8a8789faef7b4a1dc70760de75a6136b3fd3c537ec0ba4ea [stream]
+[debug] [2026-03-09T17:35:32.369Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/b8769386a58d8a7840165063caa7f4fab8e24e3dd5ae29e410ac126e41b17c3a [none]
+[debug] [2026-03-09T17:35:32.370Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/b8769386a58d8a7840165063caa7f4fab8e24e3dd5ae29e410ac126e41b17c3a [stream]
+[debug] [2026-03-09T17:35:32.372Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/0d5e62dedd22946812cafc4a2886d3aac39cbe259871af1bbcd322f0c626d4a2 [none]
+[debug] [2026-03-09T17:35:32.373Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/0d5e62dedd22946812cafc4a2886d3aac39cbe259871af1bbcd322f0c626d4a2 [stream]
+[debug] [2026-03-09T17:35:32.375Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/db5453d40175a861856ab840e699a74a03c6f415431e615b2d4e7749ff0122b5 [none]
+[debug] [2026-03-09T17:35:32.376Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/db5453d40175a861856ab840e699a74a03c6f415431e615b2d4e7749ff0122b5 [stream]
+[debug] [2026-03-09T17:35:32.378Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/044cfa3996bb8cc1ede93dcf7e11dc8e0ea25a7db66d433c37e6819b48fe8093 [none]
+[debug] [2026-03-09T17:35:32.379Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/044cfa3996bb8cc1ede93dcf7e11dc8e0ea25a7db66d433c37e6819b48fe8093 [stream]
+[debug] [2026-03-09T17:35:32.383Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/0942ffa7ce91bc34ab1d8c7cf1902cddbc79b46e44426f143e9bf399f91744d9 [none]
+[debug] [2026-03-09T17:35:32.383Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/0942ffa7ce91bc34ab1d8c7cf1902cddbc79b46e44426f143e9bf399f91744d9 [stream]
+[debug] [2026-03-09T17:35:32.386Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/3bcf0f3f2127f0ed08c3e09f94784ca61635ff50a51030ea88725a4b831b9f70 [none]
+[debug] [2026-03-09T17:35:32.386Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/3bcf0f3f2127f0ed08c3e09f94784ca61635ff50a51030ea88725a4b831b9f70 [stream]
+[debug] [2026-03-09T17:35:32.389Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/cd05d7c5bf01947a6115657f679954032d24b6ee6dd82ea661a49569fcbc52ce [none]
+[debug] [2026-03-09T17:35:32.390Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/cd05d7c5bf01947a6115657f679954032d24b6ee6dd82ea661a49569fcbc52ce [stream]
+[debug] [2026-03-09T17:35:32.392Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/070a3c7ced95f5e2c4df6a7be5ca1242916db80025f4148ace4602c631aab939 [none]
+[debug] [2026-03-09T17:35:32.393Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/070a3c7ced95f5e2c4df6a7be5ca1242916db80025f4148ace4602c631aab939 [stream]
+[debug] [2026-03-09T17:35:32.396Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d04510771f19176109e7fa1ed117bb9cd02a3d35803a0390f61e4436d4edcab8 [none]
+[debug] [2026-03-09T17:35:32.396Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d04510771f19176109e7fa1ed117bb9cd02a3d35803a0390f61e4436d4edcab8 [stream]
+[debug] [2026-03-09T17:35:32.399Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/41fbf4907f900e1e8655cf5485d001ad887f91cb74d3a871dd8b77dd9deb861a [none]
+[debug] [2026-03-09T17:35:32.400Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/41fbf4907f900e1e8655cf5485d001ad887f91cb74d3a871dd8b77dd9deb861a [stream]
+[debug] [2026-03-09T17:35:32.402Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/6d7c68719c96922fb5f05b412de94f4e38bbb9dcd72cf266d5ff1281680535f5 [none]
+[debug] [2026-03-09T17:35:32.403Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/6d7c68719c96922fb5f05b412de94f4e38bbb9dcd72cf266d5ff1281680535f5 [stream]
+[debug] [2026-03-09T17:35:32.405Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/245223c6eaed89944d4f3a3eba084194711633ff2fbfab1a33b81b23e11821c3 [none]
+[debug] [2026-03-09T17:35:32.406Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/245223c6eaed89944d4f3a3eba084194711633ff2fbfab1a33b81b23e11821c3 [stream]
+[debug] [2026-03-09T17:35:32.408Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/de4eea79bca86f875594f57ecebc77189f28804ea69480982885a36bf7d4342b [none]
+[debug] [2026-03-09T17:35:32.409Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/de4eea79bca86f875594f57ecebc77189f28804ea69480982885a36bf7d4342b [stream]
+[debug] [2026-03-09T17:35:32.412Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d009d99db3c08f02bcff5ec1a092c4226a4e80d7c520d2069ae913ee460903cd [none]
+[debug] [2026-03-09T17:35:32.412Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d009d99db3c08f02bcff5ec1a092c4226a4e80d7c520d2069ae913ee460903cd [stream]
+[debug] [2026-03-09T17:35:32.415Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/a7aa16c2b0706c181d8b06be783dd04c5715ce15b8edd255fbebb6e7edbf2813 [none]
+[debug] [2026-03-09T17:35:32.416Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/a7aa16c2b0706c181d8b06be783dd04c5715ce15b8edd255fbebb6e7edbf2813 [stream]
+[debug] [2026-03-09T17:35:32.418Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d3532cddf3ee0ac644f906e942a364dacd7437a384ee7fca3cb760ad99974206 [none]
+[debug] [2026-03-09T17:35:32.419Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d3532cddf3ee0ac644f906e942a364dacd7437a384ee7fca3cb760ad99974206 [stream]
+[debug] [2026-03-09T17:35:32.422Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/689525c406d54db34032130ece9b6c848946c613d85887f1d1e6e810460ddc80 [none]
+[debug] [2026-03-09T17:35:32.422Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/689525c406d54db34032130ece9b6c848946c613d85887f1d1e6e810460ddc80 [stream]
+[debug] [2026-03-09T17:35:32.425Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/4bfb11b469336cf205e809987018a3ba74c588bd91bb1a6e3c751731635da481 [none]
+[debug] [2026-03-09T17:35:32.426Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/4bfb11b469336cf205e809987018a3ba74c588bd91bb1a6e3c751731635da481 [stream]
+[debug] [2026-03-09T17:35:32.429Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/e7e3b9f1935cb7ca61bc4f25c7b7972b6a72a3ca914910fc9bc887d6e48c9cf0 [none]
+[debug] [2026-03-09T17:35:32.429Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/e7e3b9f1935cb7ca61bc4f25c7b7972b6a72a3ca914910fc9bc887d6e48c9cf0 [stream]
+[debug] [2026-03-09T17:35:32.431Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/add43ddde1c0eb0415be5e5876b71744f21cf6767a57de269f56669584c90e65 [none]
+[debug] [2026-03-09T17:35:32.432Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/add43ddde1c0eb0415be5e5876b71744f21cf6767a57de269f56669584c90e65 [stream]
+[debug] [2026-03-09T17:35:32.435Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/61ada8223aa5e7aac9144620588c97f8f23dfeeadec995b46038184d51bc505a [none]
+[debug] [2026-03-09T17:35:32.435Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/61ada8223aa5e7aac9144620588c97f8f23dfeeadec995b46038184d51bc505a [stream]
+[debug] [2026-03-09T17:35:32.438Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/b6ecdc2d8db2c6bfe089dbee0559c614af11be4a2e11d62266d2a083197d4504 [none]
+[debug] [2026-03-09T17:35:32.438Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/b6ecdc2d8db2c6bfe089dbee0559c614af11be4a2e11d62266d2a083197d4504 [stream]
+[debug] [2026-03-09T17:35:32.441Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d7c46abe3cbb9dbff7f32abb3b6876c19f59e671579e93d0139160f7ca523eed [none]
+[debug] [2026-03-09T17:35:32.441Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d7c46abe3cbb9dbff7f32abb3b6876c19f59e671579e93d0139160f7ca523eed [stream]
+[debug] [2026-03-09T17:35:32.443Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/a2c5b6f7cb9d8f9e68133af4cd288ca5b5ce2d257da8724c9c3ae34c359fdd8d [none]
+[debug] [2026-03-09T17:35:32.443Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/a2c5b6f7cb9d8f9e68133af4cd288ca5b5ce2d257da8724c9c3ae34c359fdd8d [stream]
+[debug] [2026-03-09T17:35:32.448Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/c07c127a7ca6208cba97a634dd52ab44f56d67286f6f723043ee7001679aa3ea [none]
+[debug] [2026-03-09T17:35:32.448Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/c07c127a7ca6208cba97a634dd52ab44f56d67286f6f723043ee7001679aa3ea [stream]
+[debug] [2026-03-09T17:35:32.451Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/1275c3f0441f41d7aab76385128e4d84d29f8f112d14ffb907886a825ae697b1 [none]
+[debug] [2026-03-09T17:35:32.451Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/1275c3f0441f41d7aab76385128e4d84d29f8f112d14ffb907886a825ae697b1 [stream]
+[debug] [2026-03-09T17:35:32.454Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/e8576966ceea1fc948ba51a4350218efe3dbc9ef4c9d89513e541840e91573f4 [none]
+[debug] [2026-03-09T17:35:32.454Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/e8576966ceea1fc948ba51a4350218efe3dbc9ef4c9d89513e541840e91573f4 [stream]
+[debug] [2026-03-09T17:35:32.530Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/56df919cc66528f39853cc94fa540a43c70db41cfea39b44fb8f1b941f921c5a [none]
+[debug] [2026-03-09T17:35:32.531Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/56df919cc66528f39853cc94fa540a43c70db41cfea39b44fb8f1b941f921c5a [stream]
+[debug] [2026-03-09T17:35:32.533Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/2ba461bf9bbe2c53cd74994ece4db7a2f931d594cf5e19d1b08c022f8b4a3a40 [none]
+[debug] [2026-03-09T17:35:32.533Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/2ba461bf9bbe2c53cd74994ece4db7a2f931d594cf5e19d1b08c022f8b4a3a40 [stream]
+[debug] [2026-03-09T17:35:32.536Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/7de31eaa687df8fd38e88f4870eb87915ebfc4dc39b2f496e58b7b24f93edcee [none]
+[debug] [2026-03-09T17:35:32.537Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/7de31eaa687df8fd38e88f4870eb87915ebfc4dc39b2f496e58b7b24f93edcee [stream]
+[debug] [2026-03-09T17:35:32.542Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/7b943d1a8a23e52d37fadc9e88418732fc31e7a14b48195366a6f671096d4e81 [none]
+[debug] [2026-03-09T17:35:32.542Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/7b943d1a8a23e52d37fadc9e88418732fc31e7a14b48195366a6f671096d4e81 [stream]
+[debug] [2026-03-09T17:35:32.545Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/112fc6a39eae90f7ba65cf67ddb1bb3a4fc62689a69e6b563bcef6e00e88540b [none]
+[debug] [2026-03-09T17:35:32.546Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/112fc6a39eae90f7ba65cf67ddb1bb3a4fc62689a69e6b563bcef6e00e88540b [stream]
+[debug] [2026-03-09T17:35:32.564Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/490335e5eba794bcc28297f58b9af4fccf9efe65ed9e23ea826583813b012b20 [none]
+[debug] [2026-03-09T17:35:32.564Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/490335e5eba794bcc28297f58b9af4fccf9efe65ed9e23ea826583813b012b20 [stream]
+[debug] [2026-03-09T17:35:32.567Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/376771b07ba59ecf4ae6510158fa0affccaf49df976b07abee599b8e12d44328 [none]
+[debug] [2026-03-09T17:35:32.567Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/376771b07ba59ecf4ae6510158fa0affccaf49df976b07abee599b8e12d44328 [stream]
+[debug] [2026-03-09T17:35:32.570Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/86206b0459de16e24bd093e1c236c059da87138bc2ff54b8f86fe47224de52a0 [none]
+[debug] [2026-03-09T17:35:32.571Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/86206b0459de16e24bd093e1c236c059da87138bc2ff54b8f86fe47224de52a0 [stream]
+[debug] [2026-03-09T17:35:32.574Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/ad2fee4057c815ce66749851a19b3363e40025bdd1940864d1db221a59c957df [none]
+[debug] [2026-03-09T17:35:32.574Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/ad2fee4057c815ce66749851a19b3363e40025bdd1940864d1db221a59c957df [stream]
+[debug] [2026-03-09T17:35:32.576Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/2dc711d2ddf586112acc244dd4272a1c0aa21640a7547e7d62da79fd8d107ffa [none]
+[debug] [2026-03-09T17:35:32.576Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/2dc711d2ddf586112acc244dd4272a1c0aa21640a7547e7d62da79fd8d107ffa [stream]
+[debug] [2026-03-09T17:35:32.579Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/81bb2cfd97ca8964066ee5c1e74494cd00db10c93db174d9c3621de0ff10650d [none]
+[debug] [2026-03-09T17:35:32.579Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/81bb2cfd97ca8964066ee5c1e74494cd00db10c93db174d9c3621de0ff10650d [stream]
+[debug] [2026-03-09T17:35:32.582Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/710dfb9ca138aef486af21331020cb22dccf62d62ef2e45556fbea7b490fd25b [none]
+[debug] [2026-03-09T17:35:32.582Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/710dfb9ca138aef486af21331020cb22dccf62d62ef2e45556fbea7b490fd25b [stream]
+[debug] [2026-03-09T17:35:32.585Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/a388a853c843846c1231d12f076c645ea95f36f782bcccc24abccc54b10b6dd8 [none]
+[debug] [2026-03-09T17:35:32.585Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/a388a853c843846c1231d12f076c645ea95f36f782bcccc24abccc54b10b6dd8 [stream]
+[debug] [2026-03-09T17:35:32.587Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/aba07ee5946771d7a3d09c834a7ef609cb0812cbb59af07aca4cf6eee730581a [none]
+[debug] [2026-03-09T17:35:32.588Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/aba07ee5946771d7a3d09c834a7ef609cb0812cbb59af07aca4cf6eee730581a [stream]
+[debug] [2026-03-09T17:35:32.590Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/b163e2f44fe0c544da7e6f207121c8a62e4c70398c1f112ea300d1e44a85cc43 [none]
+[debug] [2026-03-09T17:35:32.591Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/b163e2f44fe0c544da7e6f207121c8a62e4c70398c1f112ea300d1e44a85cc43 [stream]
+[debug] [2026-03-09T17:35:32.593Z] [hosting][populate queue][FINAL] {"max":471,"min":471,"avg":471,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":781}
+[debug] [2026-03-09T17:35:32.593Z] [hosting] uploads queued: 64
+[info] i  hosting: uploading new files [0/64] (0%) 
+[info] i  hosting: uploading new files [0/64] (0%) 
+[debug] [2026-03-09T17:35:36.708Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/29a191d93ef20725764eab0d2426e6f99ecdca15827f3664ff1babadbf28cb3f 200
+[debug] [2026-03-09T17:35:36.708Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/29a191d93ef20725764eab0d2426e6f99ecdca15827f3664ff1babadbf28cb3f [stream]
+[debug] [2026-03-09T17:35:36.717Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/2ba461bf9bbe2c53cd74994ece4db7a2f931d594cf5e19d1b08c022f8b4a3a40 200
+[debug] [2026-03-09T17:35:36.717Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/2ba461bf9bbe2c53cd74994ece4db7a2f931d594cf5e19d1b08c022f8b4a3a40 [stream]
+[debug] [2026-03-09T17:35:36.728Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/61533c68a4f72354fa4e66625fc832bf4c698e337c0ae7f59921c150828ab595 200
+[debug] [2026-03-09T17:35:36.729Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/61533c68a4f72354fa4e66625fc832bf4c698e337c0ae7f59921c150828ab595 [stream]
+[debug] [2026-03-09T17:35:36.822Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/ac2bdaa5f76c049cee2ef7cbceb1789d8fca8a1a5fc36d97baf57765bd33a7a9 200
+[debug] [2026-03-09T17:35:36.822Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/ac2bdaa5f76c049cee2ef7cbceb1789d8fca8a1a5fc36d97baf57765bd33a7a9 [stream]
+[debug] [2026-03-09T17:35:36.869Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/2baf990832c2ba524cdb66d8831f3d6871ba59c5b16be31d6b05386447a2ac0f 200
+[debug] [2026-03-09T17:35:36.869Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/2baf990832c2ba524cdb66d8831f3d6871ba59c5b16be31d6b05386447a2ac0f [stream]
+[debug] [2026-03-09T17:35:36.897Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/9392de302b2e82683afb1603530a81a16a70b3e145e838adb34cb24fca1adfd5 200
+[debug] [2026-03-09T17:35:36.897Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/9392de302b2e82683afb1603530a81a16a70b3e145e838adb34cb24fca1adfd5 [stream]
+[debug] [2026-03-09T17:35:36.911Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/e57a6c45478ac5593d3980f758c9f42cdef9dc4aa1fe19d7217ff5f7bca64686 200
+[debug] [2026-03-09T17:35:36.911Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/e57a6c45478ac5593d3980f758c9f42cdef9dc4aa1fe19d7217ff5f7bca64686 [stream]
+[debug] [2026-03-09T17:35:36.959Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/c2de3994e26dd168f7c8efcad9aec8ec9734c58a49d21da75860554013eda14f 200
+[debug] [2026-03-09T17:35:36.960Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/c2de3994e26dd168f7c8efcad9aec8ec9734c58a49d21da75860554013eda14f [stream]
+[debug] [2026-03-09T17:35:36.963Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d79646494a8b241b1168c9aad48cacdac09c43047f503d1516c9438e99899e2b 200
+[debug] [2026-03-09T17:35:36.963Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d79646494a8b241b1168c9aad48cacdac09c43047f503d1516c9438e99899e2b [stream]
+[debug] [2026-03-09T17:35:37.009Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/490335e5eba794bcc28297f58b9af4fccf9efe65ed9e23ea826583813b012b20 200
+[debug] [2026-03-09T17:35:37.009Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/490335e5eba794bcc28297f58b9af4fccf9efe65ed9e23ea826583813b012b20 [stream]
+[debug] [2026-03-09T17:35:37.087Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/99bb59672b8005bbf1475331165fb47e8467150e2d4ccadf491eaebb31a19677 200
+[debug] [2026-03-09T17:35:37.088Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/99bb59672b8005bbf1475331165fb47e8467150e2d4ccadf491eaebb31a19677 [stream]
+[debug] [2026-03-09T17:35:37.105Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/245223c6eaed89944d4f3a3eba084194711633ff2fbfab1a33b81b23e11821c3 200
+[debug] [2026-03-09T17:35:37.106Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/245223c6eaed89944d4f3a3eba084194711633ff2fbfab1a33b81b23e11821c3 [stream]
+[debug] [2026-03-09T17:35:37.117Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/f654fe41c12c0f9d6adc952f75d53ac86645d6f30d54f49372d6dce3c4d65e45 200
+[debug] [2026-03-09T17:35:37.118Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/f654fe41c12c0f9d6adc952f75d53ac86645d6f30d54f49372d6dce3c4d65e45 [stream]
+[debug] [2026-03-09T17:35:37.161Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/38c9282269cb52e2cc6a95a27e58da6a7ebc897d9a07e937d9de0bbf03c5307c 200
+[debug] [2026-03-09T17:35:37.161Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/38c9282269cb52e2cc6a95a27e58da6a7ebc897d9a07e937d9de0bbf03c5307c [stream]
+[debug] [2026-03-09T17:35:37.194Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/a2c5b6f7cb9d8f9e68133af4cd288ca5b5ce2d257da8724c9c3ae34c359fdd8d 200
+[debug] [2026-03-09T17:35:37.194Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/a2c5b6f7cb9d8f9e68133af4cd288ca5b5ce2d257da8724c9c3ae34c359fdd8d [stream]
+[debug] [2026-03-09T17:35:37.202Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/0aa61a42737d3891d5ee625b5951c214fac10f0dec6234ad14c03b83fe376392 200
+[debug] [2026-03-09T17:35:37.203Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/0aa61a42737d3891d5ee625b5951c214fac10f0dec6234ad14c03b83fe376392 [stream]
+[debug] [2026-03-09T17:35:37.273Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/9ce9f91232769f4499eef590bb239c13949ffb9d5399ab9f43f9a6000b44bcfa 200
+[debug] [2026-03-09T17:35:37.273Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/9ce9f91232769f4499eef590bb239c13949ffb9d5399ab9f43f9a6000b44bcfa [stream]
+[debug] [2026-03-09T17:35:37.276Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/52e5cec84dcbed0e3dc7d25a48037ccd7268f64ed9a37e79f4197040fe7f031b 200
+[debug] [2026-03-09T17:35:37.276Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/52e5cec84dcbed0e3dc7d25a48037ccd7268f64ed9a37e79f4197040fe7f031b [stream]
+[debug] [2026-03-09T17:35:37.307Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/41367eb2597c321bf98cfa46755f131ec5367b3bccc6bdab5067837e97f0fded 200
+[debug] [2026-03-09T17:35:37.307Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/41367eb2597c321bf98cfa46755f131ec5367b3bccc6bdab5067837e97f0fded [stream]
+[debug] [2026-03-09T17:35:37.387Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/376771b07ba59ecf4ae6510158fa0affccaf49df976b07abee599b8e12d44328 200
+[debug] [2026-03-09T17:35:37.387Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/376771b07ba59ecf4ae6510158fa0affccaf49df976b07abee599b8e12d44328 [stream]
+[debug] [2026-03-09T17:35:37.388Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/ebd3f3e980cd9aba3eddea4fb42c5ac8a5fd93d485c816faa2706e5ca4daa3d2 200
+[debug] [2026-03-09T17:35:37.388Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/ebd3f3e980cd9aba3eddea4fb42c5ac8a5fd93d485c816faa2706e5ca4daa3d2 [stream]
+[debug] [2026-03-09T17:35:37.418Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/b0db92e46811d1d95f595aab770f3bc8b1e20d4d334c5797f06518081be2ddc5 200
+[debug] [2026-03-09T17:35:37.419Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/b0db92e46811d1d95f595aab770f3bc8b1e20d4d334c5797f06518081be2ddc5 [stream]
+[debug] [2026-03-09T17:35:37.490Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/c3e57206fea69640768390f035445e5a284cbf8bfd6d020a1c7a7ef1087e3560 200
+[debug] [2026-03-09T17:35:37.490Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/c3e57206fea69640768390f035445e5a284cbf8bfd6d020a1c7a7ef1087e3560 [stream]
+[debug] [2026-03-09T17:35:37.549Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/2eb067782e126a2a83f6b4c05804486698fa9a0df42e54a8d53f279260610377 200
+[debug] [2026-03-09T17:35:37.550Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/2eb067782e126a2a83f6b4c05804486698fa9a0df42e54a8d53f279260610377 [stream]
+[info] i  hosting: uploading new files [24/64] (37%) 
+[debug] [2026-03-09T17:35:37.682Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/09d356892ce5741972ea9823cdd80d43d28bf6fbf9cffaa61709fdde7a5f7705 200
+[debug] [2026-03-09T17:35:37.682Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/09d356892ce5741972ea9823cdd80d43d28bf6fbf9cffaa61709fdde7a5f7705 [stream]
+[debug] [2026-03-09T17:35:37.698Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/db5453d40175a861856ab840e699a74a03c6f415431e615b2d4e7749ff0122b5 200
+[debug] [2026-03-09T17:35:37.698Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/db5453d40175a861856ab840e699a74a03c6f415431e615b2d4e7749ff0122b5 [stream]
+[debug] [2026-03-09T17:35:37.700Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/e8576966ceea1fc948ba51a4350218efe3dbc9ef4c9d89513e541840e91573f4 200
+[debug] [2026-03-09T17:35:37.700Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/e8576966ceea1fc948ba51a4350218efe3dbc9ef4c9d89513e541840e91573f4 [stream]
+[debug] [2026-03-09T17:35:37.705Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/0d5e62dedd22946812cafc4a2886d3aac39cbe259871af1bbcd322f0c626d4a2 200
+[debug] [2026-03-09T17:35:37.705Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/0d5e62dedd22946812cafc4a2886d3aac39cbe259871af1bbcd322f0c626d4a2 [stream]
+[debug] [2026-03-09T17:35:37.716Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/1a57e4ee25de398e8a8789faef7b4a1dc70760de75a6136b3fd3c537ec0ba4ea 200
+[debug] [2026-03-09T17:35:37.717Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/1a57e4ee25de398e8a8789faef7b4a1dc70760de75a6136b3fd3c537ec0ba4ea [stream]
+[debug] [2026-03-09T17:35:37.732Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d009d99db3c08f02bcff5ec1a092c4226a4e80d7c520d2069ae913ee460903cd 200
+[debug] [2026-03-09T17:35:37.732Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d009d99db3c08f02bcff5ec1a092c4226a4e80d7c520d2069ae913ee460903cd [stream]
+[debug] [2026-03-09T17:35:37.745Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/044cfa3996bb8cc1ede93dcf7e11dc8e0ea25a7db66d433c37e6819b48fe8093 200
+[debug] [2026-03-09T17:35:37.745Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/044cfa3996bb8cc1ede93dcf7e11dc8e0ea25a7db66d433c37e6819b48fe8093 [stream]
+[debug] [2026-03-09T17:35:37.799Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/0942ffa7ce91bc34ab1d8c7cf1902cddbc79b46e44426f143e9bf399f91744d9 200
+[debug] [2026-03-09T17:35:37.799Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/0942ffa7ce91bc34ab1d8c7cf1902cddbc79b46e44426f143e9bf399f91744d9 [stream]
+[debug] [2026-03-09T17:35:37.936Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d7c46abe3cbb9dbff7f32abb3b6876c19f59e671579e93d0139160f7ca523eed 200
+[debug] [2026-03-09T17:35:37.936Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d7c46abe3cbb9dbff7f32abb3b6876c19f59e671579e93d0139160f7ca523eed [stream]
+[debug] [2026-03-09T17:35:37.982Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/6d7c68719c96922fb5f05b412de94f4e38bbb9dcd72cf266d5ff1281680535f5 200
+[debug] [2026-03-09T17:35:37.982Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/6d7c68719c96922fb5f05b412de94f4e38bbb9dcd72cf266d5ff1281680535f5 [stream]
+[debug] [2026-03-09T17:35:38.026Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/26c10f6be33ed4f85e16457dd876119be67674e4695e57199201d66628ad0796 200
+[debug] [2026-03-09T17:35:38.026Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/26c10f6be33ed4f85e16457dd876119be67674e4695e57199201d66628ad0796 [stream]
+[debug] [2026-03-09T17:35:38.034Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/b8769386a58d8a7840165063caa7f4fab8e24e3dd5ae29e410ac126e41b17c3a 200
+[debug] [2026-03-09T17:35:38.034Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/b8769386a58d8a7840165063caa7f4fab8e24e3dd5ae29e410ac126e41b17c3a [stream]
+[debug] [2026-03-09T17:35:38.095Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/3bcf0f3f2127f0ed08c3e09f94784ca61635ff50a51030ea88725a4b831b9f70 200
+[debug] [2026-03-09T17:35:38.095Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/3bcf0f3f2127f0ed08c3e09f94784ca61635ff50a51030ea88725a4b831b9f70 [stream]
+[debug] [2026-03-09T17:35:38.129Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/4bfb11b469336cf205e809987018a3ba74c588bd91bb1a6e3c751731635da481 200
+[debug] [2026-03-09T17:35:38.129Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/4bfb11b469336cf205e809987018a3ba74c588bd91bb1a6e3c751731635da481 [stream]
+[debug] [2026-03-09T17:35:38.172Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/689525c406d54db34032130ece9b6c848946c613d85887f1d1e6e810460ddc80 200
+[debug] [2026-03-09T17:35:38.172Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/689525c406d54db34032130ece9b6c848946c613d85887f1d1e6e810460ddc80 [stream]
+[debug] [2026-03-09T17:35:38.296Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/710dfb9ca138aef486af21331020cb22dccf62d62ef2e45556fbea7b490fd25b 200
+[debug] [2026-03-09T17:35:38.296Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/710dfb9ca138aef486af21331020cb22dccf62d62ef2e45556fbea7b490fd25b [stream]
+[debug] [2026-03-09T17:35:38.331Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/de4eea79bca86f875594f57ecebc77189f28804ea69480982885a36bf7d4342b 200
+[debug] [2026-03-09T17:35:38.331Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/de4eea79bca86f875594f57ecebc77189f28804ea69480982885a36bf7d4342b [stream]
+[debug] [2026-03-09T17:35:38.426Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d04510771f19176109e7fa1ed117bb9cd02a3d35803a0390f61e4436d4edcab8 200
+[debug] [2026-03-09T17:35:38.426Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d04510771f19176109e7fa1ed117bb9cd02a3d35803a0390f61e4436d4edcab8 [stream]
+[debug] [2026-03-09T17:35:38.446Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/c07c127a7ca6208cba97a634dd52ab44f56d67286f6f723043ee7001679aa3ea 200
+[debug] [2026-03-09T17:35:38.446Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/c07c127a7ca6208cba97a634dd52ab44f56d67286f6f723043ee7001679aa3ea [stream]
+[debug] [2026-03-09T17:35:38.454Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/86206b0459de16e24bd093e1c236c059da87138bc2ff54b8f86fe47224de52a0 200
+[debug] [2026-03-09T17:35:38.455Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/86206b0459de16e24bd093e1c236c059da87138bc2ff54b8f86fe47224de52a0 [stream]
+[debug] [2026-03-09T17:35:38.476Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/e7e3b9f1935cb7ca61bc4f25c7b7972b6a72a3ca914910fc9bc887d6e48c9cf0 200
+[debug] [2026-03-09T17:35:38.476Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/e7e3b9f1935cb7ca61bc4f25c7b7972b6a72a3ca914910fc9bc887d6e48c9cf0 [stream]
+[debug] [2026-03-09T17:35:38.505Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/41fbf4907f900e1e8655cf5485d001ad887f91cb74d3a871dd8b77dd9deb861a 200
+[debug] [2026-03-09T17:35:38.505Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/41fbf4907f900e1e8655cf5485d001ad887f91cb74d3a871dd8b77dd9deb861a [stream]
+[debug] [2026-03-09T17:35:38.532Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/b6ecdc2d8db2c6bfe089dbee0559c614af11be4a2e11d62266d2a083197d4504 200
+[debug] [2026-03-09T17:35:38.532Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/b6ecdc2d8db2c6bfe089dbee0559c614af11be4a2e11d62266d2a083197d4504 [stream]
+[debug] [2026-03-09T17:35:38.616Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/cd05d7c5bf01947a6115657f679954032d24b6ee6dd82ea661a49569fcbc52ce 200
+[debug] [2026-03-09T17:35:38.617Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/cd05d7c5bf01947a6115657f679954032d24b6ee6dd82ea661a49569fcbc52ce [stream]
+[debug] [2026-03-09T17:35:38.649Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/56df919cc66528f39853cc94fa540a43c70db41cfea39b44fb8f1b941f921c5a 200
+[debug] [2026-03-09T17:35:38.649Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/56df919cc66528f39853cc94fa540a43c70db41cfea39b44fb8f1b941f921c5a [stream]
+[debug] [2026-03-09T17:35:38.703Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/61ada8223aa5e7aac9144620588c97f8f23dfeeadec995b46038184d51bc505a 200
+[debug] [2026-03-09T17:35:38.703Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/61ada8223aa5e7aac9144620588c97f8f23dfeeadec995b46038184d51bc505a [stream]
+[debug] [2026-03-09T17:35:38.723Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/112fc6a39eae90f7ba65cf67ddb1bb3a4fc62689a69e6b563bcef6e00e88540b 200
+[debug] [2026-03-09T17:35:38.723Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/112fc6a39eae90f7ba65cf67ddb1bb3a4fc62689a69e6b563bcef6e00e88540b [stream]
+[debug] [2026-03-09T17:35:38.771Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/7de31eaa687df8fd38e88f4870eb87915ebfc4dc39b2f496e58b7b24f93edcee 200
+[debug] [2026-03-09T17:35:38.771Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/7de31eaa687df8fd38e88f4870eb87915ebfc4dc39b2f496e58b7b24f93edcee [stream]
+[debug] [2026-03-09T17:35:38.787Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/a7aa16c2b0706c181d8b06be783dd04c5715ce15b8edd255fbebb6e7edbf2813 200
+[debug] [2026-03-09T17:35:38.787Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/a7aa16c2b0706c181d8b06be783dd04c5715ce15b8edd255fbebb6e7edbf2813 [stream]
+[debug] [2026-03-09T17:35:38.799Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/add43ddde1c0eb0415be5e5876b71744f21cf6767a57de269f56669584c90e65 200
+[debug] [2026-03-09T17:35:38.799Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/add43ddde1c0eb0415be5e5876b71744f21cf6767a57de269f56669584c90e65 [stream]
+[debug] [2026-03-09T17:35:38.862Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d3532cddf3ee0ac644f906e942a364dacd7437a384ee7fca3cb760ad99974206 200
+[debug] [2026-03-09T17:35:38.862Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/d3532cddf3ee0ac644f906e942a364dacd7437a384ee7fca3cb760ad99974206 [stream]
+[debug] [2026-03-09T17:35:38.886Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/7b943d1a8a23e52d37fadc9e88418732fc31e7a14b48195366a6f671096d4e81 200
+[debug] [2026-03-09T17:35:38.886Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/7b943d1a8a23e52d37fadc9e88418732fc31e7a14b48195366a6f671096d4e81 [stream]
+[debug] [2026-03-09T17:35:39.040Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/aba07ee5946771d7a3d09c834a7ef609cb0812cbb59af07aca4cf6eee730581a 200
+[debug] [2026-03-09T17:35:39.040Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/aba07ee5946771d7a3d09c834a7ef609cb0812cbb59af07aca4cf6eee730581a [stream]
+[debug] [2026-03-09T17:35:39.128Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/070a3c7ced95f5e2c4df6a7be5ca1242916db80025f4148ace4602c631aab939 200
+[debug] [2026-03-09T17:35:39.128Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/070a3c7ced95f5e2c4df6a7be5ca1242916db80025f4148ace4602c631aab939 [stream]
+[debug] [2026-03-09T17:35:39.153Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/2dc711d2ddf586112acc244dd4272a1c0aa21640a7547e7d62da79fd8d107ffa 200
+[debug] [2026-03-09T17:35:39.153Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/2dc711d2ddf586112acc244dd4272a1c0aa21640a7547e7d62da79fd8d107ffa [stream]
+[debug] [2026-03-09T17:35:39.237Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/ad2fee4057c815ce66749851a19b3363e40025bdd1940864d1db221a59c957df 200
+[debug] [2026-03-09T17:35:39.238Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/ad2fee4057c815ce66749851a19b3363e40025bdd1940864d1db221a59c957df [stream]
+[debug] [2026-03-09T17:35:39.346Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/81bb2cfd97ca8964066ee5c1e74494cd00db10c93db174d9c3621de0ff10650d 200
+[debug] [2026-03-09T17:35:39.346Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/81bb2cfd97ca8964066ee5c1e74494cd00db10c93db174d9c3621de0ff10650d [stream]
+[debug] [2026-03-09T17:35:39.508Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/a388a853c843846c1231d12f076c645ea95f36f782bcccc24abccc54b10b6dd8 200
+[debug] [2026-03-09T17:35:39.508Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/a388a853c843846c1231d12f076c645ea95f36f782bcccc24abccc54b10b6dd8 [stream]
+[debug] [2026-03-09T17:35:39.592Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/1275c3f0441f41d7aab76385128e4d84d29f8f112d14ffb907886a825ae697b1 200
+[debug] [2026-03-09T17:35:39.592Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/1275c3f0441f41d7aab76385128e4d84d29f8f112d14ffb907886a825ae697b1 [stream]
+[info] i  hosting: uploading new files [63/64] (98%) 
+[debug] [2026-03-09T17:35:39.942Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/b163e2f44fe0c544da7e6f207121c8a62e4c70398c1f112ea300d1e44a85cc43 200
+[debug] [2026-03-09T17:35:39.942Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/gratzz/versions/983343e836adec58/files/b163e2f44fe0c544da7e6f207121c8a62e4c70398c1f112ea300d1e44a85cc43 [stream]
+[debug] [2026-03-09T17:35:39.943Z] [hosting][upload queue][FINAL] {"max":7662,"min":4449,"avg":5713.234375,"active":0,"complete":64,"success":64,"errored":0,"retried":0,"total":64,"elapsed":7713}
+[info] i  hosting: upload complete 
+[info] +  hosting[gratzz]: file upload complete 
+[debug] [2026-03-09T17:35:39.944Z] [hosting] deploy completed after 8386ms
+[debug] [2026-03-09T17:35:39.944Z] [
+  {
+    "config": {
+      "public": "out",
+      "cleanUrls": true,
+      "headers": [
+        {
+          "source": "/sw.js",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "/manifest.json",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0"
+            }
+          ]
+        },
+        {
+          "source": "**",
+          "headers": [
+            {
+              "key": "Strict-Transport-Security",
+              "value": "max-age=31536000; includeSubDomains"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            },
+            {
+              "key": "Referrer-Policy",
+              "value": "strict-origin-when-cross-origin"
+            },
+            {
+              "key": "Permissions-Policy",
+              "value": "camera=(), microphone=(), geolocation=()"
+            },
+            {
+              "key": "Cross-Origin-Opener-Policy",
+              "value": "same-origin-allow-popups"
+            }
+          ]
+        }
+      ],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "site": "gratzz"
+    },
+    "version": "projects/1051507062109/sites/gratzz/versions/983343e836adec58"
+  }
+]
+[info] i  hosting[gratzz]: finalizing version... 
+[debug] [2026-03-09T17:35:39.948Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:39.948Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:39.949Z] >>> [apiv2][query] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/gratzz/versions/983343e836adec58 updateMask=status%2Cconfig
+[debug] [2026-03-09T17:35:39.949Z] >>> [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/gratzz/versions/983343e836adec58 {"status":"FINALIZED","config":{"headers":[{"glob":"/sw.js","headers":{"Cache-Control":"no-cache, no-store, must-revalidate"}},{"glob":"/manifest.json","headers":{"Cache-Control":"no-cache, max-age=0"}},{"glob":"**","headers":{"Strict-Transport-Security":"max-age=31536000; includeSubDomains","X-Content-Type-Options":"nosniff","X-Frame-Options":"DENY","Referrer-Policy":"strict-origin-when-cross-origin","Permissions-Policy":"camera=(), microphone=(), geolocation=()","Cross-Origin-Opener-Policy":"same-origin-allow-popups"}}],"cleanUrls":true}}
+[debug] [2026-03-09T17:35:43.852Z] <<< [apiv2][status] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/gratzz/versions/983343e836adec58 200
+[debug] [2026-03-09T17:35:43.852Z] <<< [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/gratzz/versions/983343e836adec58 {"name":"projects/1051507062109/sites/gratzz/versions/983343e836adec58","status":"FINALIZED","config":{"headers":[{"headers":{"Cache-Control":"no-cache, no-store, must-revalidate"},"glob":"/sw.js"},{"headers":{"Cache-Control":"no-cache, max-age=0"},"glob":"/manifest.json"},{"headers":{"X-Frame-Options":"DENY","Referrer-Policy":"strict-origin-when-cross-origin","Permissions-Policy":"camera=(), microphone=(), geolocation=()","Cross-Origin-Opener-Policy":"same-origin-allow-popups","Strict-Transport-Security":"max-age=31536000; includeSubDomains","X-Content-Type-Options":"nosniff"},"glob":"**"}],"cleanUrls":true},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-03-09T17:35:32.022667Z","createUser":{"email":"walterciitop@gmail.com"},"finalizeTime":"2026-03-09T17:35:41.351010Z","finalizeUser":{"email":"walterciitop@gmail.com"}}
+[debug] [2026-03-09T17:35:43.852Z] [hosting] finalized version for gratzz:[object Object]
+[info] +  hosting[gratzz]: version finalized 
+[info] i  hosting[gratzz]: releasing new version... 
+[debug] [2026-03-09T17:35:43.853Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:43.853Z] Checked if tokens are valid: true, expires at: 1773081318800
+[debug] [2026-03-09T17:35:43.853Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/gratzz/channels/live/releases versionName=projects%2F1051507062109%2Fsites%2Fgratzz%2Fversions%2F983343e836adec58
+[debug] [2026-03-09T17:35:43.854Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/gratzz/channels/live/releases {}
+[debug] [2026-03-09T17:35:44.173Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/gratzz/channels/live/releases 200
+[debug] [2026-03-09T17:35:44.173Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/gratzz/channels/live/releases {"name":"projects/1051507062109/sites/gratzz/channels/live/releases/1773077744474000","version":{"name":"projects/1051507062109/sites/gratzz/versions/983343e836adec58","status":"FINALIZED","config":{"headers":[{"headers":{"Cache-Control":"no-cache, no-store, must-revalidate"},"glob":"/sw.js"},{"headers":{"Cache-Control":"no-cache, max-age=0"},"glob":"/manifest.json"},{"headers":{"Strict-Transport-Security":"max-age=31536000; includeSubDomains","X-Content-Type-Options":"nosniff","X-Frame-Options":"DENY","Referrer-Policy":"strict-origin-when-cross-origin","Permissions-Policy":"camera=(), microphone=(), geolocation=()","Cross-Origin-Opener-Policy":"same-origin-allow-popups"},"glob":"**"}],"cleanUrls":true},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-03-09T17:35:32.022667Z","createUser":{"email":"walterciitop@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocI-PY8JDlFTlGKLmnFKmFnGl8bjCsUYKDXfgl3knTEZqw8qQxh-"},"finalizeTime":"2026-03-09T17:35:41.351010Z","finalizeUser":{"email":"walterciitop@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocI-PY8JDlFTlGKLmnFKmFnGl8bjCsUYKDXfgl3knTEZqw8qQxh-"}},"type":"DEPLOY","releaseTime":"2026-03-09T17:35:44.474Z","releaseUser":{"email":"walterciitop@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocI-PY8JDlFTlGKLmnFKmFnGl8bjCsUYKDXfgl3knTEZqw8qQxh-"}}
+[debug] [2026-03-09T17:35:44.173Z] [hosting] release: {"name":"projects/1051507062109/sites/gratzz/channels/live/releases/1773077744474000","version":{"name":"projects/1051507062109/sites/gratzz/versions/983343e836adec58","status":"FINALIZED","config":{"headers":[{"headers":{"Cache-Control":"no-cache, no-store, must-revalidate"},"glob":"/sw.js"},{"headers":{"Cache-Control":"no-cache, max-age=0"},"glob":"/manifest.json"},{"headers":{"Strict-Transport-Security":"max-age=31536000; includeSubDomains","X-Content-Type-Options":"nosniff","X-Frame-Options":"DENY","Referrer-Policy":"strict-origin-when-cross-origin","Permissions-Policy":"camera=(), microphone=(), geolocation=()","Cross-Origin-Opener-Policy":"same-origin-allow-popups"},"glob":"**"}],"cleanUrls":true},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-03-09T17:35:32.022667Z","createUser":{"email":"walterciitop@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocI-PY8JDlFTlGKLmnFKmFnGl8bjCsUYKDXfgl3knTEZqw8qQxh-"},"finalizeTime":"2026-03-09T17:35:41.351010Z","finalizeUser":{"email":"walterciitop@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocI-PY8JDlFTlGKLmnFKmFnGl8bjCsUYKDXfgl3knTEZqw8qQxh-"}},"type":"DEPLOY","releaseTime":"2026-03-09T17:35:44.474Z","releaseUser":{"email":"walterciitop@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocI-PY8JDlFTlGKLmnFKmFnGl8bjCsUYKDXfgl3knTEZqw8qQxh-"}}
+[info] +  hosting[gratzz]: release complete 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/gratzz/overview
+[info] Hosting URL: https://gratzz.web.app
