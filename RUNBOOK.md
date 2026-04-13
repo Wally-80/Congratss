@@ -35,7 +35,7 @@ Failure states strictly follow "Fail Forward Fast" or "Revert Immutably" rules:
 
 ## 🛠️ Common Triage Workflows
 
-### Corrupt Dependencies / Type Miss-matches
+### Corrupt Dependencies / Type Mismatches
 Execute the following commands natively in the terminal if encountering severe internal module errors.
 ```bash
 rm -rf node_modules package-lock.json .next

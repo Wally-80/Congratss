@@ -17,7 +17,7 @@ Gratzz is a versatile, multi-platform celebration and milestone management tool.
 
 - **PWA Ready**: Installable on iOS and Android devices directly from the browser.
 - **Native Wrappers**: Integrated with Capacitor for seamless compilation to native App Store and Google Play binaries.
-- **Real-Time Data**: Persistent synchronised data provided via Firebase Firestore and Auth.
+- **Real-Time Data**: Persistent synchronized data provided via Firebase Firestore and Auth.
 - **Dynamic Scheduling**: Flexible timelines for upcoming events, greetings, and special dates.
 - **Fully Responsive**: Crafted with Tailwind CSS to look stunning across desktop, tablet, and mobile breakpoints.
 
