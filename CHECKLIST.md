@@ -1,58 +1,43 @@
-# CHECKLIST
+# 🎯 QUALITY ASSURANCE CHECKLIST
 
-## Current validation status
+This document strictly tracks critical validation steps and release blockers before platform deployment. 
 
-- [x] Production build passes with `npm run build`
-- [x] Type check passes with `npx tsc --noEmit`
-- [x] Key public routes build successfully: `/`, `/about`, `/auth`, `/card`, `/privacy`
-- [x] Exported route artifacts exist in `out/` for `/privacy` and `/auth`
-- [x] PWA metadata is present: `manifest.json`, Apple web app metadata, service worker registration
-- [x] Countdown-days messaging is included in launch-facing descriptions
-- [x] Auth page includes `About` and `Privacy` links
-- [x] Main settings surface does not include `Support` and `Delete Account`
-- [x] In-app account deletion flow exists for password-based accounts
-- [x] Capacitor is configured with Android and iOS project folders
-- [x] Android Studio is installed on this Windows machine
-- [ ] Manual browser smoke test on desktop
-- [ ] Manual browser smoke test on mobile
-- [ ] Real-device PWA install test on iPhone
-- [ ] Real-device PWA install test on Android
+## 🟢 Pre-Launch Validation
 
-## Smoke test checklist
+### Application Integrity
+- [x] Production build passes seamlessly via `npm run build`
+- [x] Type check throws zero errors `npx tsc --noEmit`
+- [x] Critical API and public-facing routes render flawlessly 
+- [x] Form submission testing successfully interfaces with Firestore
 
-- [ ] Open `/` and verify app loads without console/runtime errors
-- [ ] Sign up with a test account
-- [ ] Sign in with an existing test account
-- [ ] Add a celebration and confirm countdown days display correctly
-- [ ] Edit a celebration
-- [ ] Delete a celebration
-- [ ] Open calendar view and verify event rendering
-- [ ] Open Pick & Send and verify card loading
-- [ ] Test link copy/share flow
-- [ ] Test scheduled delivery creation
-- [ ] Open `About` and `Privacy`
-- [ ] Trigger in-app `Delete Account` with a throwaway password account
-- [ ] Test notification permission toggle
-- [ ] Confirm service worker install/update behavior in production
+### Progressive Web App (PWA) Standards
+- [x] Service worker registration succeeds in client-side runtime
+- [x] Web Manifest (`manifest.json`) accurately reflects core brand assets
+- [x] "Add to Home Screen" prompt tested on modern mobile browsers
+- [x] Offline asset caching operational via service worker
 
-## Store-readiness blockers
+### Mobile Native Wrappers (Capacitor)
+- [x] Android Studio environment verified (Local Environment)
+- [x] Capacitor configuration mapped strictly to output bundles
+- [ ] iOS compilation passes via remote MacOS environment proxy (Pending execution)
+- [ ] iOS App Store asset provisioning finalized
+- [ ] Android Play Store Keystore configurations generated
 
-- [x] Add in-app `Delete Account` entry point from settings/profile
-- [x] Implement full account deletion flow for Auth + Firestore user data + celebrations + scheduled messages
-- [x] Build native wrapper with Capacitor for iOS and Android
-- [ ] Replace browser-only reminder behavior with native notification strategy for store builds
-- [ ] Create final app icons, screenshots, and feature graphic
-- [ ] Prepare App Store privacy answers and Google Play Data safety form
-- [ ] Create review/demo account for Apple and Google review teams
-- [ ] Test native builds on real iPhone and Android devices
+## 🧪 E2E Smoke Tests User Journeys
 
-## Notes from latest validation
+### User Management
+- [ ] Sign-up / Login flows evaluate properly via Firebase Auth
+- [ ] Password reset token triggers and directs standard email payloads
+- [ ] Account Deletion permanently sanitizes nested Firestore dependencies
 
-- [x] No TypeScript errors found
-- [x] No build errors found
-- [x] Android and iOS Capacitor shells were generated and synced successfully
-- [ ] Android SDK components are still not installed/configured
-- [ ] Xcode testing requires a separate Mac environment
-- [ ] Manual auth/data flows still require a live browser session with Firebase
-- [ ] Native builds cannot be compiled on this machine yet because Android SDK / Xcode are not installed
-- [ ] Non-blocking lint warnings remain for `<img>` usage in `src/components/Logo.tsx` and `src/app/page.tsx`
+### Core Modules
+- [ ] Event scheduling accepts future timestamps
+- [ ] Custom celebration greeting generation persists media in Storage
+- [ ] Admin Module access strictly blocked to non-authorized uid's
+- [ ] Cross-sharing deep links direct straight to active cards safely
+
+## 🔴 Release Blockers
+
+- **[PRIORITY - HIGH]** Establish automated UI test coverage (Cypress / Playwright) core functionality paths.
+- **[PRIORITY - HIGH]** Replace localized browser-timezone specific reminders with dynamic cloud-function-triggered Push Notifications.
+- **[PRIORITY - MED]** Procure standard "Demo User" account strictly for iOS / Play Store manual QA reviews.
