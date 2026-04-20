@@ -21,7 +21,7 @@ The app is not yet ready for store submission because these items are still open
 - enroll in Apple Developer Program
 - decide whether the app is submitted under an individual or organization account
 - create app record in App Store Connect
-- reserve bundle ID, for example `com.gratzz.app`
+- reserve bundle ID, for example `com.congratss.app`
 
 ### Google
 
@@ -29,7 +29,7 @@ The app is not yet ready for store submission because these items are still open
 - choose personal or organization account correctly
 - create app record in Play Console
 - enable Play App Signing
-- reserve package name, for example `com.gratzz.app`
+- reserve package name, for example `com.congratss.app`
 
 ## 2. Product and technical preparation
 

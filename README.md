@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Congratss
+
+Congratss is a Next.js web application that helps users remember important dates, manage countdowns, and send greetings and scheduled messages from a single dashboard.
+
+## Spec-Driven Development (SDD)
+
+This project strictly follows the **Spec-Driven Development (SDD)** methodology using **GitHub Spec Kit**. All new features must be planned and specified before implementation.
+
+Our SDD workflow is governed by the project constitution, ensuring consistency, reliability, and clear AI-agent handoffs. 
+
+Check the `.speckit/` directory for our templates:
+- `.speckit/constitution.md`: Core project principles (e.g. Component-First, Test-First).
+- `.speckit/specification.md`: Feature user stories and requirements template.
+- `.speckit/plan.md`: Technical implementation plan template.
+- `.speckit/tasks.md`: Task breakdown for implementation.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js (v18+)
+- npm or yarn
+
+### Local Setup
+
+First, install dependencies:
+
+```bash
+npm install
+```
+
+Then, start the Next.js development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the local environment.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Documentation Overview
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+As part of our project governance, please refer to the following key documents:
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [CHECKLIST.md](./CHECKLIST.md)
+- [PROJECT_PLAN.md](./PROJECT_PLAN.md)
+- [CONTRIBUTING.md](./CONTRIBUTING.md): Branching strategies and PR rules.
+- [DECISIONS.md](./DECISIONS.md): Architectural decisions.
+- [RUNBOOK.md](./RUNBOOK.md): Deployment, rollbacks, and operational fixes.

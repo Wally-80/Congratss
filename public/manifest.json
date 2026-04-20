@@ -2,10 +2,19 @@
     "name": "Congratss",
     "short_name": "Congratss",
     "description": "Track countdown days and celebrate every moment with Congratss",
+    "id": "/",
     "start_url": "/",
+    "scope": "/",
     "display": "standalone",
-    "background_color": "#0a0a1a",
-    "theme_color": "#0a0a1a",
+    "orientation": "portrait",
+    "background_color": "#030308",
+    "theme_color": "#030308",
+    "lang": "en-US",
+    "dir": "ltr",
+    "categories": [
+        "social",
+        "lifestyle"
+    ],
     "icons": [
         {
             "src": "/pwa-192.png",

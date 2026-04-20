@@ -15,6 +15,8 @@ import { type ScheduledMessage, useScheduledMessages } from "@/hooks/useSchedule
 import { translations } from "@/lib/translations";
 import { playCelebrationChime } from "@/lib/sound";
 import { useTheme } from "@/context/ThemeContext";
+import { Capacitor } from "@capacitor/core";
+import { LocalNotifications } from "@capacitor/local-notifications";
 
 const AuthPage = dynamic(() => import("./auth/page"), { ssr: false });
 const SendGreetingModal = dynamic(() => import("@/components/SendGreetingModal"), { ssr: false });
@@ -142,67 +144,89 @@ export default function Dashboard() {
 
     useEffect(() => {
         if (!notificationsEnabled) return;
-        if (typeof window === "undefined" || !("Notification" in window)) return;
-        if (Notification.permission !== "granted") return;
-        const activeTranslations = translations[language];
 
-        const todayKey = new Date().toISOString().slice(0, 10);
+        const handleNotifications = async () => {
+            let canShowWebPush = false;
+            let canShowNativeLocal = false;
 
-        celebrations.forEach((item) => {
-            let reminderType: "today" | "tomorrow" | "week" | "month" | "year" | null = null;
-            if (item.isPast) return;
-            const effectiveReminderTiming = item.reminderTiming ?? (item.recurrence === "one_time" ? "day_of" : "default");
-            switch (effectiveReminderTiming) {
-                case "none":
-                    reminderType = null;
-                    break;
-                case "day_of":
-                    reminderType = item.daysLeft === 0 ? "today" : null;
-                    break;
-                case "day_before":
-                    reminderType = item.daysLeft === 1 ? "tomorrow" : null;
-                    break;
-                case "week_before":
-                    reminderType = item.daysLeft === 7 ? "week" : null;
-                    break;
-                case "month_before":
-                    reminderType = item.daysLeft === 30 ? "month" : null;
-                    break;
-                case "year_before":
-                    reminderType = item.daysLeft === 365 || item.daysLeft === 366 ? "year" : null;
-                    break;
-                default:
-                    if (item.daysLeft === 0) reminderType = "today";
-                    if (item.daysLeft === 1) reminderType = "tomorrow";
-                    if (item.daysLeft === 7) reminderType = "week";
-                    break;
+            if (Capacitor.isNativePlatform()) {
+                let permStatus = await LocalNotifications.checkPermissions();
+                if (permStatus.display === "prompt") {
+                    permStatus = await LocalNotifications.requestPermissions();
+                }
+                canShowNativeLocal = permStatus.display === "granted";
+            } else {
+                if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+                    canShowWebPush = true;
+                }
             }
-            if (!reminderType) return;
 
-            const dedupeKey = `gratzz_notify_${item.id}_${reminderType}_${todayKey}`;
-            if (localStorage.getItem(dedupeKey)) return;
+            if (!canShowWebPush && !canShowNativeLocal) return;
 
-            const reminderTemplate = reminderType === "today"
-                ? activeTranslations.notification_body_today
-                : reminderType === "tomorrow"
-                    ? activeTranslations.notification_body_tomorrow
-                    : reminderType === "week"
-                        ? activeTranslations.notification_body_week
-                        : reminderType === "month"
-                            ? activeTranslations.notification_body_month
-                            : activeTranslations.notification_body_year;
-            const reminderBody = reminderTemplate.replace("{title}", item.title);
+            const activeTranslations = translations[language];
+            const todayKey = new Date().toISOString().slice(0, 10);
+            const nativeSchedules: any[] = [];
 
-            try {
-                new Notification(activeTranslations.notification_title, {
-                    body: reminderBody,
-                    tag: dedupeKey,
-                });
-                localStorage.setItem(dedupeKey, "1");
-            } catch (error) {
-                console.error("Notification error:", error);
+            celebrations.forEach((item) => {
+                let reminderType: "today" | "tomorrow" | "week" | "month" | "year" | null = null;
+                if (item.isPast) return;
+                const effectiveReminderTiming = item.reminderTiming ?? (item.recurrence === "one_time" ? "day_of" : "default");
+                switch (effectiveReminderTiming) {
+                    case "none": break;
+                    case "day_of": reminderType = item.daysLeft === 0 ? "today" : null; break;
+                    case "day_before": reminderType = item.daysLeft === 1 ? "tomorrow" : null; break;
+                    case "week_before": reminderType = item.daysLeft === 7 ? "week" : null; break;
+                    case "month_before": reminderType = item.daysLeft === 30 ? "month" : null; break;
+                    case "year_before": reminderType = item.daysLeft === 365 || item.daysLeft === 366 ? "year" : null; break;
+                    default:
+                        if (item.daysLeft === 0) reminderType = "today";
+                        if (item.daysLeft === 1) reminderType = "tomorrow";
+                        if (item.daysLeft === 7) reminderType = "week";
+                        break;
+                }
+                if (!reminderType) return;
+
+                const dedupeKey = `gratzz_notify_${item.id}_${reminderType}_${todayKey}`;
+                if (localStorage.getItem(dedupeKey)) return;
+
+                const reminderTemplate = reminderType === "today"
+                    ? activeTranslations.notification_body_today
+                    : reminderType === "tomorrow"
+                        ? activeTranslations.notification_body_tomorrow
+                        : reminderType === "week"
+                            ? activeTranslations.notification_body_week
+                            : reminderType === "month"
+                                ? activeTranslations.notification_body_month
+                                : activeTranslations.notification_body_year;
+                const reminderBody = reminderTemplate.replace("{title}", item.title);
+
+                if (canShowNativeLocal) {
+                    nativeSchedules.push({
+                        title: activeTranslations.notification_title,
+                        body: reminderBody,
+                        id: Math.floor(Math.random() * 1000000),
+                        schedule: { at: new Date() } // Fire immediately since the dashboard resolved it's due
+                    });
+                    localStorage.setItem(dedupeKey, "1");
+                } else if (canShowWebPush) {
+                    try {
+                        new Notification(activeTranslations.notification_title, {
+                            body: reminderBody,
+                            tag: dedupeKey,
+                        });
+                        localStorage.setItem(dedupeKey, "1");
+                    } catch (error) {
+                        console.error("Notification error:", error);
+                    }
+                }
+            });
+
+            if (canShowNativeLocal && nativeSchedules.length > 0) {
+                await LocalNotifications.schedule({ notifications: nativeSchedules });
             }
-        });
+        };
+
+        handleNotifications();
     }, [celebrations, language, notificationsEnabled]);
 
     useEffect(() => {

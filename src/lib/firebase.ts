@@ -1,7 +1,8 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getMessaging, isSupported, type Messaging } from "firebase/messaging";
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -16,7 +17,27 @@ const firebaseConfig = {
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+if (typeof window !== "undefined") {
+    enableIndexedDbPersistence(db).catch((err) => {
+        if (err.code === "failed-precondition") {
+            console.warn("Multiple tabs open, persistence can only be enabled in one tab at a time.");
+        } else if (err.code === "unimplemented") {
+            console.warn("The current browser does not support all of the features required to enable persistence.");
+        }
+    });
+}
+
 const storage = getStorage(app);
 
-export { app, auth, db, storage };
+let messaging: Messaging | null = null;
+if (typeof window !== "undefined") {
+    isSupported().then((supported) => {
+        if (supported) {
+            messaging = getMessaging(app);
+        }
+    }).catch(console.error);
+}
+
+export { app, auth, db, storage, messaging };
 

@@ -23,7 +23,10 @@ import {
     where,
     writeBatch
 } from "firebase/firestore";
-import { db, auth } from "@/lib/firebase";
+import { db, auth, messaging } from "@/lib/firebase";
+import { getToken } from "firebase/messaging";
+import { Capacitor } from "@capacitor/core";
+import { PushNotifications, type Token } from "@capacitor/push-notifications";
 
 import { Language } from "@/lib/translations";
 
@@ -186,6 +189,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                         });
                     }
                     setLoading(false);
+                }, (error) => {
+                    console.error("AuthContext user onSnapshot error:", error);
+                    // Don't kill the whole app if settings doc is restricted
+                    setLoading(false);
                 });
             } else {
                 setIsAdmin(false);
@@ -237,9 +244,44 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const setNotificationsEnabled = async (enabled: boolean) => {
         setNotificationsEnabledState(enabled);
+        let webFcmToken: string | null = null;
+
+        if (enabled && typeof window !== "undefined") {
+            try {
+                if (Capacitor.isNativePlatform()) {
+                    let permStatus = await PushNotifications.checkPermissions();
+                    if (permStatus.receive === "prompt") {
+                        permStatus = await PushNotifications.requestPermissions();
+                    }
+                    if (permStatus.receive === "granted") {
+                        PushNotifications.addListener("registration", (token: Token) => {
+                            if (auth.currentUser) {
+                                const userRef = doc(db, "users", auth.currentUser.uid);
+                                setDoc(userRef, { fcmToken: token.value, updatedAt: serverTimestamp() }, { merge: true }).catch(console.error);
+                            }
+                        });
+                        await PushNotifications.register();
+                    }
+                } else if (messaging) {
+                    const permission = await Notification.requestPermission();
+                    if (permission === "granted") {
+                        webFcmToken = await getToken(messaging, { 
+                            vapidKey: "BCbrSct-0SNNmcPdux-TBQj5xtlTp2cmGYb2dWKwSW6fbfWVEAE3vICD3gN0lf7LJfAfSFqJeNhhQEPVcH-RPTg" 
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to setup push notifications:", error);
+            }
+        }
+
         if (user) {
             const userRef = doc(db, "users", user.uid);
-            await setDoc(userRef, { notificationsEnabled: enabled, updatedAt: serverTimestamp() }, { merge: true });
+            await setDoc(userRef, { 
+                notificationsEnabled: enabled, 
+                ...(webFcmToken ? { fcmToken: webFcmToken } : {}),
+                updatedAt: serverTimestamp() 
+            }, { merge: true });
         }
     };
 

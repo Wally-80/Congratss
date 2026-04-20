@@ -28,12 +28,12 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isAdminByDoc() || isAdminByEmail();
+      return isAdminByEmail() || isAdminByDoc();
     }
 
     // User settings/preferences document
     match /users/{userId} {
-      allow read: if isOwner(userId) || isAdmin();
+      allow read: if isOwner(userId) || (isSignedIn() && (isAdminByEmail() || isAdminByDoc()));
 
       // Users can create their own doc, but cannot self-assign admin fields.
       allow create: if isOwner(userId)
