@@ -1,6 +1,7 @@
 <div align="center">
   <img src="public/logo.png" alt="Congratss Logo" width="200" />
   <h1>Congratss - Celebration Management Platform</h1>
+  <p><strong>Live app:</strong> <a href="https://congratss.com">congratss.com</a></p>
   <p>A modern, high-performance Progressive Web Application (PWA) for managing and scheduling celebrations.</p>
 
   [![Next.js](https://img.shields.io/badge/Next.js-15.0-black?style=flat&logo=next.js)](https://nextjs.org/)
@@ -12,6 +13,12 @@
 ## 📌 Overview
 
 Congratss is a Next.js web application that helps users remember important dates, manage countdowns, and send greetings and scheduled messages from a single dashboard. Built with modern web technologies, it allows users to elegantly schedule greetings, maintain a timeline of special events natively on mobile and web, and share celebrations directly.
+
+## 👤 About This Project
+
+Built solo as a full-stack project: architecture, data model, UI, and native packaging. Developed using spec-driven development — every feature specified and planned before implementation, with architecture decisions recorded in [DECISIONS.md](DECISIONS.md).
+
+**Author:** Walter Pomalaza — [wpomalaza.com](https://wpomalaza.com) · [LinkedIn](https://www.linkedin.com/in/walter-pomalaza-05927b140)
 
 ## 🏁 Spec-Driven Development (SDD)
 
@@ -47,8 +54,8 @@ Ensure you have `Node.js >= 20.0.0` and `npm` installed.
 
 ### 2. Clone and Install
 ```bash
-git clone https://github.com/Wally-80/Gratzz.git
-cd gratzz
+git clone https://github.com/Wally-80/Congratss.git
+cd Congratss
 npm install
 ```
 
