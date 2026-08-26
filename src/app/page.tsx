@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { Plus, Home as HomeIcon, Calendar as CalendarIcon, Settings, Search, LogOut, Send, ChevronLeft, ChevronRight, Pencil, Trash2, Info, Shield, Download } from "lucide-react";
+import { Plus, Home as HomeIcon, Calendar as CalendarIcon, Settings, Search, LogOut, Send, ChevronLeft, ChevronRight, Pencil, Trash2, Info, Shield, Download, FileText, Lock } from "lucide-react";
 import CelebrationCard from "@/components/CelebrationCard";
 import AddCelebrationModal from "@/components/AddCelebrationModal";
 import EditScheduledDeliveryModal from "@/components/EditScheduledDeliveryModal";
@@ -483,7 +483,7 @@ export default function Dashboard() {
         setActiveTab("home");
     };
 
-    const openInfoPage = (path: "/about" | "/privacy" | "/support" | "/delete-account") => {
+    const openInfoPage = (path: "/about" | "/privacy" | "/terms" | "/security" | "/support" | "/delete-account") => {
         window.location.assign(path);
     };
 
@@ -1114,11 +1114,27 @@ export default function Dashboard() {
                                 </button>
                                 <button
                                     type="button"
+                                    onClick={() => openInfoPage("/terms")}
+                                    className="w-full flex items-center justify-between text-[var(--app-text-dim)] hover:text-[var(--app-text)] transition-colors"
+                                >
+                                    <span className="text-sm font-medium">{t.terms_of_service}</span>
+                                    <FileText className="w-4 h-4 opacity-70" />
+                                </button>
+                                <button
+                                    type="button"
                                     onClick={() => openInfoPage("/privacy")}
                                     className="w-full flex items-center justify-between text-[var(--app-text-dim)] hover:text-[var(--app-text)] transition-colors"
                                 >
                                     <span className="text-sm font-medium">{t.privacy_policy}</span>
                                     <Shield className="w-4 h-4 opacity-70" />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => openInfoPage("/security")}
+                                    className="w-full flex items-center justify-between text-[var(--app-text-dim)] hover:text-[var(--app-text)] transition-colors"
+                                >
+                                    <span className="text-sm font-medium">{t.security}</span>
+                                    <Lock className="w-4 h-4 opacity-70" />
                                 </button>
                             </div>
 

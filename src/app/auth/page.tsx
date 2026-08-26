@@ -10,10 +10,12 @@ import {
     signInWithEmailAndPassword,
     signOut,
 } from "firebase/auth";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
+import { TERMS_VERSION } from "@/lib/legal";
 import { Language, translations } from "@/lib/translations";
 import { getAvatarUrl, getRandomAvatar } from "@/lib/avatars";
 import Logo from "@/components/Logo";
@@ -78,6 +80,7 @@ export default function AuthPage() {
     const [error, setError] = useState("");
     const [info, setInfo] = useState("");
     const [loadingMode, setLoadingMode] = useState<LoadingMode>(null);
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
 
     const copy = language === "es"
         ? {
@@ -90,6 +93,14 @@ export default function AuthPage() {
             verifyBeforeLogin: "Tu correo no esta verificado. Te enviamos un magic link para confirmarlo.",
             resetPassword: "Reset password",
             resetPasswordSent: "Se envio un email para resetear tu contrasena.",
+            betaBadge: "Beta publica",
+            agreeAge: "Confirmo que tengo al menos 13 anos (o la edad minima legal en mi pais). ",
+            agreePrefix: "He leido y acepto los",
+            agreeTerms: "Terminos de Servicio",
+            agreeAnd: "y la",
+            agreePrivacy: "Politica de Privacidad",
+            agreeBeta: `, y entiendo que Congratss es una version beta en pruebas que se ofrece "tal cual".`,
+            mustAcceptTerms: "Debes aceptar los Terminos de Servicio y la Politica de Privacidad para continuar.",
         }
         : {
             signInButton: "Sign in",
@@ -101,6 +112,14 @@ export default function AuthPage() {
             verifyBeforeLogin: "Your email is not verified. We sent a magic link to confirm it.",
             resetPassword: "Reset password",
             resetPasswordSent: "Password reset email sent.",
+            betaBadge: "Public beta",
+            agreeAge: "I confirm I am at least 13 years old (or the minimum legal age in my country). ",
+            agreePrefix: "I have read and agree to the",
+            agreeTerms: "Terms of Service",
+            agreeAnd: "and the",
+            agreePrivacy: "Privacy Policy",
+            agreeBeta: `, and I understand Congratss is a beta release under testing, provided "as is".`,
+            mustAcceptTerms: "You must accept the Terms of Service and Privacy Policy to continue.",
         };
 
     const actionCodeUrl = useMemo(() => {
@@ -127,10 +146,36 @@ export default function AuthPage() {
         ? "bg-[var(--app-bg)] border-[var(--glass-border)] text-[var(--app-text)] placeholder:text-[var(--app-text-muted)] focus:bg-white/10"
         : "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-cyan-500 focus:bg-white";
 
+    // Stores proof of consent (when + which version) on the user document,
+    // so we can show a re-consent prompt if TERMS_VERSION changes later.
+    const recordLegalAcceptance = async (uid: string) => {
+        try {
+            await setDoc(
+                doc(db, "users", uid),
+                {
+                    termsAcceptedAt: serverTimestamp(),
+                    termsVersion: TERMS_VERSION,
+                    termsAcceptedLanguage: language,
+                    updatedAt: serverTimestamp(),
+                },
+                { merge: true },
+            );
+        } catch (acceptanceError) {
+            // Never block auth on this write; it is best-effort bookkeeping.
+            console.error("Failed to record legal acceptance", acceptanceError);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
         setInfo("");
+
+        if (!acceptedTerms) {
+            setError(copy.mustAcceptTerms);
+            return;
+        }
+
         setLoadingMode(isLogin ? "sign-in" : "sign-up");
 
         try {
@@ -143,6 +188,7 @@ export default function AuthPage() {
                     setError(copy.verifyBeforeLogin);
                     return;
                 }
+                await recordLegalAcceptance(credential.user.uid);
                 router.replace("/");
                 return;
             }
@@ -150,6 +196,7 @@ export default function AuthPage() {
             const credential = await createUserWithEmailAndPassword(auth, email, password);
             const avatar = getRandomAvatar();
             await updateUserProfile("Congratss User", getAvatarUrl(avatar));
+            await recordLegalAcceptance(credential.user.uid);
             await sendEmailVerification(credential.user, { url: actionCodeUrl });
             await signOut(auth);
             if (typeof window !== "undefined") {
@@ -210,8 +257,11 @@ export default function AuthPage() {
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-neon-cyan/5 blur-[80px] rounded-full" />
                 <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-neon-pink/5 blur-[80px] rounded-full" />
 
-                <div className="z-10 mb-8">
+                <div className="z-10 mb-8 flex flex-col items-center">
                     <Logo size="lg" className="mb-4" />
+                    <span className={`px-3 py-1 rounded-full border text-[9px] font-black uppercase tracking-[0.2em] ${isDarkMode ? "border-amber-400/40 bg-amber-500/10 text-amber-300" : "border-amber-400/60 bg-amber-50 text-amber-700"}`}>
+                        {copy.betaBadge}
+                    </span>
                 </div>
 
                 {error && (
@@ -253,9 +303,31 @@ export default function AuthPage() {
                         />
                     </div>
 
+                    <label className={`flex items-start gap-3 px-1 cursor-pointer select-none text-[11px] leading-relaxed ${isDarkMode ? "text-[var(--app-text-dim)]/80" : "text-slate-600"}`}>
+                        <input
+                            type="checkbox"
+                            checked={acceptedTerms}
+                            onChange={(e) => setAcceptedTerms(e.target.checked)}
+                            disabled={isBusy}
+                            className="mt-0.5 h-4 w-4 shrink-0 rounded border-[var(--glass-border)] accent-cyan-500 cursor-pointer"
+                        />
+                        <span>
+                            {copy.agreeAge}
+                            {copy.agreePrefix}{" "}
+                            <Link href="/terms" className={`font-bold underline underline-offset-2 transition-colors ${isDarkMode ? "text-neon-cyan hover:text-[var(--app-text)]" : "text-cyan-700 hover:text-slate-900"}`}>
+                                {copy.agreeTerms}
+                            </Link>{" "}
+                            {copy.agreeAnd}{" "}
+                            <Link href="/privacy" className={`font-bold underline underline-offset-2 transition-colors ${isDarkMode ? "text-neon-cyan hover:text-[var(--app-text)]" : "text-cyan-700 hover:text-slate-900"}`}>
+                                {copy.agreePrivacy}
+                            </Link>
+                            {copy.agreeBeta}
+                        </span>
+                    </label>
+
                     <button
                         type="submit"
-                        disabled={isBusy}
+                        disabled={isBusy || !acceptedTerms}
                         className="w-full relative group disabled:cursor-not-allowed"
                     >
                         <div className={`absolute inset-0 bg-neon-cyan blur-md transition-opacity duration-300 rounded-2xl ${isDarkMode ? "opacity-20 group-hover:opacity-40" : "opacity-15 group-hover:opacity-30"}`} />
@@ -301,13 +373,21 @@ export default function AuthPage() {
                         </button>
                     </div>
 
-                    <div className="flex gap-4 text-[10px] uppercase tracking-widest">
+                    <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[10px] uppercase tracking-widest">
                         <Link href="/about" className="text-[var(--app-text-dim)]/60 hover:text-[var(--app-text)] transition-colors">
                             {t.about_app}
                         </Link>
                         <span className="text-[var(--app-text-dim)]/20">|</span>
+                        <Link href="/terms" className="text-[var(--app-text-dim)]/60 hover:text-[var(--app-text)] transition-colors">
+                            {t.terms_of_service}
+                        </Link>
+                        <span className="text-[var(--app-text-dim)]/20">|</span>
                         <Link href="/privacy" className="text-[var(--app-text-dim)]/60 hover:text-[var(--app-text)] transition-colors">
                             {t.privacy_policy}
+                        </Link>
+                        <span className="text-[var(--app-text-dim)]/20">|</span>
+                        <Link href="/security" className="text-[var(--app-text-dim)]/60 hover:text-[var(--app-text)] transition-colors">
+                            {t.security}
                         </Link>
                     </div>
                 </div>

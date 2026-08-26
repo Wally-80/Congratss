@@ -3,6 +3,13 @@
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import PageCloseButton from "@/components/PageCloseButton";
+import {
+    APP_DBA,
+    LEGAL_CONTACT_EMAIL,
+    LEGAL_ENTITY,
+    LEGAL_LAST_UPDATED_EN,
+    LEGAL_LAST_UPDATED_ES,
+} from "@/lib/legal";
 
 export default function PrivacyPage() {
     const { language } = useAuth();
@@ -13,12 +20,32 @@ export default function PrivacyPage() {
             <PageCloseButton className="fixed top-[max(1rem,env(safe-area-inset-top))] right-6 sm:right-10 z-30" />
             <div className="max-w-3xl mx-auto space-y-6">
                 <header className="space-y-2">
-                    <p className="text-xs uppercase tracking-[0.2em] text-[var(--app-text-muted)]">Congratss</p>
+                    <p className="text-xs uppercase tracking-[0.2em] text-[var(--app-text-muted)]">{APP_DBA}</p>
                     <h1 className="text-3xl font-bold">{isEs ? "Politica de Privacidad" : "Privacy Policy"}</h1>
                     <p className="text-sm text-[var(--app-text-dim)]">
-                        {isEs ? "Actualizado: 6 de marzo de 2026" : "Last updated: March 6, 2026"}
+                        {isEs ? `Actualizado: ${LEGAL_LAST_UPDATED_ES}` : `Last updated: ${LEGAL_LAST_UPDATED_EN}`}
                     </p>
                 </header>
+
+                <section className="glass-card premium-border neon-border-cyan p-6 space-y-3">
+                    <h2 className="text-lg font-semibold">{isEs ? "Quienes Somos" : "Who We Are"}</h2>
+                    <p className="text-sm text-[var(--app-text-dim)]">
+                        {isEs
+                            ? `${APP_DBA} es operado por ${LEGAL_ENTITY}, haciendo negocios como (DBA) "${APP_DBA}". ${LEGAL_ENTITY} es el responsable de los datos personales descritos en esta politica. Puedes contactarnos en ${LEGAL_CONTACT_EMAIL}.`
+                            : `${APP_DBA} is operated by ${LEGAL_ENTITY}, doing business as (DBA) "${APP_DBA}". ${LEGAL_ENTITY} is the controller of the personal data described in this policy. You can reach us at ${LEGAL_CONTACT_EMAIL}.`}
+                    </p>
+                </section>
+
+                <section className="glass-card premium-border p-6 space-y-3 border border-amber-400/40 bg-amber-500/5">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-500">
+                        {isEs ? "Aviso de Beta" : "Beta Notice"}
+                    </p>
+                    <p className="text-sm text-[var(--app-text-dim)]">
+                        {isEs
+                            ? `${APP_DBA} se encuentra actualmente en fase beta de prueba. Los datos guardados durante la beta pueden restablecerse o eliminarse a medida que el producto evoluciona. Consulta los Terminos de Servicio para mas detalles.`
+                            : `${APP_DBA} is currently in beta testing. Data saved during the beta may be reset or deleted as the product evolves. See the Terms of Service for details.`}
+                    </p>
+                </section>
 
                 <section className="glass-card premium-border neon-border-cyan p-6 space-y-3">
                     <h2 className="text-lg font-semibold">{isEs ? "Datos que Guardamos" : "Data We Store"}</h2>
@@ -66,7 +93,46 @@ export default function PrivacyPage() {
                     </p>
                 </section>
 
-                <div className="pt-2">
+                <section className="glass-card premium-border neon-border-cyan p-6 space-y-3">
+                    <h2 className="text-lg font-semibold">{isEs ? "Proveedores de Terceros" : "Third-Party Processors"}</h2>
+                    <p className="text-sm text-[var(--app-text-dim)]">
+                        {isEs
+                            ? "Usamos Google Firebase (Authentication, Firestore, Cloud Storage, Hosting y Cloud Messaging) para operar el Servicio. Firebase procesa datos en nuestro nombre conforme a las politicas de privacidad y seguridad de Google. No vendemos tus datos personales ni los compartimos con terceros para publicidad."
+                            : "We use Google Firebase (Authentication, Firestore, Cloud Storage, Hosting, and Cloud Messaging) to operate the Service. Firebase processes data on our behalf under Google's privacy and security policies. We do not sell your personal data or share it with third parties for advertising."}
+                    </p>
+                </section>
+
+                <section className="glass-card premium-border neon-border-cyan p-6 space-y-3">
+                    <h2 className="text-lg font-semibold">{isEs ? "Menores de Edad" : "Children's Privacy"}</h2>
+                    <p className="text-sm text-[var(--app-text-dim)]">
+                        {isEs
+                            ? "El Servicio no esta dirigido a menores de 13 anos y no recolectamos conscientemente datos de ellos. Si crees que un menor nos proporciono datos personales, contactanos y los eliminaremos."
+                            : "The Service is not directed to children under 13, and we do not knowingly collect data from them. If you believe a child has provided us personal data, contact us and we will delete it."}
+                    </p>
+                </section>
+
+                <section className="glass-card premium-border neon-border-cyan p-6 space-y-3">
+                    <h2 className="text-lg font-semibold">{isEs ? "Cambios y Contacto" : "Changes and Contact"}</h2>
+                    <p className="text-sm text-[var(--app-text-dim)]">
+                        {isEs
+                            ? `Podemos actualizar esta politica a medida que el Servicio evolucione; publicaremos la version vigente en esta pagina con su fecha de actualizacion. Preguntas o solicitudes de privacidad (acceso, correccion o eliminacion de datos): ${LEGAL_ENTITY} (DBA ${APP_DBA}), ${LEGAL_CONTACT_EMAIL}.`
+                            : `We may update this policy as the Service evolves; the current version will always be posted on this page with its 'Last updated' date. Privacy questions or requests (data access, correction, or deletion): ${LEGAL_ENTITY} (DBA ${APP_DBA}), ${LEGAL_CONTACT_EMAIL}.`}
+                    </p>
+                </section>
+
+                <div className="pt-2 flex flex-wrap gap-3">
+                    <Link
+                        href="/terms"
+                        className="inline-flex items-center rounded-xl border border-[var(--glass-border)] px-4 py-2 text-sm font-semibold text-[var(--app-text-dim)] hover:text-[var(--app-text)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                    >
+                        {isEs ? "Terminos de Servicio" : "Terms of Service"}
+                    </Link>
+                    <Link
+                        href="/security"
+                        className="inline-flex items-center rounded-xl border border-[var(--glass-border)] px-4 py-2 text-sm font-semibold text-[var(--app-text-dim)] hover:text-[var(--app-text)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                    >
+                        {isEs ? "Seguridad" : "Security"}
+                    </Link>
                     <Link
                         href="/"
                         className="inline-flex items-center rounded-xl border border-[var(--glass-border)] px-4 py-2 text-sm font-semibold text-[var(--app-text-dim)] hover:text-[var(--app-text)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
