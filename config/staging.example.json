@@ -1,0 +1,9 @@
+{
+  "projectId": "congratss-staging-example",
+  "apiKey": "replace-with-staging-web-api-key",
+  "authDomain": "congratss-staging-example.firebaseapp.com",
+  "storageBucket": "congratss-staging-example.firebasestorage.app",
+  "messagingSenderId": "123456789",
+  "appId": "1:123456789:web:replace-with-staging-app-id",
+  "publisherOrigin": ""
+}

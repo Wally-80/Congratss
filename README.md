@@ -90,3 +90,6 @@ The public homepage is at `/`, the existing customer dashboard at `/dashboard`, 
 Run `npm run lint -- --max-warnings 0`, `npm run test:unit`, `npm run test:security`, `npm run test:e2e:emulators`, and `npm run build` for the regression checks. Emulator tests require Java 21 and use only the `demo-congratss` project. Browser tests use system Chromium when present, or the Playwright-managed browser (`npx playwright install chromium`); `CHROMIUM_PATH` can override its location.
 
 The publishing service is opt-in and independent of the static/native export. Without `NEXT_PUBLIC_PUBLISHER_URL`, publishing stays disabled while preview and local drafts work. See [service configuration and local emulator instructions](services/publisher/README.md), [implementation specification](specs/002-congratss-modernization/spec.md), and [review notes/screenshots](docs/congratss-2-review.md). No production deployment is part of this branch.
+# Isolated staging preview preparation
+
+Follow [the staging setup guide](docs/staging-setup.md) to create a separate test project and prepare an isolated frontend artifact. `npm run staging:prepare -- config/staging.local.json --check` validates the public configuration; `--build` creates the ignored `.staging` artifact without deploying. Never use the production-default Firebase project for a preview.

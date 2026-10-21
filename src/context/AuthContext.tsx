@@ -259,7 +259,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setNotificationsEnabledState(enabled);
         let webFcmToken: string | null = null;
 
-        if (enabled && typeof window !== "undefined") {
+        if (enabled && typeof window !== "undefined" && process.env.NEXT_PUBLIC_DISABLE_PUSH !== "true") {
             try {
                 if (Capacitor.isNativePlatform()) {
                     let permStatus = await PushNotifications.checkPermissions();

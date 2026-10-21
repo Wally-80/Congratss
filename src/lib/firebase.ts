@@ -36,7 +36,7 @@ if (useEmulators && isNewApp) {
 }
 
 let messaging: Messaging | null = null;
-if (typeof window !== "undefined") {
+if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_DISABLE_PUSH !== "true") {
     isSupported().then((supported) => {
         if (supported) {
             messaging = getMessaging(app);

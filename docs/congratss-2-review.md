@@ -32,6 +32,10 @@ Branch: `feature/congratss-2-modernization`.
 
 See [publishing service operations](../services/publisher/README.md) and [specification](../specs/002-congratss-modernization/spec.md).
 
+## Isolated staging preparation
+
+See [step-by-step staging setup](staging-setup.md). A staging-only configuration validator/build helper now overrides production client settings, disables push registration, replaces the exported legacy messaging worker, and generates a separate ignored Hosting/rules config. Production defaults remain unchanged. The sample build uses placeholder public configuration solely to validate export generation; it is not a working Firebase environment. Three staging safety tests extend the unit/API suite to 16 tests. A real staging project, authenticated account, service provisioning/IAM and separate rollout are still needed for a live preview. No cloud resources were created or deployed.
+
 ## Dependency security
 
 `npm audit --omit=dev` reports **zero vulnerabilities** after the patched runtime updates and same-major gRPC override. The full audit still reports **11 development-tool dependency entries** (7 high, 4 moderate), including inherited entries through Firebase CLI and Next's ESLint plugin. npm's proposed automatic remedies downgrade Firebase CLI/Next ESLint to earlier major versions; those forced downgrades were not applied. These toolchain advisories need compatible upstream remediation and are an explicit review item, not a claim that the whole development dependency tree is advisory-free.
