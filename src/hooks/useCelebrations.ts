@@ -45,6 +45,13 @@ export const useCelebrations = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const userId = user?.uid;
+    const [day, setDay] = useState(() => new Date().toDateString());
+    useEffect(() => {
+        const refreshDay = () => setDay(new Date().toDateString());
+        const timer = window.setInterval(refreshDay, 60000);
+        window.addEventListener("focus", refreshDay);
+        return () => { window.clearInterval(timer); window.removeEventListener("focus", refreshDay); };
+    }, []);
 
     useEffect(() => {
         if (!userId) return;
@@ -91,7 +98,7 @@ export const useCelebrations = () => {
         });
 
         return () => unsubscribe();
-    }, [userId]);
+    }, [userId, day]);
 
     const addCelebration = async (data: { title: string, rawDate: string, type: CelebrationType, customTypeLabel?: string, recurrence?: CelebrationRecurrence, reminderTiming?: CelebrationReminderTiming }) => {
         if (!userId) return;

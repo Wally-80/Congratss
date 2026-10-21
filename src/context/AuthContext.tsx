@@ -23,6 +23,7 @@ import {
     where,
     writeBatch
 } from "firebase/firestore";
+import { publisherOrigin } from "@/lib/publisher";
 import { db, auth, messaging } from "@/lib/firebase";
 import { getToken } from "firebase/messaging";
 import { Capacitor } from "@capacitor/core";
@@ -133,6 +134,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         let unsubscribeUserDoc: (() => void) | undefined;
 
         const unsubscribeAuth = onAuthStateChanged(auth, (authUser) => {
+            unsubscribeUserDoc?.();
+            unsubscribeUserDoc = undefined;
             const isPasswordProviderUser = Boolean(
                 authUser?.providerData?.some((provider) => provider.providerId === "password")
             );
@@ -150,6 +153,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }
 
             setUser(authUser);
+            // Authentication readiness must not depend on optional preference reads.
+            setLoading(false);
+            setIsAdmin(false);
+            let trustedClaimAdmin = false;
+            if (authUser) {
+                void authUser.getIdTokenResult().then(result => {
+                    trustedClaimAdmin = result.claims.admin === true;
+                    if (auth.currentUser?.uid === authUser.uid && trustedClaimAdmin) setIsAdmin(true);
+                }).catch(() => undefined);
+            }
 
             if (authUser) {
                 // Listen to user document in Firestore for role and language updates
@@ -159,9 +172,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                         const userData = snapshot.data();
                         // Support both 'role: admin' and 'isAdmin: true' formats
                         setIsAdmin(
-                            userData.role === "admin" ||
+                            trustedClaimAdmin || userData.role === "admin" ||
                             userData.isAdmin === true ||
-                            ADMIN_EMAILS.includes(authUser.email ?? "")
+                            (authUser.emailVerified && ADMIN_EMAILS.includes(authUser.email ?? ""))
                         );
                         if (userData.language) {
                             setLanguageState(userData.language as Language);
@@ -171,7 +184,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                         setOnboardingCompletedState(userData.onboardingCompleted === true);
                     } else {
                         // Safe default for new users or missing docs
-                        setIsAdmin(ADMIN_EMAILS.includes(authUser.email ?? ""));
+                        setIsAdmin(trustedClaimAdmin || (authUser.emailVerified && ADMIN_EMAILS.includes(authUser.email ?? "")));
                         setNotificationsEnabledState(false);
                         setOnboardingCompletedState(false);
                         const fallbackLanguage: Language =
@@ -246,7 +259,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setNotificationsEnabledState(enabled);
         let webFcmToken: string | null = null;
 
-        if (enabled && typeof window !== "undefined") {
+        if (enabled && typeof window !== "undefined" && process.env.NEXT_PUBLIC_DISABLE_PUSH !== "true") {
             try {
                 if (Capacitor.isNativePlatform()) {
                     let permStatus = await PushNotifications.checkPermissions();
@@ -321,6 +334,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
 
         try {
+            const publisher = publisherOrigin(process.env.NEXT_PUBLIC_PUBLISHER_URL);
+            if (publisher) {
+                const response = await fetch(`${publisher}/api/cards`, {
+                    method: "DELETE", headers: { Authorization: `Bearer ${await currentUser.getIdToken()}` },
+                });
+                if (!response.ok) throw new Error("Public card cleanup failed. Please try account deletion again.");
+            }
+            await deleteDocsForUser("card_drafts", currentUser.uid);
+            localStorage.removeItem(`congratss.card-drafts.v1.${currentUser.uid}`);
             await deleteDocsForUser("celebrations", currentUser.uid);
             await deleteDocsForUser("scheduled_messages", currentUser.uid);
             await deleteDoc(doc(db, "users", currentUser.uid));

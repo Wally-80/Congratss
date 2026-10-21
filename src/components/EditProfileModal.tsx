@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import AppImage from "@/components/AppImage";
+import React, { useState } from "react";
 import { X, User, Image as ImageIcon, Loader2 } from "lucide-react";
 
 import { useAuth } from "@/context/AuthContext";
@@ -17,7 +18,10 @@ interface EditProfileModalProps {
     };
 }
 
-export default function EditProfileModal({ isOpen, onClose, onUpdate, currentData }: EditProfileModalProps) {
+export default function EditProfileModal(props: EditProfileModalProps) {
+    return props.isOpen ? <ProfileForm {...props} /> : null;
+}
+function ProfileForm({ isOpen, onClose, onUpdate, currentData }: EditProfileModalProps) {
     const { language } = useAuth();
     const t = translations[language];
 
@@ -25,14 +29,6 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
     const [photoURL, setPhotoURL] = useState(currentData.photoURL);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
-
-    useEffect(() => {
-        if (isOpen) {
-            setDisplayName(currentData.displayName);
-            setPhotoURL(currentData.photoURL);
-            setError("");
-        }
-    }, [isOpen, currentData]);
 
     if (!isOpen) return null;
 
@@ -76,7 +72,7 @@ export default function EditProfileModal({ isOpen, onClose, onUpdate, currentDat
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="flex flex-col items-center mb-6">
                         <div className="w-24 h-24 rounded-[2rem] border-4 border-black/10 dark:border-white/10 overflow-hidden mb-4 shadow-2xl relative group bg-black/5 dark:bg-white/5 flex items-center justify-center">
-                            <img
+                            <AppImage
                                 src={photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName || "U")}&background=random&color=fff&size=256`}
                                 alt="Profile Preview"
                                 className="w-full h-full object-cover"

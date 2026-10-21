@@ -1,5 +1,6 @@
-﻿"use client";
+"use client";
 
+import AppImage from "@/components/AppImage";
 import React, { useState, useEffect } from "react";
 import { Plus, Trash2, Pencil, Image as ImageIcon, Save, X, PlusCircle, Upload, Loader2 } from "lucide-react";
 import { cardService, GreetingCard, type CardLocale } from "@/lib/cardService";
@@ -332,7 +333,7 @@ export default function AdminDashboard() {
                                         {cards.filter(c => c.category === category).map(card => (
                                             <div key={card.id} className="glass-card p-2 group overflow-hidden premium-border neon-border-cyan">
                                                 <div className="relative aspect-square rounded-lg overflow-hidden mb-2">
-                                                    <img src={card.url} alt={card.label} className="w-full h-full object-cover" />
+                                                    <AppImage src={card.url} alt={card.label} className="w-full h-full object-cover" />
                                                     <div className="absolute inset-0 bg-black/45 opacity-100 pointer-events-auto sm:opacity-0 sm:pointer-events-none sm:group-hover:opacity-100 sm:group-hover:pointer-events-auto transition-opacity flex items-start justify-end gap-2 p-2">
                                                         <button
                                                             type="button"

@@ -45,3 +45,11 @@ next-env.d.ts
 
 firebase-debug.log
 *.log
+
+# Local automated review output
+/test-results/
+/playwright-report/
+
+# Isolated staging configuration and artifacts
+/.staging/
+/config/staging.local.json

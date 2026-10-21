@@ -48,7 +48,10 @@ const buildShareUrl = (channel: ScheduledChannel, message: string, recipient: st
     return `sms:${encodeURIComponent(normalizePhone(target))}?&body=${encodedMessage}`;
 };
 
-export default function EditScheduledDeliveryModal({
+export default function EditScheduledDeliveryModal(props: EditScheduledDeliveryModalProps) {
+    return props.isOpen && props.scheduledMessage ? <ScheduledDeliveryForm {...props} key={props.scheduledMessage.id} /> : null;
+}
+function ScheduledDeliveryForm({
     isOpen,
     scheduledMessage,
     onClose,
@@ -90,22 +93,13 @@ export default function EditScheduledDeliveryModal({
             error_destination: "Please enter a valid destination for that channel.",
         };
 
-    const [scheduleDate, setScheduleDate] = React.useState("");
-    const [scheduleTime, setScheduleTime] = React.useState("");
-    const [channel, setChannel] = React.useState<ScheduledChannel>("whatsapp");
-    const [recipient, setRecipient] = React.useState("");
+    const [scheduleDate, setScheduleDate] = React.useState(scheduledMessage ? toDateInputValue(scheduledMessage.scheduledAt) : "");
+    const [scheduleTime, setScheduleTime] = React.useState(scheduledMessage ? toTimeInputValue(scheduledMessage.scheduledAt) : "");
+    const [channel, setChannel] = React.useState<ScheduledChannel>(scheduledMessage?.channel || "whatsapp");
+    const [recipient, setRecipient] = React.useState(scheduledMessage?.recipient || "");
     const [error, setError] = React.useState<string | null>(null);
     const [isSaving, setIsSaving] = React.useState(false);
     const [isDeleting, setIsDeleting] = React.useState(false);
-
-    React.useEffect(() => {
-        if (!scheduledMessage) return;
-        setScheduleDate(toDateInputValue(scheduledMessage.scheduledAt));
-        setScheduleTime(toTimeInputValue(scheduledMessage.scheduledAt));
-        setChannel(scheduledMessage.channel);
-        setRecipient(scheduledMessage.recipient);
-        setError(null);
-    }, [scheduledMessage]);
 
     if (!isOpen || !scheduledMessage) return null;
 

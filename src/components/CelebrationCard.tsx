@@ -131,12 +131,14 @@ export default function CelebrationCard({
 
                 <div className="flex items-center gap-1">
                     <button
+                        aria-label={`${language === "es" ? "Editar" : "Edit"} ${title}`}
                         onClick={() => onEdit({ id, title, rawDate, type, customTypeLabel, recurrence, reminderTiming })}
                         className="p-2.5 text-[var(--app-text-dim)] hover:text-[var(--app-text)] hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-all"
                     >
                         <Pencil className="w-4 h-4" />
                     </button>
                     <button
+                        aria-label={`${language === "es" ? "Eliminar" : "Delete"} ${title}`}
                         onClick={() => onDelete(id)}
                         className="p-2.5 text-[var(--app-text-dim)] hover:text-red-500 hover:bg-red-500/5 rounded-xl transition-all"
                     >
