@@ -82,3 +82,11 @@ To understand our architectural, strategic, and operational workflows, please re
 
 ## 📄 License
 *Proprietary and Confidential. All rights reserved.*
+
+## Congratss 2.0 development branch
+
+The public homepage is at `/`, the existing customer dashboard at `/dashboard`, and the new composer at `/create`. Legacy `/card` URLs remain supported. Use Node 24 (`.nvmrc`) and `npm ci`.
+
+Run `npm run lint -- --max-warnings 0`, `npm run test:unit`, `npm run test:security`, `npm run test:e2e:emulators`, and `npm run build` for the regression checks. Emulator tests require Java 21 and use only the `demo-congratss` project. Browser tests use system Chromium when present, or the Playwright-managed browser (`npx playwright install chromium`); `CHROMIUM_PATH` can override its location.
+
+The publishing service is opt-in and independent of the static/native export. Without `NEXT_PUBLIC_PUBLISHER_URL`, publishing stays disabled while preview and local drafts work. See [service configuration and local emulator instructions](services/publisher/README.md), [implementation specification](specs/002-congratss-modernization/spec.md), and [review notes/screenshots](docs/congratss-2-review.md). No production deployment is part of this branch.
