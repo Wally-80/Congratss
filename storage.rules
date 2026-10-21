@@ -1,50 +1,24 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    function isSignedIn() {
-      return request.auth != null;
+    function admin() {
+      return request.auth != null && (
+        request.auth.token.get('admin', false) == true
+        || (request.auth.token.get('email_verified', false) == true
+          && request.auth.token.get('email', '') in ['walterrpom@gmail.com', 'walterciitop@gmail.com'])
+        || (firestore.exists(/databases/(default)/documents/users/$(request.auth.uid))
+          && (firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.get('role', '') == 'admin'
+            || firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.get('isAdmin', false) == true))
+      );
     }
-
-    function isAdminByDoc() {
-      return isSignedIn()
-        && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid))
-        && (
-          firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == "admin"
-          || firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin == true
-        );
+    match /greeting_cards/{path=**} {
+      allow read: if true;
+      allow create, update: if admin() && request.resource.size < 15 * 1024 * 1024
+        && request.resource.contentType.matches('(image/(png|jpeg|webp|gif)|video/mp4)');
+      allow delete: if admin();
     }
-
-    function isAdminByEmail() {
-      return isSignedIn()
-        && request.auth.token.email != null
-        && [
-          "walterrpom@gmail.com",
-          "walterciitop@gmail.com"
-        ].hasAny([request.auth.token.email]);
-    }
-
-    function isAdmin() {
-      return isAdminByDoc() || isAdminByEmail();
-    }
-
-    // Public library assets
-    match /greeting_cards/{allPaths=**} {
-      allow read;
-      allow write: if isAdmin()
-        && request.resource.size < 15 * 1024 * 1024
-        && request.resource.contentType.matches('(image|video)/.*');
-    }
-
-    // User custom uploads for greeting send flow
-    match /user_uploads/{allPaths=**} {
-      allow read;
-      allow write: if false;
-    }
-
-    // Deny writes to any other path
-    match /{allPaths=**} {
-      allow read;
-      allow write: if false;
-    }
+    // Existing public links are preserved. New user uploads stay local to the device.
+    match /user_uploads/{path=**} { allow read: if true; allow write: if false; }
+    match /{path=**} { allow read, write: if false; }
   }
 }

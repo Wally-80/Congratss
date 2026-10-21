@@ -1,5 +1,6 @@
 "use client";
 
+import AppImage from "@/components/AppImage";
 import Link from "next/link";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -97,7 +98,7 @@ function SharedCardContent() {
                             Loading shared card...
                         </div>
                     ) : resolvedImage ? (
-                        <img
+                        <AppImage
                             src={resolvedImage}
                             alt="Shared greeting card"
                             className="w-full h-auto max-h-[72vh] object-contain rounded-2xl"

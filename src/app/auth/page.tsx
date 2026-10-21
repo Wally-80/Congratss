@@ -67,6 +67,12 @@ const formatAuthError = (error: unknown, language: Language, context: ErrorConte
     }
 };
 
+function authDestination() {
+    if (typeof window === "undefined") return "/dashboard";
+    const next = new URLSearchParams(window.location.search).get("next");
+    return next === "/create" ? "/create" : "/dashboard";
+}
+
 export default function AuthPage() {
     const { user, loading, language, setLanguage, updateUserProfile } = useAuth();
     const { theme } = useTheme();
@@ -134,7 +140,7 @@ export default function AuthPage() {
     useEffect(() => {
         if (loading) return;
         if (user && user.emailVerified) {
-            router.replace("/");
+            router.replace(authDestination());
         }
     }, [loading, router, user]);
 
@@ -189,7 +195,7 @@ export default function AuthPage() {
                     return;
                 }
                 await recordLegalAcceptance(credential.user.uid);
-                router.replace("/");
+                router.replace(authDestination());
                 return;
             }
 
@@ -278,28 +284,32 @@ export default function AuthPage() {
 
                 <form onSubmit={handleSubmit} className="w-full space-y-5 z-10">
                     <div className="space-y-2">
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--app-text-dim)] ml-2">{t.email}</label>
+                        <label htmlFor="auth-email" className="block text-[10px] font-black uppercase tracking-widest text-[var(--app-text-dim)] ml-2">{t.email}</label>
                         <input
+                            id="auth-email"
+                            autoComplete="email"
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className={`w-full border rounded-2xl py-4 px-5 text-sm focus:outline-none focus:border-neon-cyan/50 transition-all duration-300 shadow-inner ${inputToneClass}`}
                             placeholder="your@email.com"
                             required
-                            disabled={isBusy}
+                            disabled={isBusy || loading}
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--app-text-dim)] ml-2">{t.password}</label>
+                        <label htmlFor="auth-password" className="block text-[10px] font-black uppercase tracking-widest text-[var(--app-text-dim)] ml-2">{t.password}</label>
                         <input
+                            id="auth-password"
+                            autoComplete={isLogin ? "current-password" : "new-password"}
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className={`w-full border rounded-2xl py-4 px-5 text-sm focus:outline-none focus:border-neon-cyan/50 transition-all duration-300 shadow-inner ${inputToneClass}`}
                             placeholder="********"
                             required
-                            disabled={isBusy}
+                            disabled={isBusy || loading}
                         />
                     </div>
 
@@ -308,7 +318,7 @@ export default function AuthPage() {
                             type="checkbox"
                             checked={acceptedTerms}
                             onChange={(e) => setAcceptedTerms(e.target.checked)}
-                            disabled={isBusy}
+                            disabled={isBusy || loading}
                             className="mt-0.5 h-4 w-4 shrink-0 rounded border-[var(--glass-border)] accent-cyan-500 cursor-pointer"
                         />
                         <span>
@@ -327,7 +337,7 @@ export default function AuthPage() {
 
                     <button
                         type="submit"
-                        disabled={isBusy || !acceptedTerms}
+                        disabled={isBusy || loading || !acceptedTerms}
                         className="w-full relative group disabled:cursor-not-allowed"
                     >
                         <div className={`absolute inset-0 bg-neon-cyan blur-md transition-opacity duration-300 rounded-2xl ${isDarkMode ? "opacity-20 group-hover:opacity-40" : "opacity-15 group-hover:opacity-30"}`} />
@@ -340,7 +350,7 @@ export default function AuthPage() {
                 <button
                     type="button"
                     onClick={handleResetPassword}
-                    disabled={isBusy}
+                    disabled={isBusy || loading}
                     className={`mt-4 text-[10px] uppercase tracking-widest font-black transition-colors ${isDarkMode ? "text-[var(--app-text-dim)]/70 hover:text-neon-cyan" : "text-slate-500 hover:text-cyan-600"} disabled:opacity-50`}
                 >
                     {copy.resetPassword}

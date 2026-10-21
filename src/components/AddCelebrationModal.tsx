@@ -42,7 +42,11 @@ interface AddCelebrationModalProps {
     onScheduleDelivery?: (celebration: InitialCelebrationData) => void;
 }
 
-export default function AddCelebrationModal({
+export default function AddCelebrationModal(props: AddCelebrationModalProps) {
+    return props.isOpen ? <CelebrationForm {...props} key={`${props.initialData?.id || "new"}-${props.defaultDate || ""}`} /> : null;
+}
+
+function CelebrationForm({
     isOpen,
     onClose,
     onAdd,
@@ -58,12 +62,12 @@ export default function AddCelebrationModal({
     const t = translations[language];
     const isDarkMode = theme === "dark";
 
-    const [title, setTitle] = useState("");
-    const [date, setDate] = useState("");
-    const [type, setType] = useState<CelebrationType>("birthday");
-    const [customTypeLabel, setCustomTypeLabel] = useState("");
-    const [recurrence, setRecurrence] = useState<CelebrationRecurrence>("annual");
-    const [reminderTiming, setReminderTiming] = useState<CelebrationReminderTiming>("default");
+    const [title, setTitle] = useState(initialData?.title || "");
+    const [date, setDate] = useState(initialData?.rawDate || defaultDate);
+    const [type, setType] = useState<CelebrationType>(initialData?.type || "birthday");
+    const [customTypeLabel, setCustomTypeLabel] = useState(initialData?.customTypeLabel || "");
+    const [recurrence, setRecurrence] = useState<CelebrationRecurrence>(initialData?.recurrence || "annual");
+    const [reminderTiming, setReminderTiming] = useState<CelebrationReminderTiming>(initialData?.reminderTiming || (initialData?.recurrence === "one_time" ? "day_of" : "default"));
     const [isSubmitting, setIsSubmitting] = useState(false);
     const baseFieldClass = isDarkMode
         ? "bg-white/10 border-white/20 text-white placeholder:text-white/55"
@@ -110,35 +114,6 @@ export default function AddCelebrationModal({
             { value: "year_before", label: t.reminder_year_before },
         ];
 
-    // Populate fields when editing
-    React.useEffect(() => {
-        if (initialData) {
-            setTitle(initialData.title);
-            setDate(initialData.rawDate);
-            setType(initialData.type);
-            setCustomTypeLabel(initialData.customTypeLabel || "");
-            const initialRecurrence = initialData.recurrence || "annual";
-            setRecurrence(initialRecurrence);
-            setReminderTiming(initialData.reminderTiming || (initialRecurrence === "one_time" ? "day_of" : "default"));
-        } else {
-            setTitle("");
-            setDate(defaultDate);
-            setType("birthday");
-            setCustomTypeLabel("");
-            setRecurrence("annual");
-            setReminderTiming("default");
-        }
-    }, [initialData, isOpen, defaultDate]);
-
-    React.useEffect(() => {
-        if (recurrence === "one_time" && !["day_of", "none"].includes(reminderTiming)) {
-            setReminderTiming("day_of");
-        }
-        if (recurrence === "annual" && reminderTiming === "day_of" && !initialData) {
-            setReminderTiming("default");
-        }
-    }, [initialData, recurrence, reminderTiming]);
-
     if (!isOpen) return null;
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -172,6 +147,7 @@ export default function AddCelebrationModal({
         >
             <div
                 onClick={(e) => e.stopPropagation()}
+                role="dialog" aria-modal="true" aria-labelledby="celebration-form-title"
                 className={`glass-pane w-full h-[100dvh] sm:h-auto sm:max-h-[90vh] sm:max-w-md relative animate-in fade-in zoom-in duration-300 premium-border ${type === "birthday" ? "neon-border-pink" : type === "anniversary" ? "neon-border-cyan" : ""} ${isDarkMode ? "bg-[#151820] sm:bg-[var(--pane-bg)]" : "bg-[var(--pane-bg)]"} pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] px-4 sm:px-8 sm:py-8 flex flex-col overflow-hidden`}
             >
                 {isDarkMode && (
@@ -190,17 +166,18 @@ export default function AddCelebrationModal({
                 </button>
 
                 <div className="relative z-10 flex-1 min-h-0 flex flex-col">
-                    <h2 className="text-2xl font-bold mb-5 sm:mb-8 text-[var(--app-text)]">
+                    <h2 id="celebration-form-title" className="text-2xl font-bold mb-5 sm:mb-8 text-[var(--app-text)]">
                         {initialData ? t.edit_celebration : t.add_celebration}
                     </h2>
 
                     <form onSubmit={handleSubmit} className="flex-1 min-h-0 flex flex-col">
                         <div className="space-y-6 flex-1 min-h-0 overflow-y-auto pr-1 pb-4">
                             <div>
-                                <label className={`block text-sm font-medium mb-2 uppercase tracking-widest ${textMutedClass}`}>
+                                <label htmlFor="celebration-title" className={`block text-sm font-medium mb-2 uppercase tracking-widest ${textMutedClass}`}>
                                     {t.title}
                                 </label>
                                 <input
+                                    id="celebration-title"
                                     type="text"
                                     placeholder={t.title_placeholder}
                                     value={title}
@@ -211,10 +188,11 @@ export default function AddCelebrationModal({
                             </div>
 
                             <div>
-                                <label className={`block text-sm font-medium mb-2 uppercase tracking-widest ${textMutedClass}`}>
+                                <label htmlFor="celebration-date" className={`block text-sm font-medium mb-2 uppercase tracking-widest ${textMutedClass}`}>
                                     {t.date}
                                 </label>
                                 <input
+                                    id="celebration-date"
                                     type="date"
                                     value={date}
                                     onChange={(e) => setDate(e.target.value)}
@@ -233,7 +211,11 @@ export default function AddCelebrationModal({
                                         <button
                                             key={option.value}
                                             type="button"
-                                            onClick={() => setRecurrence(option.value)}
+                                            onClick={() => {
+                                                setRecurrence(option.value);
+                                                if (option.value === "one_time" && !["day_of", "none"].includes(reminderTiming)) setReminderTiming("day_of");
+                                                if (option.value === "annual" && reminderTiming === "day_of" && !initialData) setReminderTiming("default");
+                                            }}
                                             className={`rounded-2xl border p-3 text-left transition-all ${recurrence === option.value
                                                 ? "border-cyan-400 bg-cyan-400/10 text-[var(--app-text)]"
                                                 : baseOptionClass}`}

@@ -14,7 +14,6 @@ const ROOT = resolve(__dirname, "..");
 
 const LOGO_SRC = resolve(ROOT, "public/logo.png");
 const BG_COLOR = { r: 3, g: 3, b: 8, alpha: 1 }; // #030308
-const BG_HEX = "#030308";
 
 // ─── Android icon sizes ───────────────────────────────────────────────
 const ANDROID_RES = resolve(ROOT, "android/app/src/main/res");

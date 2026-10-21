@@ -1,120 +1,89 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isSignedIn() {
-      return request.auth != null;
+    function signedIn() { return request.auth != null; }
+    function owner(uid) { return signedIn() && request.auth.uid == uid; }
+    function admin() {
+      return signedIn() && (
+        request.auth.token.get('admin', false) == true
+        || (request.auth.token.get('email_verified', false) == true
+          && request.auth.token.get('email', '') in ['walterrpom@gmail.com', 'walterciitop@gmail.com'])
+        || (exists(/databases/$(database)/documents/users/$(request.auth.uid))
+          && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') == 'admin'
+            || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('isAdmin', false) == true))
+      );
     }
-
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
+    function bounded(value, max) { return value is string && value.size() <= max; }
+    function validCelebration(d) {
+      return bounded(d.title, 200) && d.title.size() > 0
+        && bounded(d.rawDate, 40) && d.rawDate.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}.*$')
+        && bounded(d.type, 60)
+        && bounded(d.get('customTypeLabel', ''), 100)
+        && d.get('recurrence', 'annual') in ['annual', 'one_time']
+        && d.get('reminderTiming', 'default') in ['default', 'none', 'day_of', 'day_before', 'week_before', 'month_before', 'year_before'];
     }
-
-    function isAdminByDoc() {
-      return isSignedIn()
-        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
-        && (
-          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin"
-          || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true
-        );
+    function validSchedule(d) {
+      return d.channel in ['whatsapp', 'email', 'sms']
+        && bounded(d.recipient, 320) && bounded(d.message, 12000)
+        && bounded(d.shareUrl, 20000) && d.shareUrl.matches('^(https://|mailto:|sms:).*')
+        && bounded(d.cardUrl, 4096) && bounded(d.cardLabel, 200)
+        && bounded(d.celebrationTitle, 200) && d.scheduledAt is timestamp
+        && d.status in ['scheduled', 'sent', 'failed', 'cancelled'];
     }
-
-    function isAdminByEmail() {
-      return isSignedIn()
-        && request.auth.token.email != null
-        && [
-          "walterrpom@gmail.com",
-          "walterciitop@gmail.com"
-        ].hasAny([request.auth.token.email]);
+    function validPreferences(d) {
+      return d.get('language', 'en') in ['en', 'es']
+        && d.get('notificationsEnabled', false) is bool
+        && d.get('onboardingCompleted', false) is bool
+        && bounded(d.get('fcmToken', ''), 8192)
+        && bounded(d.get('termsVersion', ''), 100)
+        && d.get('termsAcceptedLanguage', 'en') in ['en', 'es'];
     }
-
-    function isAdmin() {
-      return isAdminByEmail() || isAdminByDoc();
+    match /users/{uid} {
+      allow read: if owner(uid) || admin();
+      allow create: if owner(uid) && !request.resource.data.keys().hasAny(['role', 'isAdmin']) && validPreferences(request.resource.data);
+      allow update: if admin() || (owner(uid) && validPreferences(request.resource.data)
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isAdmin'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'language', 'notificationsEnabled', 'fcmToken', 'onboardingCompleted', 'onboardingCompletedAt',
+          'createdAt', 'updatedAt', 'termsAcceptedAt', 'termsVersion', 'termsAcceptedLanguage'
+        ]));
+      allow delete: if owner(uid) || admin();
     }
-
-    // User settings/preferences document
-    match /users/{userId} {
-      allow read: if isOwner(userId) || (isSignedIn() && (isAdminByEmail() || isAdminByDoc()));
-
-      // Users can create their own doc, but cannot self-assign admin fields.
-      allow create: if isOwner(userId)
-        && !request.resource.data.keys().hasAny(["role", "isAdmin"]);
-
-      // Users can update own preferences/profile except admin fields.
-      allow update: if (isOwner(userId)
-          && !request.resource.data.diff(resource.data).changedKeys().hasAny(["role", "isAdmin"]))
-        || isAdmin();
-
-      allow delete: if isOwner(userId) || isAdmin();
+    match /celebrations/{id} {
+      allow create: if owner(request.resource.data.userId) && validCelebration(request.resource.data);
+      allow read, delete: if owner(resource.data.userId);
+      allow update: if owner(resource.data.userId) && request.resource.data.userId == resource.data.userId
+        && validCelebration(request.resource.data);
     }
-
-    // Main user celebrations
-    match /celebrations/{celebrationId} {
-      allow create: if isSignedIn()
-        && request.resource.data.userId == request.auth.uid
-        && request.resource.data.keys().hasAll(["title", "rawDate", "type", "userId"])
-        && request.resource.data.title is string
-        && request.resource.data.rawDate is string
-        && request.resource.data.type is string
-        && (!request.resource.data.keys().hasAny(["customTypeLabel"]) || request.resource.data.customTypeLabel is string);
-
-      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
-
-      allow update: if isSignedIn()
-        && resource.data.userId == request.auth.uid
-        && request.resource.data.userId == resource.data.userId
-        && request.resource.data.title is string
-        && request.resource.data.rawDate is string
-        && request.resource.data.type is string
-        && (!request.resource.data.keys().hasAny(["customTypeLabel"]) || request.resource.data.customTypeLabel is string);
-    }
-
-    // Public greeting card library
-    match /greeting_cards/{cardId} {
+    match /greeting_cards/{id} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow create, update: if admin() && bounded(request.resource.data.label, 200)
+        && bounded(request.resource.data.url, 4096)
+        && request.resource.data.url.matches('^(/|https://).*')
+        && bounded(request.resource.data.category, 100)
+        && request.resource.data.get('locale', 'both') in ['en', 'es', 'both'];
+      allow delete: if admin();
     }
-
-    // Per-user scheduled card deliveries
-    match /scheduled_messages/{messageId} {
-      allow create: if isSignedIn()
-        && request.resource.data.userId == request.auth.uid
-        && request.resource.data.keys().hasAll([
-          "userId",
-          "celebrationTitle",
-          "channel",
-          "recipient",
-          "message",
-          "shareUrl",
-          "cardLabel",
-          "cardUrl",
-          "scheduledAt",
-          "status"
-        ])
-        && request.resource.data.celebrationTitle is string
-        && request.resource.data.channel is string
-        && ["whatsapp", "email", "sms"].hasAny([request.resource.data.channel])
-        && request.resource.data.recipient is string
-        && request.resource.data.message is string
-        && request.resource.data.shareUrl is string
-        && request.resource.data.cardLabel is string
-        && request.resource.data.cardUrl is string
-        && request.resource.data.status == "scheduled";
-
-      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
-
-      allow update: if isSignedIn()
-        && resource.data.userId == request.auth.uid
-        && request.resource.data.userId == resource.data.userId
-        && request.resource.data.channel == resource.data.channel
-        && request.resource.data.recipient == resource.data.recipient
-        && request.resource.data.shareUrl == resource.data.shareUrl
-        && request.resource.data.cardUrl == resource.data.cardUrl
-        && request.resource.data.status is string;
+    match /scheduled_messages/{id} {
+      allow create: if owner(request.resource.data.userId) && validSchedule(request.resource.data)
+        && request.resource.data.status == 'scheduled';
+      allow read, delete: if owner(resource.data.userId);
+      allow update: if owner(resource.data.userId) && request.resource.data.userId == resource.data.userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'channel', 'recipient', 'shareUrl', 'scheduledAt', 'status', 'lastError', 'updatedAt', 'sentAt'
+        ]) && validSchedule(request.resource.data);
     }
-
-    // Deny by default for everything else
-    match /{document=**} {
-      allow read, write: if false;
+    match /card_drafts/{id} {
+      function validDraft() {
+        return request.resource.data.keys().hasOnly(['schemaVersion', 'userId', 'content', 'updatedAt'])
+          && request.resource.data.schemaVersion == 1
+          && request.resource.data.content is map && request.resource.data.updatedAt is timestamp;
+      }
+      allow create: if owner(request.resource.data.userId) && validDraft();
+      allow read, delete: if owner(resource.data.userId);
+      allow update: if owner(resource.data.userId) && request.resource.data.userId == resource.data.userId && validDraft();
     }
+    // Published snapshots, quotas and all unknown collections are server-only.
+    match /{document=**} { allow read, write: if false; }
   }
 }

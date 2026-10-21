@@ -1,5 +1,6 @@
 "use client";
 
+import AppImage from "@/components/AppImage";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { X, Send, MessageCircle, Mail, Phone, Check, RefreshCw, Upload, Loader2, CalendarClock } from "lucide-react";
 import { cardService, GreetingCard } from "@/lib/cardService";
@@ -183,7 +184,10 @@ const getAppShareBaseUrl = () => {
     return "https://congratss.com";
 };
 
-export default function SendGreetingModal({ isOpen, onClose, celebration, startInScheduleMode = false }: SendGreetingModalProps) {
+export default function SendGreetingModal(props: SendGreetingModalProps) {
+    return props.isOpen ? <GreetingComposer {...props} key={`${props.celebration?.id || "any"}-${props.startInScheduleMode || false}`} /> : null;
+}
+function GreetingComposer({ isOpen, onClose, celebration, startInScheduleMode = false }: SendGreetingModalProps) {
     const { language } = useAuth();
     const { theme } = useTheme();
     const { createScheduledMessage } = useScheduledMessages();
@@ -341,8 +345,6 @@ export default function SendGreetingModal({ isOpen, onClose, celebration, startI
         if (!isOpen) return;
 
         let alive = true;
-        setLoadingCards(true);
-        setError(null);
 
         const loadCards = async () => {
             try {
@@ -381,17 +383,6 @@ export default function SendGreetingModal({ isOpen, onClose, celebration, startI
         };
     }, [isOpen, language]);
 
-    useEffect(() => {
-        if (!isOpen) return;
-        const nextHour = new Date(Date.now() + 60 * 60 * 1000);
-        setScheduleDate(toDateInputValue(nextHour));
-        setScheduleTime(toTimeInputValue(nextHour));
-        setScheduleRecipient("");
-        setScheduleChannel("whatsapp");
-        setIsScheduleMode(startInScheduleMode);
-        setInfo(null);
-    }, [isOpen, startInScheduleMode]);
-
     const localeFilteredCards = useMemo(
         () => greetingCards.filter((card) => isCardVisibleForLanguage(card, language)),
         [greetingCards, language]
@@ -400,24 +391,6 @@ export default function SendGreetingModal({ isOpen, onClose, celebration, startI
         () => Array.from(new Set(localeFilteredCards.map((img) => normalizeCategory(img.category)))),
         [localeFilteredCards]
     );
-
-    useEffect(() => {
-        if (localeFilteredCards.length === 0) {
-            setSelectedImageId(null);
-            return;
-        }
-
-        if (!selectedImageId || !localeFilteredCards.some((card) => card.id === selectedImageId)) {
-            setSelectedImageId(localeFilteredCards[0].id);
-        }
-    }, [localeFilteredCards, selectedImageId]);
-
-    useEffect(() => {
-        if (activeCategory === ALL_CATEGORY_KEY) return;
-        if (!availableCategoryKeys.includes(activeCategory)) {
-            setActiveCategory(ALL_CATEGORY_KEY);
-        }
-    }, [activeCategory, availableCategoryKeys]);
 
     if (!isOpen) return null;
 
@@ -432,9 +405,10 @@ export default function SendGreetingModal({ isOpen, onClose, celebration, startI
     const selectedCardLabel = selectedImage ? localizeCardLabel(selectedImage.label, language) : previewCopy.no_card_selected;
     const messagePreview = message.trim() || previewCopy.no_message_yet;
 
-    const filteredImages = activeCategory === ALL_CATEGORY_KEY
+    const effectiveCategory = availableCategoryKeys.includes(activeCategory) ? activeCategory : ALL_CATEGORY_KEY;
+    const filteredImages = effectiveCategory === ALL_CATEGORY_KEY
         ? localeFilteredCards
-        : localeFilteredCards.filter(img => normalizeCategory(img.category) === activeCategory);
+        : localeFilteredCards.filter(img => normalizeCategory(img.category) === effectiveCategory);
 
     const handleTemplateSelect = (template: string) => {
         setMessage(template);
@@ -490,7 +464,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration, startI
         if (platform === "whatsapp") {
             window.open(url, "_blank");
         } else {
-            window.location.href = url;
+            window.location.assign(url);
         }
     };
 
@@ -695,7 +669,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration, startI
                                     <button
                                         key={cat}
                                         onClick={() => setActiveCategory(cat)}
-                                        className={`px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase transition-all whitespace-nowrap border ${activeCategory === cat
+                                        className={`px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase transition-all whitespace-nowrap border ${effectiveCategory === cat
                                             ? "bg-cyan-400 text-black border-cyan-400 shadow-neon"
                                             : "text-[var(--app-text-dim)] border-[var(--glass-border)] hover:text-[var(--app-text)] bg-black/5 dark:bg-white/5"
                                             }`}
@@ -712,7 +686,7 @@ export default function SendGreetingModal({ isOpen, onClose, celebration, startI
                             </div>
                             {selectedImage ? (
                                 <div className="rounded-xl overflow-hidden border border-black/10 dark:border-white/15 bg-black/5 dark:bg-black/30">
-                                    <img
+                                    <AppImage
                                         src={selectedImage.url}
                                         alt={selectedCardLabel}
                                         className="w-full h-44 sm:h-52 object-contain bg-black/10"
@@ -759,14 +733,14 @@ export default function SendGreetingModal({ isOpen, onClose, celebration, startI
                                     <button
                                         key={img.id}
                                         onClick={() => setSelectedImageId(img.id)}
-                                        className={`relative flex-shrink-0 w-32 h-32 sm:w-full sm:h-28 rounded-xl overflow-hidden border-2 transition-all ${selectedImageId === img.id ? "border-cyan-400 scale-105 shadow-neon-sm" : "border-black/10 dark:border-white/20 opacity-70 grayscale-[0.2]"
+                                        className={`relative flex-shrink-0 w-32 h-32 sm:w-full sm:h-28 rounded-xl overflow-hidden border-2 transition-all ${selectedImage?.id === img.id ? "border-cyan-400 scale-105 shadow-neon-sm" : "border-black/10 dark:border-white/20 opacity-70 grayscale-[0.2]"
                                             }`}
                                     >
-                                        <img src={img.url} alt={localizeCardLabel(img.label, language)} className="w-full h-full object-cover" />
+                                        <AppImage src={img.url} alt={localizeCardLabel(img.label, language)} className="w-full h-full object-cover" />
                                         <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm py-1.5 px-2">
                                             <p className="text-[9px] font-bold text-white/90 uppercase text-center truncate">{localizeCardLabel(img.label, language)}</p>
                                         </div>
-                                        {selectedImageId === img.id && (
+                                        {selectedImage?.id === img.id && (
                                             <div className="absolute top-2 right-2">
                                                 <div className="p-1 bg-cyan-400 rounded-full shadow-neon">
                                                     <Check className="w-3 h-3 text-black font-bold" />

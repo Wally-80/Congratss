@@ -14,7 +14,10 @@ interface OnboardingModalProps {
     onGoSettings: () => void;
 }
 
-export default function OnboardingModal({
+export default function OnboardingModal(props: OnboardingModalProps) {
+    return props.isOpen ? <OnboardingFlow {...props} /> : null;
+}
+function OnboardingFlow({
     isOpen,
     onFinish,
     onEnableNotifications,
@@ -106,7 +109,6 @@ export default function OnboardingModal({
 
     useEffect(() => {
         if (!isOpen) return;
-        setStepIndex(0);
         onGoHome();
     }, [isOpen, onGoHome]);
 
@@ -130,14 +132,7 @@ export default function OnboardingModal({
     }, [isOpen]);
 
     useEffect(() => {
-        if (!isOpen) {
-            setTargetRect(null);
-            return;
-        }
-        if (!currentStep.selector) {
-            setTargetRect(null);
-            return;
-        }
+        if (!isOpen || !currentStep.selector) return;
 
         const updateTarget = () => {
             const target = document.querySelector(currentStep.selector) as HTMLElement | null;
@@ -161,7 +156,7 @@ export default function OnboardingModal({
     }, [currentStep.selector, isOpen]);
 
     const focusRect = useMemo(() => {
-        if (!targetRect) return null;
+        if (!currentStep.selector || !targetRect) return null;
         const padding = 8;
         const top = Math.max(6, targetRect.top - padding);
         const left = Math.max(6, targetRect.left - padding);
@@ -174,11 +169,11 @@ export default function OnboardingModal({
             width: Math.min(targetRect.width + padding * 2, maxWidth),
             height: Math.min(targetRect.height + padding * 2, maxHeight),
         };
-    }, [targetRect, viewport.height, viewport.width]);
+    }, [currentStep.selector, targetRect, viewport.height, viewport.width]);
 
     const tooltipStyle = useMemo(() => {
         const width = Math.min(360, Math.max(280, viewport.width - 24));
-        if (!targetRect) {
+        if (!currentStep.selector || !targetRect) {
             return {
                 width,
                 left: Math.max(12, (viewport.width - width) / 2),
@@ -196,7 +191,7 @@ export default function OnboardingModal({
             : Math.min(Math.max(12, viewport.height - 220), targetRect.bottom + 16);
 
         return { width, left, top };
-    }, [targetRect, viewport.height, viewport.width]);
+    }, [currentStep.selector, targetRect, viewport.height, viewport.width]);
 
     const goNext = () => {
         if (isLastStep) {

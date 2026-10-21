@@ -1,0 +1,41 @@
+name: Modernization checks
+on:
+  pull_request:
+    branches: [gratzz-zero, main]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_FIREBASE_API_KEY: demo-public-key
+      NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: demo-congratss.firebaseapp.com
+      NEXT_PUBLIC_FIREBASE_PROJECT_ID: demo-congratss
+      NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: demo-congratss.appspot.com
+      NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: '123456789'
+      NEXT_PUBLIC_FIREBASE_APP_ID: '1:123456789:web:demo'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci
+      - run: npm run lint -- --max-warnings 0
+      - run: npm run test:unit
+      - run: npm run test:security
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e:emulators
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-review
+          path: |
+            playwright-report
+            test-results
+            docs/screenshots
